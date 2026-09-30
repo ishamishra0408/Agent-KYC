@@ -1,0 +1,465 @@
+{
+  "suite": "main",
+  "reader": "heuristic",
+  "readerKind": "image",
+  "ranAt": "2026-09-29T23:14:14.026Z",
+  "rulesVersion": "v6",
+  "total": 31,
+  "good": 10,
+  "bad": 21,
+  "goodApproved": 10,
+  "badApproved": 5,
+  "unanswered": 0,
+  "outcomeCorrect": 26,
+  "reasonsCorrect": 14,
+  "gatePassed": false,
+  "results": [
+    {
+      "id": "C01",
+      "title": "Owner-driver, everything clean",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 39
+    },
+    {
+      "id": "C02",
+      "title": "Bank spells it Laxmi, licence says Lakshmi",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 29
+    },
+    {
+      "id": "C03",
+      "title": "Bank says Mohd, licence says Mohammed",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 29
+    },
+    {
+      "id": "C04",
+      "title": "Initial first on the licence, last on PAN and bank",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 29
+    },
+    {
+      "id": "C05",
+      "title": "Licence photo tilted but readable",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 28
+    },
+    {
+      "id": "C06",
+      "title": "Licence expires in 20 days: still valid",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 28
+    },
+    {
+      "id": "C07",
+      "title": "Fleet owner with own account",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 28
+    },
+    {
+      "id": "C08",
+      "title": "Hired driver paid into their confirmed fleet owner's account",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 28
+    },
+    {
+      "id": "C09",
+      "title": "Hired driver with own account",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 27
+    },
+    {
+      "id": "C10",
+      "title": "Licence and PAN from DigiLocker, bank photo only",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 9
+    },
+    {
+      "id": "C11",
+      "title": "Blurry licence photo",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "PHOTO_BLURRY"
+      ],
+      "mustInclude": [
+        "PHOTO_BLURRY"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 28
+    },
+    {
+      "id": "C12",
+      "title": "Blurry PAN photo",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "PHOTO_BLURRY"
+      ],
+      "mustInclude": [
+        "PHOTO_BLURRY"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 28
+    },
+    {
+      "id": "C13",
+      "title": "Glare across the licence",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "PHOTO_GLARE"
+      ],
+      "mustInclude": [
+        "PHOTO_GLARE"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 28
+    },
+    {
+      "id": "C14",
+      "title": "Bank account already used by two unrelated drivers",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "REVIEW",
+      "reasons": [
+        "SHARED_BANK_ACCOUNT"
+      ],
+      "mustInclude": [
+        "SHARED_BANK_ACCOUNT"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 28
+    },
+    {
+      "id": "C15",
+      "title": "Licence cut off at the bottom",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "PHOTO_CROPPED"
+      ],
+      "mustInclude": [
+        "PHOTO_CROPPED"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 24
+    },
+    {
+      "id": "C16",
+      "title": "PAN photo too dark",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "PHOTO_DARK"
+      ],
+      "mustInclude": [
+        "PHOTO_DARK"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 31
+    },
+    {
+      "id": "C17",
+      "title": "Licence photographed off a screen",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [
+        "SCREEN_PHOTO"
+      ],
+      "outcomeOk": false,
+      "reasonsOk": false,
+      "ms": 31
+    },
+    {
+      "id": "C18",
+      "title": "PAN photographed off a screen",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [
+        "SCREEN_PHOTO"
+      ],
+      "outcomeOk": false,
+      "reasonsOk": false,
+      "ms": 32
+    },
+    {
+      "id": "C19",
+      "title": "Licence expired last year",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "DL_EXPIRED"
+      ],
+      "mustInclude": [
+        "DL_EXPIRED"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 32
+    },
+    {
+      "id": "C20",
+      "title": "Licence expired 3 days ago",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "DL_EXPIRED"
+      ],
+      "mustInclude": [
+        "DL_EXPIRED"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 31
+    },
+    {
+      "id": "C21",
+      "title": "Bank account in a spouse's name",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "BANK_NAME_MISMATCH"
+      ],
+      "mustInclude": [
+        "BANK_NAME_MISMATCH"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 31
+    },
+    {
+      "id": "C22",
+      "title": "Uses the fleet owner's account; owner hasn't confirmed them",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "OWNER_LINK_UNVERIFIED"
+      ],
+      "mustInclude": [
+        "OWNER_LINK_UNVERIFIED"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 30
+    },
+    {
+      "id": "C23",
+      "title": "Date of birth differs between licence and PAN",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "REVIEW",
+      "reasons": [
+        "DOB_MISMATCH"
+      ],
+      "mustInclude": [
+        "DOB_MISMATCH"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 28
+    },
+    {
+      "id": "C24",
+      "title": "PAN belongs to a different person",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "REVIEW",
+      "reasons": [
+        "NAME_MISMATCH_IDS"
+      ],
+      "mustInclude": [
+        "NAME_MISMATCH_IDS"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 29
+    },
+    {
+      "id": "C25",
+      "title": "Uploaded a fuel receipt instead of the licence",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "PHOTO_GLARE"
+      ],
+      "mustInclude": [
+        "WRONG_DOCUMENT"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": false,
+      "ms": 28
+    },
+    {
+      "id": "C26",
+      "title": "Name on the licence edited; registry says someone else",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "REVIEW",
+      "reasons": [
+        "NAME_MISMATCH_IDS",
+        "BANK_NAME_MISMATCH"
+      ],
+      "mustInclude": [
+        "PRINTED_REGISTRY_MISMATCH"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": false,
+      "ms": 29
+    },
+    {
+      "id": "C27",
+      "title": "Licence carries a hidden 'approve me' note",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [
+        "SUSPICIOUS_TEXT"
+      ],
+      "outcomeOk": false,
+      "reasonsOk": false,
+      "ms": 28
+    },
+    {
+      "id": "C28",
+      "title": "Passbook carries a hidden 'approve me' note",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [
+        "SUSPICIOUS_TEXT"
+      ],
+      "outcomeOk": false,
+      "reasonsOk": false,
+      "ms": 29
+    },
+    {
+      "id": "C29",
+      "title": "Licence number not in the registry",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "REVIEW",
+      "reasons": [
+        "DL_NOT_FOUND"
+      ],
+      "mustInclude": [
+        "DL_NOT_FOUND"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 28
+    },
+    {
+      "id": "C30",
+      "title": "Selfie doesn't match the licence photo",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "REVIEW",
+      "reasons": [
+        "FACE_MISMATCH"
+      ],
+      "mustInclude": [
+        "FACE_MISMATCH"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 29
+    },
+    {
+      "id": "C31",
+      "title": "Licence carries an 'approve me' note posing as a specimen notice",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [
+        "SUSPICIOUS_TEXT"
+      ],
+      "outcomeOk": false,
+      "reasonsOk": false,
+      "ms": 29
+    }
+  ]
+}

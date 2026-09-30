@@ -1,0 +1,59 @@
+{
+  "name": "agent-kycready",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Portfolio project: an AI-native driver KYC onboarding agent. AI proposes, code decides, people decide the hard cases.",
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c cyan,magenta \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "tsx watch server/index.ts",
+    "dev:web": "vite",
+    "build": "vite build",
+    "start": "tsx server/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.app.json",
+    "evals": "tsx evals/run-evals.ts",
+    "evals:baseline": "for r in naive heuristic oracle; do tsx evals/run-evals.ts --reader=$r && tsx evals/run-evals.ts --reader=$r --suite=holdout; done",
+    "evals:gate": "tsx evals/run-evals.ts --reader=oracle --strict && tsx evals/run-evals.ts --reader=oracle --suite=holdout --strict",
+    "evals:bakeoff": "tsx evals/bakeoff.ts",
+    "evals:phone": "tsx evals/phone.ts",
+    "graph:parity": "tsx evals/graph-parity.ts",
+    "idnet:fetch": "tsx evals/idnet/fetch.ts",
+    "evals:idnet": "tsx evals/idnet/run.ts",
+    "specimens": "tsx evals/generate-specimens.ts",
+    "policy:build": "tsx scripts/build-policy.ts",
+    "policy:test": "tsx scripts/opa.ts test policy -v",
+    "policy:fmt": "tsx scripts/opa.ts fmt -w policy",
+    "policy:diff": "tsx scripts/policy-diff.ts",
+    "c4": "tsx scripts/c4.ts build",
+    "c4:check": "tsx scripts/c4.ts check",
+    "c4:serve": "tsx scripts/c4.ts serve",
+    "c4:page": "tsx scripts/c4.ts page"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@open-policy-agent/opa-wasm": "^1.10.0",
+    "better-sqlite3": "^13.0.3",
+    "express": "^5.2.1",
+    "lucide-react": "^1.48.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "sharp": "^0.35.5",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "concurrently": "^10.0.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  }
+}

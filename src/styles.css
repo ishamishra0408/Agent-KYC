@@ -1,0 +1,1963 @@
+/* Agent KYCReady: logistics with whimsy, in UPS colours.
+   Two themes: "Morning depot" (light) and "Night highway" (dark).
+   Palette follows UPS's own web tokens: brown #351c15, brown gradient #7e5844 to #69422d,
+   gold #ffc400, caramel #c67d30, warm greys. Palette only: no UPS name, logo or shield.
+   Warm colours are the brand. Cool colours carry provenance, as small markers only (an icon, a
+   label, a thin accent line), never as filled bands (D-041):
+     purple        = an AI slot wrote it
+     green         = the rules decided
+     blue          = a person decided (UPS's link blue)
+     dashed grey   = SIMULATED
+   Amber (fix) and red (reject) keep their usual meaning. */
+
+:root {
+  --bg: hsl(30deg 50% 98%);
+  --bg-accent: hsl(46deg 100% 50% / 0.1);
+  --bg-accent-2: hsl(21deg 30% 38% / 0.06);
+  --surface: hsl(0deg 0% 100%);
+  --surface-2: hsl(40deg 9% 94%);
+  --surface-3: hsl(36deg 10% 89%);
+  --text: hsl(13deg 43% 14%);
+  --text-2: hsl(20deg 7% 35%);
+  --text-3: hsl(22deg 7% 41%);
+  --border: hsl(35deg 14% 87%);
+  --border-2: hsl(33deg 10% 72%);
+  --control-border: hsl(25deg 8% 52%);
+  --primary: hsl(21deg 40% 29%);
+  --primary-edge: hsl(13deg 43% 14%);
+  --on-primary: hsl(40deg 100% 97%);
+  --gold: hsl(46deg 100% 50%);
+  --gold-edge: hsl(40deg 100% 36%);
+  --on-gold: hsl(13deg 43% 14%);
+  --gold-line: hsl(40deg 100% 36%);
+  --kraft: hsl(33deg 45% 72%);
+  --caramel: hsl(31deg 61% 48%);
+  --link: var(--primary);
+  --focus: var(--primary);
+  --ai: hsl(270deg 70% 48%);
+  --ai-bg: hsl(270deg 100% 97%);
+  --ai-border: hsl(270deg 70% 87%);
+  --rules: hsl(154deg 72% 25%);
+  --rules-bg: hsl(150deg 60% 94%);
+  --rules-border: hsl(150deg 45% 76%);
+  --human: hsl(209deg 94% 38%);
+  --human-bg: hsl(210deg 100% 96%);
+  --human-border: hsl(210deg 70% 82%);
+  --fix: hsl(36deg 95% 29%);
+  --fix-bg: hsl(45deg 100% 93%);
+  --fix-border: hsl(44deg 80% 74%);
+  --danger: hsl(1deg 70% 44%);
+  --danger-bg: hsl(0deg 100% 97%);
+  --sim: hsl(20deg 7% 40%);
+  --road: hsl(20deg 8% 24%);
+  --road-line: var(--gold);
+  --phone-frame: hsl(15deg 20% 9%);
+  --truck-cargo: var(--primary);
+  --truck-cab: var(--primary-edge);
+  --truck-stripe: var(--gold);
+  --truck-window: hsl(200deg 60% 86%);
+  --truck-wheel: hsl(15deg 20% 10%);
+  --truck-hub: hsl(30deg 10% 72%);
+  --scrim: hsl(15deg 40% 6% / 0.5);
+  --shadow-sm: 0 1px 1px hsl(20deg 30% 25% / 0.08), 0 2px 3px hsl(20deg 30% 25% / 0.08);
+  --shadow-md: 0 1px 1px hsl(20deg 30% 25% / 0.07), 0 3px 6px hsl(20deg 30% 25% / 0.08), 0 8px 18px hsl(20deg 30% 25% / 0.08);
+  --shadow-lg: 0 2px 2px hsl(20deg 30% 20% / 0.06), 0 8px 16px hsl(20deg 30% 20% / 0.08), 0 24px 48px hsl(20deg 30% 20% / 0.12);
+  /* Liquid glass (D-037): the navigation layer floats over the content as tinted, frosted glass.
+     The 85% tint keeps text on it at WCAG AA over any backdrop, black included (tests/theme.test.ts). */
+  --glass: hsl(30deg 40% 99% / 0.85);
+  --glass-gloss: linear-gradient(180deg, hsl(0deg 0% 100% / 0.5), hsl(0deg 0% 100% / 0) 45%);
+  --glass-edge: hsl(0deg 0% 100% / 0.8);
+  --glass-rim: hsl(20deg 30% 20% / 0.14);
+  --glass-sheen: hsl(0deg 0% 100% / 0.95);
+  --glass-pill: hsl(0deg 0% 100%);
+  --glass-well: hsl(20deg 25% 20% / 0.07);
+  --glass-accent: var(--primary);
+  --glass-shadow: 0 1px 1px hsl(20deg 30% 20% / 0.06), 0 10px 30px hsl(20deg 40% 15% / 0.16);
+  --glass-blur: blur(20px) saturate(180%);
+  --phone-ambient:
+    radial-gradient(360px 280px at 0% 0%, var(--bg-accent), transparent 70%),
+    radial-gradient(340px 320px at 100% 100%, var(--bg-accent-2), transparent 70%),
+    var(--surface);
+  --radius: 10px;
+  --radius-lg: 18px;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --font-body: "Mukta", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Baloo 2", "Mukta", system-ui, sans-serif;
+  color-scheme: light;
+}
+
+/* Two copies of the dark tokens: one follows the system, one follows the theme button. Keep them identical. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: hsl(15deg 30% 6%);
+    --bg-accent: hsl(46deg 100% 50% / 0.06);
+    --bg-accent-2: hsl(21deg 40% 35% / 0.16);
+    --surface: hsl(15deg 25% 10%);
+    --surface-2: hsl(16deg 20% 14%);
+    --surface-3: hsl(18deg 18% 19%);
+    --text: hsl(36deg 30% 92%);
+    --text-2: hsl(30deg 12% 74%);
+    --text-3: hsl(28deg 8% 58%);
+    --border: hsl(16deg 16% 19%);
+    --border-2: hsl(18deg 14% 28%);
+    --control-border: hsl(25deg 8% 46%);
+    --primary: hsl(31deg 61% 48%);
+    --primary-edge: hsl(26deg 55% 28%);
+    --on-primary: hsl(15deg 40% 8%);
+    --gold: hsl(46deg 100% 50%);
+    --gold-edge: hsl(38deg 90% 30%);
+    --on-gold: hsl(13deg 43% 14%);
+    --gold-line: hsl(46deg 100% 50%);
+    --kraft: hsl(33deg 35% 60%);
+    --caramel: hsl(31deg 61% 55%);
+    --link: var(--gold);
+    --focus: var(--gold);
+    --ai: hsl(272deg 100% 84%);
+    --ai-bg: hsl(272deg 60% 22% / 0.45);
+    --ai-border: hsl(272deg 45% 40%);
+    --rules: hsl(150deg 62% 58%);
+    --rules-bg: hsl(150deg 50% 15% / 0.6);
+    --rules-border: hsl(150deg 45% 30%);
+    --human: hsl(209deg 90% 72%);
+    --human-bg: hsl(209deg 60% 16% / 0.6);
+    --human-border: hsl(209deg 50% 34%);
+    --fix: hsl(26deg 100% 62%);
+    --fix-bg: hsl(26deg 60% 14% / 0.6);
+    --fix-border: hsl(26deg 50% 32%);
+    --danger: hsl(350deg 95% 69%);
+    --danger-bg: hsl(350deg 60% 16% / 0.6);
+    --sim: hsl(28deg 8% 62%);
+    --road: hsl(18deg 10% 16%);
+    --phone-frame: hsl(15deg 25% 3%);
+    --truck-cab: hsl(21deg 30% 38%);
+    --truck-window: hsl(200deg 45% 70%);
+    --truck-wheel: hsl(15deg 25% 5%);
+    --scrim: hsl(15deg 40% 3% / 0.6);
+    --shadow-sm: 0 1px 2px hsl(15deg 50% 2% / 0.5);
+    --shadow-md: 0 1px 2px hsl(15deg 50% 2% / 0.4), 0 4px 10px hsl(15deg 50% 2% / 0.35);
+    --shadow-lg: 0 2px 4px hsl(15deg 50% 2% / 0.4), 0 12px 32px hsl(15deg 50% 2% / 0.5);
+    --glass: hsl(18deg 20% 12% / 0.85);
+    --glass-gloss: linear-gradient(180deg, hsl(0deg 0% 100% / 0.07), hsl(0deg 0% 100% / 0) 45%);
+    --glass-edge: hsl(0deg 0% 100% / 0.14);
+    --glass-rim: hsl(0deg 0% 0% / 0.5);
+    --glass-sheen: hsl(0deg 0% 100% / 0.18);
+    --glass-pill: hsl(20deg 14% 24%);
+    --glass-well: hsl(0deg 0% 0% / 0.28);
+    --glass-accent: var(--gold);
+    --glass-shadow: 0 1px 2px hsl(15deg 50% 2% / 0.5), 0 12px 32px hsl(15deg 50% 2% / 0.55);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: hsl(15deg 30% 6%);
+  --bg-accent: hsl(46deg 100% 50% / 0.06);
+  --bg-accent-2: hsl(21deg 40% 35% / 0.16);
+  --surface: hsl(15deg 25% 10%);
+  --surface-2: hsl(16deg 20% 14%);
+  --surface-3: hsl(18deg 18% 19%);
+  --text: hsl(36deg 30% 92%);
+  --text-2: hsl(30deg 12% 74%);
+  --text-3: hsl(28deg 8% 58%);
+  --border: hsl(16deg 16% 19%);
+  --border-2: hsl(18deg 14% 28%);
+  --control-border: hsl(25deg 8% 46%);
+  --primary: hsl(31deg 61% 48%);
+  --primary-edge: hsl(26deg 55% 28%);
+  --on-primary: hsl(15deg 40% 8%);
+  --gold: hsl(46deg 100% 50%);
+  --gold-edge: hsl(38deg 90% 30%);
+  --on-gold: hsl(13deg 43% 14%);
+  --gold-line: hsl(46deg 100% 50%);
+  --kraft: hsl(33deg 35% 60%);
+  --caramel: hsl(31deg 61% 55%);
+  --link: var(--gold);
+  --focus: var(--gold);
+  --ai: hsl(272deg 100% 84%);
+  --ai-bg: hsl(272deg 60% 22% / 0.45);
+  --ai-border: hsl(272deg 45% 40%);
+  --rules: hsl(150deg 62% 58%);
+  --rules-bg: hsl(150deg 50% 15% / 0.6);
+  --rules-border: hsl(150deg 45% 30%);
+  --human: hsl(209deg 90% 72%);
+  --human-bg: hsl(209deg 60% 16% / 0.6);
+  --human-border: hsl(209deg 50% 34%);
+  --fix: hsl(26deg 100% 62%);
+  --fix-bg: hsl(26deg 60% 14% / 0.6);
+  --fix-border: hsl(26deg 50% 32%);
+  --danger: hsl(350deg 95% 69%);
+  --danger-bg: hsl(350deg 60% 16% / 0.6);
+  --sim: hsl(28deg 8% 62%);
+  --road: hsl(18deg 10% 16%);
+  --phone-frame: hsl(15deg 25% 3%);
+  --truck-cab: hsl(21deg 30% 38%);
+  --truck-window: hsl(200deg 45% 70%);
+  --truck-wheel: hsl(15deg 25% 5%);
+  --scrim: hsl(15deg 40% 3% / 0.6);
+  --shadow-sm: 0 1px 2px hsl(15deg 50% 2% / 0.5);
+  --shadow-md: 0 1px 2px hsl(15deg 50% 2% / 0.4), 0 4px 10px hsl(15deg 50% 2% / 0.35);
+  --shadow-lg: 0 2px 4px hsl(15deg 50% 2% / 0.4), 0 12px 32px hsl(15deg 50% 2% / 0.5);
+  --glass: hsl(18deg 20% 12% / 0.85);
+  --glass-gloss: linear-gradient(180deg, hsl(0deg 0% 100% / 0.07), hsl(0deg 0% 100% / 0) 45%);
+  --glass-edge: hsl(0deg 0% 100% / 0.14);
+  --glass-rim: hsl(0deg 0% 0% / 0.5);
+  --glass-sheen: hsl(0deg 0% 100% / 0.18);
+  --glass-pill: hsl(20deg 14% 24%);
+  --glass-well: hsl(0deg 0% 0% / 0.28);
+  --glass-accent: var(--gold);
+  --glass-shadow: 0 1px 2px hsl(15deg 50% 2% / 0.5), 0 12px 32px hsl(15deg 50% 2% / 0.55);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background:
+    radial-gradient(900px 500px at 8% -10%, var(--bg-accent), transparent 70%),
+    radial-gradient(700px 420px at 100% 0%, var(--bg-accent-2), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--link);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--surface-2);
+}
+
+select {
+  min-height: 34px;
+  padding: 0 10px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--control-border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ---------- Primitives ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border-2);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 160ms var(--spring), background 120ms, border-color 120ms;
+}
+.btn:hover {
+  background: var(--surface-2);
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(1px);
+  transition-duration: 40ms;
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  transform: none;
+}
+.btn.ghost {
+  border-color: transparent;
+  background: transparent;
+}
+.btn.ghost:hover {
+  background: var(--surface-2);
+}
+.btn.small {
+  min-height: 30px;
+  padding: 0 11px;
+  font-size: 13px;
+}
+.btn.block {
+  width: 100%;
+}
+.btn.approve {
+  border-color: var(--rules-border);
+  color: var(--rules);
+}
+.btn.fix {
+  border-color: var(--fix-border);
+  color: var(--fix);
+}
+.btn.reject {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.btn.selected {
+  background: var(--surface-3);
+  border-color: var(--text-3);
+  box-shadow: inset 0 2px 0 hsl(0deg 0% 0% / 0.08);
+}
+
+/* Keycap button, after the layered technique in Josh W. Comeau's tutorial "Building a Magical 3D Button":
+   shadow, edge and face layers; the face lifts on hover and presses on click. */
+.push {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 4px;
+  font-weight: 700;
+  -webkit-tap-highlight-color: transparent;
+}
+.push.block {
+  width: 100%;
+}
+.push-shadow,
+.push-edge {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+}
+.push-shadow {
+  background: hsl(0deg 0% 0% / 0.22);
+  transform: translateY(2px);
+  filter: blur(3px);
+  transition: transform 500ms var(--spring);
+}
+.push-edge {
+  background: var(--primary-edge);
+}
+.push-front {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: var(--primary);
+  color: var(--on-primary);
+  transform: translateY(-4px);
+  transition: transform 500ms var(--spring);
+  font-size: 15px;
+}
+.push.sm .push-front {
+  min-height: 30px;
+  padding: 0 12px;
+  font-size: 13px;
+  transform: translateY(-3px);
+}
+.push.gold .push-edge {
+  background: var(--gold-edge);
+}
+.push.gold .push-front {
+  background: var(--gold);
+  color: var(--on-gold);
+}
+.push.plain .push-edge {
+  background: var(--border-2);
+}
+.push.plain .push-front {
+  background: var(--surface);
+  color: var(--text);
+  border: 1.5px solid var(--border-2);
+}
+.push:hover .push-front {
+  transform: translateY(-6px);
+  transition-duration: 250ms;
+}
+.push.sm:hover .push-front {
+  transform: translateY(-4px);
+}
+.push:hover .push-shadow {
+  transform: translateY(4px);
+}
+.push:active .push-front {
+  transform: translateY(-1px);
+  transition-duration: 40ms;
+}
+.push:active .push-shadow {
+  transform: translateY(1px);
+  transition-duration: 40ms;
+}
+.push:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.push:disabled .push-front {
+  transform: translateY(-2px);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid transparent;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+.chip.ai {
+  background: var(--ai-bg);
+  color: var(--ai);
+  border-color: var(--ai-border);
+}
+.chip.rules {
+  background: var(--rules-bg);
+  color: var(--rules);
+  border-color: var(--rules-border);
+}
+.chip.human {
+  background: var(--human-bg);
+  color: var(--human);
+  border-color: var(--human-border);
+}
+.chip.fix {
+  background: var(--fix-bg);
+  color: var(--fix);
+  border-color: var(--fix-border);
+}
+.chip.danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.chip.neutral {
+  background: var(--surface-2);
+  color: var(--text-2);
+  border-color: var(--border);
+}
+/* Provenance chips carry an icon as well as a colour (blue and purple look alike to some colour-blind people). */
+.chip .chip-icon {
+  flex: none;
+}
+/* Provenance, quietly: a neutral chip, and only its icon in the source's colour. */
+.chip.source {
+  background: transparent;
+  color: var(--text-2);
+  border-color: var(--border);
+}
+.chip.source.ai .chip-icon {
+  color: var(--ai);
+}
+.chip.source.rules .chip-icon {
+  color: var(--rules);
+}
+.chip.source.human .chip-icon {
+  color: var(--human);
+}
+/* On a keycap, the SIMULATED chip takes the button's text colour so it stays readable. */
+.push-front .chip.sim {
+  color: inherit;
+  border-color: currentColor;
+}
+/* SIMULATED looks like a dashed lane line. */
+.chip.sim {
+  background: transparent;
+  color: var(--sim);
+  border: 1px dashed var(--sim);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.muted {
+  color: var(--text-2);
+}
+.faint {
+  color: var(--text-3);
+}
+.small {
+  font-size: 13px;
+}
+.error-text {
+  color: var(--danger);
+  font-size: 13px;
+  margin: 0;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.spread {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+/* Icons that wiggle when you hover them. */
+.boop svg {
+  transition: transform 450ms var(--spring);
+}
+.boop:hover svg {
+  transform: rotate(-12deg) scale(1.12);
+}
+
+/* ---------- Truck ---------- */
+.truck .truck-cargo {
+  fill: var(--truck-cargo);
+}
+.truck .truck-stripe {
+  fill: var(--truck-stripe);
+}
+.truck .truck-cab {
+  fill: var(--truck-cab);
+}
+.truck .truck-window {
+  fill: var(--truck-window);
+}
+.truck .truck-wheel circle {
+  fill: var(--truck-wheel);
+}
+.truck .truck-wheel .truck-hub {
+  fill: var(--truck-hub);
+}
+.truck.driving {
+  animation: bounce 380ms ease-in-out infinite alternate;
+}
+.truck.driving .truck-wheel {
+  animation: spin 500ms linear infinite;
+}
+@keyframes bounce {
+  to {
+    transform: translateY(-1.5px);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Liquid glass (D-037) ----------
+   Only the navigation layer is glass: the demo bar, the phone's top bar and tab bar, the camera
+   sheet and the toast. Content stays solid, and no glass sits on glass: controls inside a glass bar
+   are wells and pills, not more glass. */
+.demo-bar,
+.phone-top,
+.tabbar,
+.sheet,
+.toast {
+  background: var(--glass-gloss), var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow:
+    inset 0 1px 0 var(--glass-sheen),
+    inset 0 0 0 1px var(--glass-edge),
+    0 0 0 1px var(--glass-rim),
+    var(--glass-shadow);
+}
+/* Solid where glass would get in the way: the system asks for less transparency, high-contrast
+   mode is on, or the browser can't blur. */
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .demo-bar,
+  .phone-top,
+  .tabbar,
+  .sheet,
+  .toast {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .demo-bar,
+  .phone-top,
+  .tabbar,
+  .sheet,
+  .toast {
+    background: var(--surface);
+  }
+}
+/* Colours that don't reach AA on glass over every backdrop sit on their own solid ground there. */
+.demo-bar .error-text,
+.phone-top .chip.sim,
+.sheet .chip.sim {
+  background: var(--surface);
+}
+.demo-bar .error-text {
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+/* High-contrast mode drops the pill backgrounds, so the selection gets an outline instead. */
+@media (forced-colors: active) {
+  .tabbar button[aria-selected="true"],
+  .ops-tabs button[aria-selected="true"],
+  .lang-toggle button[aria-pressed="true"],
+  .queue button[aria-pressed="true"],
+  .btn.selected {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Demo page ---------- */
+.demo-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 10px 20px;
+}
+.brand {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+.brand .accent {
+  background: var(--gold);
+  color: var(--on-gold);
+  padding: 0 5px;
+  margin: 0 1px;
+  border-radius: 6px;
+}
+.clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border-2);
+  background: var(--surface);
+  cursor: pointer;
+  color: var(--text-2);
+}
+.icon-btn:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+/* The demo fills the window exactly: bar on top, phone and console share the rest. */
+.demo-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.demo-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 410px minmax(0, 1fr);
+  gap: 20px;
+  padding: 10px 20px 32px;
+}
+.demo-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+}
+.demo-col .phone {
+  flex: 1;
+  height: auto;
+  max-height: 790px;
+  min-height: 0;
+}
+.demo-col .ops {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}
+.toast {
+  position: fixed;
+  bottom: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  padding: 10px 16px;
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  animation: toast-in 380ms var(--spring);
+}
+@keyframes toast-in {
+  from {
+    transform: translate(-50%, 20px);
+    opacity: 0;
+  }
+}
+
+/* A road along the bottom of the page, with a truck on its way somewhere. */
+.road-strip {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22px;
+  background: var(--road);
+  pointer-events: none;
+  z-index: 1;
+  /* Clip sideways only, so the truck's roof can sit above the road. */
+  overflow-x: clip;
+  overflow-y: visible;
+}
+.road-strip::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 10px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--road-line) 0 18px, transparent 18px 36px);
+  opacity: 0.8;
+}
+.road-strip .truck {
+  position: absolute;
+  bottom: 6px;
+  left: -60px;
+  animation: drive 22s linear infinite;
+}
+@keyframes drive {
+  to {
+    transform: translateX(calc(100vw + 120px));
+  }
+}
+
+@media (max-width: 980px) {
+  .demo-page {
+    height: auto;
+    min-height: 100vh;
+  }
+  .demo-grid {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 12px 12px 40px;
+  }
+  .demo-col .phone {
+    flex: none;
+    height: 740px;
+  }
+  .demo-col .ops {
+    flex: none;
+    height: 80vh;
+  }
+}
+
+/* ---------- Phone ---------- */
+.phone {
+  width: 390px;
+  max-width: 100%;
+  height: min(790px, calc(100vh - 190px));
+  min-height: 560px;
+  margin: 0 auto;
+  border-radius: 46px;
+  border: 11px solid var(--phone-frame);
+  background: var(--phone-ambient);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+.phone.bare {
+  border: none;
+  border-radius: 0;
+  width: 100%;
+  height: 100vh;
+  box-shadow: none;
+}
+.phone-status {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 24px 0;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+/* Status bar and header, floating over the page as one glass bar. */
+.phone-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+}
+.phone-head {
+  padding: 6px 16px 10px;
+}
+.phone-head .phone-name {
+  margin: 0;
+  line-height: 1.3;
+  font-family: var(--font-display);
+  font-size: 17px;
+}
+/* Where focus lands when a sheet closes and its opener is busy: a landing spot, not a control. */
+.phone-body:focus,
+.ops-body:focus {
+  outline: none;
+}
+/* The page runs under both glass bars and leaves room for them (measured in PhoneApp). */
+.phone-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--phone-top-h, 0px);
+  padding-bottom: calc(var(--phone-tabs-h, 0px) + 20px);
+  scroll-padding-top: var(--phone-top-h, 0px);
+  scroll-padding-bottom: calc(var(--phone-tabs-h, 0px) + 20px); /* a focused item never hides under a bar */
+}
+/* A floating glass capsule; the selected tab is a solid pill inside it. */
+.tabbar {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 5px;
+  border-radius: 999px;
+}
+.tabbar button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 6px 0 7px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+  position: relative;
+  transition: background 250ms, color 250ms, box-shadow 250ms;
+}
+.tabbar button svg {
+  transition: transform 450ms var(--spring);
+}
+.tabbar button[aria-selected="true"] {
+  color: var(--glass-accent);
+  background: var(--glass-pill);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 var(--glass-sheen);
+}
+.tabbar button[aria-selected="true"] svg {
+  transform: translateY(-2px) scale(1.12);
+}
+.badge-dot {
+  position: absolute;
+  top: 4px;
+  left: calc(50% + 6px);
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-size: 10.5px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  animation: pop-in 400ms var(--spring);
+}
+@keyframes pop-in {
+  from {
+    transform: scale(0);
+  }
+}
+.lang-toggle {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--glass-well);
+}
+.lang-toggle button {
+  border: none;
+  background: transparent;
+  padding: 1px 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text);
+  transition: background 200ms, color 200ms, box-shadow 200ms;
+}
+.lang-toggle button[aria-pressed="true"] {
+  background: var(--glass-pill);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 var(--glass-sheen);
+}
+
+/* ---------- KYC ---------- */
+.kyc {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The progress bar is a road; the truck drives to the step you're on. */
+.road {
+  position: relative;
+  margin: 10px 14px 2px;
+  padding-top: 20px;
+}
+.road-lane {
+  position: relative;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--road);
+  overflow: hidden;
+}
+.road-lane::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 6px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--road-line) 0 8px, transparent 8px 16px);
+  opacity: 0.85;
+}
+.road-done {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--caramel);
+  opacity: 0.55;
+  transition: width 700ms var(--spring);
+}
+.road-truck {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  transition: left 900ms var(--spring);
+  z-index: 2;
+}
+.milestones {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  margin-top: 5px;
+}
+.milestone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-align: center;
+}
+.milestone .post {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--surface-3);
+  border: 1.5px solid var(--border-2);
+  transform: rotate(45deg);
+  transition: background 300ms, transform 400ms var(--spring);
+}
+.milestone.done {
+  color: var(--primary);
+}
+.milestone.done .post {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.milestone.current {
+  color: var(--text);
+}
+.milestone.current .post {
+  background: var(--gold);
+  border-color: var(--gold-edge);
+  transform: rotate(45deg) scale(1.3);
+}
+.milestone.pulse .post {
+  animation: pulse 900ms ease-out 3;
+}
+@keyframes pulse {
+  50% {
+    box-shadow: 0 0 0 7px hsl(46deg 100% 50% / 0.35);
+  }
+}
+
+.banner {
+  margin: 8px 14px 0;
+  padding: 9px 12px;
+  border-radius: 14px;
+  border: 1.5px solid var(--border);
+  border-left: 4px solid var(--border-2);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  animation: slide-in 450ms var(--spring);
+}
+@keyframes slide-in {
+  from {
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+}
+.banner.approved {
+  border-left-color: var(--rules);
+}
+.banner.fix {
+  border-left-color: var(--fix);
+}
+.banner.review {
+  border-left-color: var(--human);
+}
+.banner.rejected {
+  border-left-color: var(--danger);
+}
+.banner strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 15.5px;
+}
+.banner.approved strong {
+  color: var(--rules);
+}
+.banner.fix strong {
+  color: var(--fix);
+}
+.banner.review strong {
+  color: var(--human);
+}
+.banner.rejected strong {
+  color: var(--danger);
+}
+
+.docs-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 8px 14px 0;
+}
+.doc-tile {
+  border: 1.5px dashed var(--border-2);
+  border-radius: 10px;
+  padding: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-3);
+  background: var(--surface-2);
+  min-height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: transform 300ms var(--spring);
+}
+.doc-tile img {
+  width: 100%;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.doc-tile.ok {
+  border-style: solid;
+  border-color: var(--rules-border);
+  color: var(--rules);
+  animation: pop-in 400ms var(--spring);
+}
+.doc-tile.issue {
+  border-style: solid;
+  border-color: var(--fix-border);
+  background: var(--fix-bg);
+  color: var(--fix);
+  animation: wobble 500ms ease-in-out;
+}
+@keyframes wobble {
+  25% {
+    transform: rotate(-3deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+.chat {
+  flex: 1;
+  min-height: 0; /* shrinks first, so the next action stays above the floating tab bar */
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+.bubble {
+  max-width: 86%;
+  padding: 8px 12px;
+  border-radius: 16px;
+  font-size: 14.5px;
+  line-height: 1.45;
+  border: 1.5px solid transparent;
+  animation: bubble-in 380ms var(--spring);
+}
+@keyframes bubble-in {
+  from {
+    transform: translateY(8px) scale(0.97);
+    opacity: 0;
+  }
+}
+.bubble .who {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 1px;
+  letter-spacing: 0.01em;
+}
+.bubble.assistant,
+.bubble.rules,
+.bubble.reviewer,
+.bubble.owner {
+  align-self: flex-start;
+  background: var(--surface-2);
+  border-bottom-left-radius: 5px;
+}
+.bubble.assistant .who {
+  color: var(--ai);
+}
+.bubble.typing {
+  display: inline-flex;
+  gap: 4px;
+  padding: 13px 14px;
+}
+.bubble.typing .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ai);
+  animation: typing 1.1s ease-in-out infinite;
+}
+.bubble.typing .dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.bubble.typing .dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes typing {
+  0%,
+  70%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+.bubble.driver {
+  align-self: flex-end;
+  background: var(--primary);
+  color: var(--on-primary);
+  border-bottom-right-radius: 5px;
+  font-weight: 500;
+}
+.bubble.rules .who {
+  color: var(--rules);
+}
+.bubble.reviewer .who,
+.bubble.owner .who {
+  color: var(--human);
+}
+
+.faq-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 6px 14px;
+  scrollbar-width: none;
+}
+.faq-row button {
+  flex: none;
+  border: 1.5px solid var(--border-2);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: transform 250ms var(--spring), border-color 150ms;
+}
+.faq-row button:hover {
+  transform: translateY(-2px);
+  border-color: var(--ai);
+  color: var(--ai);
+}
+.action-bar {
+  padding: 12px 14px 12px;
+  border-top: 1.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface);
+}
+.action-bar strong {
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+/* Two actions side by side: keep each label on one line (Hindi labels run longer). */
+.action-bar .row .push-front {
+  padding: 0 12px;
+  white-space: nowrap;
+}
+.consent {
+  font-size: 13.5px;
+  color: var(--text-2);
+  line-height: 1.45;
+}
+
+/* Camera sheet */
+.sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+  display: flex;
+  align-items: flex-end;
+  z-index: 5;
+  animation: fade-in 200ms ease-out;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+/* The dialog itself takes focus when it opens (useDialog); its buttons show the ring. */
+.sheet:focus {
+  outline: none;
+}
+.sheet {
+  width: 100%;
+  border-radius: 26px 26px 0 0;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: sheet-up 420ms var(--spring);
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+.sheet strong {
+  font-family: var(--font-display);
+  font-size: 17px;
+}
+.shot-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+.shot {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 5px;
+  background: var(--surface-2);
+  cursor: pointer;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  transition: transform 300ms var(--spring), border-color 150ms;
+}
+.shot img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+  margin-bottom: 4px;
+}
+.shot:hover {
+  border-color: var(--primary);
+  transform: translateY(-3px) rotate(-1deg);
+}
+
+/* ---------- Inbox: dispatch notices, styled like shipping labels ---------- */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+}
+.label-card {
+  border-radius: 14px;
+  border: 1.5px solid var(--border);
+  border-top: 5px solid var(--gold);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  animation: slide-in 450ms var(--spring);
+}
+.label-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--surface-2);
+  border-bottom: 1.5px dashed var(--border-2);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.barcode {
+  width: 54px;
+  height: 14px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--text-2) 0 2px,
+    transparent 2px 3px,
+    var(--text-2) 3px 4px,
+    transparent 4px 7px,
+    var(--text-2) 7px 10px,
+    transparent 10px 11px
+  );
+  opacity: 0.55;
+  border-radius: 2px;
+}
+.label-body {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ---------- Loads: cargo tickets with a tear-off stub ---------- */
+.ticket {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 104px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  animation: slide-in 450ms var(--spring);
+}
+.ticket::before,
+.ticket::after {
+  content: "";
+  position: absolute;
+  right: 95px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+}
+.ticket::before {
+  top: -9px;
+}
+.ticket::after {
+  bottom: -9px;
+}
+.ticket-main {
+  padding: 12px 12px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.route {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  column-gap: 8px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1.25;
+}
+.route .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2.5px solid var(--primary);
+  margin-top: 4px;
+}
+.route .dot.to {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.route .line {
+  width: 2px;
+  height: 12px;
+  margin-left: 4px;
+  background: repeating-linear-gradient(180deg, var(--text-3) 0 3px, transparent 3px 6px);
+}
+.ticket-stub {
+  border-left: 2px dashed var(--border-2);
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border-radius: 0 16px 16px 0;
+}
+.fare {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+}
+.stamp {
+  position: absolute;
+  right: 118px;
+  top: 50%;
+  translate: 0 -50%;
+  rotate: -14deg;
+  padding: 1px 10px;
+  border: 3px solid var(--rules);
+  border-radius: 8px;
+  color: var(--rules);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+  pointer-events: none;
+  animation: stamp-in 420ms cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+@keyframes stamp-in {
+  from {
+    scale: 2.2;
+    opacity: 0;
+  }
+}
+.locked {
+  margin: 24px 14px;
+  padding: 22px;
+  text-align: center;
+  border-radius: 18px;
+  border: 2px dashed var(--border-2);
+  color: var(--text-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.locked strong {
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--text);
+}
+.empty {
+  padding: 30px 14px;
+  text-align: center;
+  color: var(--text-3);
+}
+
+/* ---------- Confetti ---------- */
+.confetti-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 20;
+}
+.confetti {
+  position: absolute;
+  top: 18%;
+  width: 10px;
+  height: 10px;
+  background: var(--c);
+  animation: confetti-fall var(--d) cubic-bezier(0.2, 0.7, 0.4, 1) forwards;
+}
+.confetti.parcel {
+  border-radius: 2px;
+  box-shadow: inset 0 -3px 0 hsl(0deg 0% 0% / 0.18);
+}
+.confetti.cone {
+  width: 0;
+  height: 0;
+  background: none;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 12px solid var(--c);
+}
+.confetti.pin {
+  border-radius: 50% 50% 50% 0;
+  rotate: -45deg;
+}
+.confetti.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+@keyframes confetti-fall {
+  0% {
+    transform: translate(0, 0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x), var(--y)) rotate(var(--r));
+    opacity: 0;
+  }
+}
+
+/* ---------- Ops console ---------- */
+.ops {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 160px);
+  min-height: 560px;
+  overflow: hidden;
+}
+.ops.bare {
+  height: 100vh;
+  border-radius: 0;
+}
+.ops-head {
+  padding: 14px 16px 0;
+}
+.ops-head h1,
+.ops-head h2 {
+  margin: 0;
+  font-size: 19px;
+}
+/* A segmented control: a well on the solid card, the selected section a raised pill with a gold edge. */
+.ops-tabs {
+  display: flex;
+  gap: 2px;
+  margin: 10px 12px 0;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--glass-well);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ops-tabs button {
+  position: relative;
+  border: none;
+  background: none;
+  padding: 6px 14px 8px;
+  cursor: pointer;
+  color: var(--text-2);
+  font-weight: 600;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: color 150ms, background 150ms, box-shadow 150ms;
+}
+.ops-tabs button:hover {
+  color: var(--text);
+}
+.ops-tabs button[aria-selected="true"] {
+  color: var(--text);
+  background: var(--glass-pill);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 var(--glass-sheen);
+}
+.ops-tabs button[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 35%;
+  right: 35%;
+  bottom: 3px;
+  height: 2.5px;
+  border-radius: 2px;
+  background: var(--gold-line);
+}
+.ops-body {
+  padding: 16px;
+  overflow: auto;
+  flex: 1;
+}
+.review-grid {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.queue {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.queue button {
+  text-align: left;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 300ms var(--spring), border-color 150ms;
+}
+.queue button:hover {
+  transform: translateY(-2px);
+}
+.queue button[aria-pressed="true"] {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 1.5px var(--focus), var(--shadow-sm);
+}
+.queue strong {
+  font-family: var(--font-display);
+  font-size: 15.5px;
+}
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.section h3 {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+}
+.doc-card {
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--surface);
+}
+.doc-card img {
+  width: 100%;
+  border-radius: 9px;
+  display: block;
+  aspect-ratio: 1280 / 860;
+  object-fit: cover;
+  background: var(--surface-2);
+}
+.kv {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  font-size: 13px;
+  margin: 0;
+}
+.kv dt {
+  color: var(--text-3);
+}
+.kv dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+.warn-box {
+  padding: 2px 0 2px 10px;
+  border-left: 3px solid var(--danger);
+  color: var(--danger);
+  font-size: 13px;
+}
+.reason {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  padding: 2px 0 2px 10px;
+  border-left: 3px solid var(--border-2);
+}
+.reason.review {
+  border-left-color: var(--human);
+}
+.reason.fix {
+  border-left-color: var(--fix);
+}
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.checks li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.checks svg {
+  flex: none;
+  color: var(--rules);
+}
+.table td.result {
+  white-space: nowrap;
+  font-weight: 600;
+}
+.table td.result svg {
+  vertical-align: -2px;
+  margin-right: 4px;
+}
+.result.pass {
+  color: var(--rules);
+}
+.result.fail {
+  color: var(--danger);
+}
+.decide {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1.5px solid var(--border);
+  background: var(--surface-2);
+}
+.decide strong {
+  font-family: var(--font-display);
+  font-size: 16px;
+}
+.decide textarea {
+  min-height: 64px;
+  resize: vertical;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--control-border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 8px 10px;
+  font: inherit;
+}
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+.timeline li {
+  display: grid;
+  grid-template-columns: 70px 70px 1fr;
+  gap: 8px;
+  color: var(--text-2);
+}
+table.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+table.table th {
+  text-align: left;
+  font-weight: 700;
+  color: var(--text-3);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 6px 8px;
+  border-bottom: 1.5px solid var(--border);
+  white-space: nowrap;
+}
+table.table td {
+  padding: 9px 8px;
+  border-bottom: 1.5px solid var(--border);
+  vertical-align: top;
+}
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+}
+.metric {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+}
+.metric .value {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.funnel-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 40px;
+  gap: 10px;
+  align-items: center;
+  font-weight: 600;
+}
+.funnel-bar {
+  height: 24px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  position: relative;
+  overflow: hidden;
+}
+.funnel-bar span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: repeating-linear-gradient(-45deg, var(--primary) 0 10px, color-mix(in srgb, var(--primary) 82%, white) 10px 20px);
+  transition: width 900ms var(--spring);
+}
+
+/* Trust graph */
+.g-account {
+  fill: var(--surface-2);
+  stroke: var(--border-2);
+  stroke-width: 1.5;
+}
+/* Outlines, not fills: the line and the node's edge carry the colour, the words carry the meaning. */
+.g-node-ok {
+  fill: var(--surface);
+  stroke: var(--rules);
+  stroke-width: 1.5;
+}
+.g-node-bad {
+  fill: var(--surface);
+  stroke: var(--danger);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+.g-line-ok {
+  stroke: var(--rules);
+  stroke-width: 1.75;
+}
+.g-line-bad {
+  stroke: var(--danger);
+  stroke-width: 1.75;
+  stroke-dasharray: 6 5;
+}
+.g-title {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--text);
+  font-family: var(--font-display);
+}
+.g-sub {
+  font-size: 11px;
+  fill: var(--text-2);
+}
+
+@media (max-width: 760px) {
+  .review-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Calm everything down for people who asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+  .road-strip .truck {
+    animation: none;
+    left: 24px;
+  }
+}

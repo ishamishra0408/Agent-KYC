@@ -1,0 +1,263 @@
+# Agent KYCReady — architecture and flow
+#
+# Install once:   brew install d2
+# Live preview:   d2 --layout=elk --watch architecture.d2
+# Export:         d2 --layout=elk architecture.d2 architecture.svg
+#
+# Read it: bold numbered arrows (1-14) follow one driver from nudge to unlocked loads.
+# Boxes with a small (i) icon have a tooltip: hover the icon to see what the box does.
+
+direction: right
+
+classes: {
+  ai: {
+    style: {
+      fill: "#F3E8FF"
+      stroke: "#7C3AED"
+      stroke-dash: 4
+      font-color: "#3B0764"
+    }
+  }
+  code: {
+    style: {
+      fill: "#DCFCE7"
+      stroke: "#15803D"
+      font-color: "#052E16"
+    }
+  }
+  human: {
+    style: {
+      fill: "#E6F0FA"
+      stroke: "#0662BB"
+      font-color: "#062A4D"
+    }
+  }
+  sim: {
+    style: {
+      fill: "#F1F5F9"
+      stroke: "#64748B"
+      stroke-dash: 3
+      font-color: "#334155"
+    }
+  }
+  ext: {
+    style: {
+      fill: "#E0F2F1"
+      stroke: "#0A8080"
+      font-color: "#053F3F"
+    }
+  }
+  store: {
+    style: {
+      fill: "#FEF9C3"
+      stroke: "#A16207"
+      font-color: "#422006"
+    }
+  }
+  offbox: {
+    style: {
+      fill: "#F8FAFC"
+      stroke: "#94A3B8"
+      stroke-dash: 5
+      font-color: "#475569"
+    }
+  }
+  journey: {
+    style: {
+      stroke: "#0F172A"
+      stroke-width: 3
+      font-color: "#0F172A"
+    }
+  }
+  test_edge: {
+    style: {
+      stroke: "#94A3B8"
+      stroke-dash: 5
+      font-color: "#64748B"
+    }
+  }
+}
+
+title: |md
+  # Agent KYCReady: signup to first load
+  **Target design.** Built today: decision policy (OPA), status machine, send gateway, bookings lock, log, evals, driver app, ops console, the AI document reader (Gemma 4 31B, Sonnet fallback, through OpenRouter) and the Neo4j trust graph.
+  Still stand-ins: the assistant, the nudge writer and the case summary are scripted; Plaud and Vultr come in later phases (README, Status).
+|
+title.near: top-center
+
+howto: |md
+  **How to read it**
+  - Purple, dashed: **AI proposes**. It never approves anyone.
+  - Green: **code decides**: rules, message limits, the bookings lock.
+  - Blue: **a person decides** the cases sent to review.
+  - Grey, dashed: **SIMULATED** (fake registry checks, simulated drivers).
+  - Teal clouds: sponsor AI services. Yellow cylinders: data.
+  - Bold arrows: your 5 steps. Notify 1-3, open KYC 4-6, check 7-11, unlock 12-13, re-notify 14.
+  - Dashed arrows: offline tests.
+|
+howto.near: bottom-center
+
+# ---------- People ----------
+driver: "Driver" {
+  shape: person
+}
+reviewer: "Ops reviewer" {
+  shape: person
+  class: human
+}
+
+# ---------- Screens ----------
+driverapp: "Driver app (React, phone)" {
+  inbox: "Notification inbox"
+  chat: "KYC chat: Hindi + English, voice notes"
+  capture: "Photo capture + coaching"
+  loads: "Loads screen"
+}
+
+console: "Ops console (React)" {
+  reviewq: "Review queue" {
+    class: human
+  }
+  nudgeq: "Nudge log"
+  funnel: "Funnel"
+  why: "Why? evidence view"
+}
+
+# ---------- Server ----------
+server: "API server (Express + TypeScript, hosted on Vultr)" {
+  ai: "AI proposes: never approves" {
+    class: ai
+    agent: "Onboarding agent" {
+      class: ai
+      tooltip: "Guides the driver, answers questions, asks for the next document. Its tools read status and request documents. It has no approve tool."
+    }
+    reader: "Document reader" {
+      class: ai
+      tooltip: "Reads ID photos and returns strict JSON: document type, fields, photo quality, mismatches, confidence. It decides nothing."
+    }
+    nudger: "Nudge writer" {
+      class: ai
+      tooltip: "Uses where the driver is stuck, plus what they said in chat, to name the blocker and draft a message for it. The send gateway decides whether it goes out."
+    }
+    summarizer: "Case summarizer" {
+      class: ai
+      tooltip: "Writes the summary a reviewer sees for each case sent to review."
+    }
+  }
+
+  core: "Code decides" {
+    class: code
+    status: "Status tracker" {
+      class: code
+      tooltip: "Signed up, consented, documents, checking, needs fix or in review, approved, first trip; licence expired (bookings locked until a renewed one passes); or rejected. Every change is logged."
+    }
+    rules: "Decision policy (OPA · Rego, v6)" {
+      class: code
+      tooltip: "policy/kyc.rego, compiled to WebAssembly and run inside the app. The only automatic path to approved, and only with all five core checks passed. Returns approve, ask for a fix, or review, with reasons, what passed and notices. A contract around it mints the decision; only decisions it minted can be applied."
+    }
+    gateway: "Send gateway (limits, quiet hours, stop rules)" {
+      class: code
+      tooltip: "Max 1 nudge per 2 days. Nothing between 9 PM and 8 AM. Stops on approval or opt-out, except one licence renewal reminder. For a real launch, WhatsApp and SMS use pre-approved templates only."
+    }
+    bookings: "Bookings lock" {
+      class: code
+      tooltip: "Refuses bookings (403) unless the driver is approved."
+    }
+  }
+
+  router: "Model router" {
+    tooltip: "Per-job settings: which model, which provider, how hard it thinks. Swapping a model is a settings change."
+  }
+
+  checks: "Registry checks: SIMULATED" {
+    class: sim
+    digilocker: "DigiLocker" {class: sim}
+    dlrc: "Driving licence + vehicle RC" {class: sim}
+    pan: "PAN" {class: sim}
+    bank: "Bank: Rs 1 reverse penny-drop" {class: sim}
+    face: "Face match + liveness" {class: sim}
+  }
+}
+
+# ---------- Data ----------
+data: "Data" {
+  sqlite: "SQLite: status + event log" {
+    shape: cylinder
+    class: store
+  }
+  neo4j: "Neo4j Aura Free: trust graph" {
+    shape: cylinder
+    class: store
+    tooltip: "Drivers, bank accounts and fleet owners, over the HTTPS Query API. Tells a fraud ring (strangers sharing one bank account) from a real fleet (drivers linked to their owner). No answer sends the case to a person (policy v5)."
+  }
+}
+
+# ---------- Sponsor AI services ----------
+external: "Sponsor AI services" {
+  openrouter: "OpenRouter: Claude + open-weight models" {
+    shape: cloud
+    class: ext
+    tooltip: "One API for every model. The document reader is Gemma 4 31B (open-weight), with Claude Sonnet 5.5 when Gemma is slow or fails, chosen by a five-model comparison."
+  }
+  plaud: "Plaud: voice to text" {
+    shape: cloud
+    class: ext
+    tooltip: "Turns drivers' voice notes into text in many languages."
+  }
+}
+
+# ---------- Offline tests ----------
+offline: "Offline: tests before AI" {
+  class: offbox
+  specimen: "31 SPECIMEN cases (10 good, 21 bad) + 16 holdout" {
+    shape: page
+  }
+  evals: "Test runner"
+  bakeoff: "Model comparison (BAKEOFF.md)" {
+    shape: document
+  }
+  sim: "Simulation: old 2-day timer vs new rules" {
+    class: sim
+  }
+}
+
+# ---------- One driver's journey (your 5 steps) ----------
+server.core.status -> server.ai.nudger: "1. drivers with incomplete KYC + where they're stuck" {class: journey}
+server.ai.nudger -> server.core.gateway: "2. draft nudge" {class: journey}
+server.core.gateway -> driverapp.inbox: "3. allowed nudge: max 1 per 2 days, no nights" {class: journey}
+driver -> driverapp.inbox: "4. taps it" {class: journey}
+driverapp.inbox -> driverapp.chat: "5. opens at the stuck step" {class: journey}
+driverapp.chat <-> server.ai.agent: "6. chat + voice notes" {class: journey}
+driverapp.capture -> server.ai.reader: "7. ID photo" {class: journey}
+server.ai.reader -> server.core.rules: "8. fields, quality, mismatches (JSON)" {class: journey}
+server.core.rules <-> server.checks: "9. verify, get evidence" {class: journey}
+server.core.rules <-> data.neo4j: "10. ring or fleet? save decision + evidence" {class: journey}
+server.core.rules -> server.core.status: "11. approve, ask for fix, or review + reason" {class: journey}
+server.core.status -> server.core.bookings: "12. approved" {class: journey}
+server.core.bookings -> driverapp.loads: "13. loads unlocked" {class: journey}
+server.core.status -> server.core.gateway: "14. still pending on our side: status update, not a reminder" {class: journey}
+driver -> driverapp.capture: "takes photo"
+
+# ---------- Fix and review loops ----------
+server.core.status -> server.ai.agent: "needs fix: coach the retake"
+server.core.status -> console.reviewq: "cases for review"
+server.ai.summarizer -> console.reviewq: "case summary"
+reviewer -> console.reviewq: "decides"
+console.reviewq -> server.core.status: "human decision"
+console.why -> data.neo4j: "evidence path"
+
+# ---------- Plumbing ----------
+server.ai.agent -> external.plaud: "voice note to text"
+server.ai -> server.router: "every LLM call"
+server.router -> external.openrouter: "documents, chat, nudges"
+server.core.status -> data.sqlite: "every change logged"
+server.core.gateway -> console.nudgeq: "sent or held"
+data.sqlite -> console.funnel: "funnel numbers"
+
+# ---------- Offline tests ----------
+offline.specimen -> offline.evals: "feeds" {class: test_edge}
+offline.evals -> server.ai.reader: "same code path" {class: test_edge}
+offline.evals -> server.core.rules: "gate: 0 bad approved, at most 1 good missed" {class: test_edge}
+offline.evals -> offline.bakeoff: "accuracy, cost, speed" {class: test_edge}
+offline.bakeoff -> server.router: "you pick a model per job" {class: test_edge}
+offline.sim -> server.core.gateway: "simulated drivers" {class: test_edge}

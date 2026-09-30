@@ -1,0 +1,489 @@
+<title>%%TITLE%%</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a drawing register. The sheet list runs across the top; each view is a dark drawing plate
+   with its key and title block along the bottom edge, and the trace steps sit beside the plate. */
+:root {
+  --paper: #f3f2ef;
+  --raise: #fbfaf8;
+  --ink: #1f1a17;
+  --muted: #675f5a;
+  --rule: #d6d1cc;
+  --gold: #ffc400;
+  --gold-ink: #7a5600;
+  --accepted: #2f6b45;
+  --proposed: #a3177f;
+  /* The plate is one look in both themes: the model's colours are drawn for a dark canvas. */
+  --plate: #1f2226;
+  --plate-2: #272b31;
+  --plate-rule: #3a4048;
+  --plate-ink: #d7dbe3;
+  --plate-muted: #9aa3ae;
+  --f-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #141211; --raise: #1b1817; --ink: #ede7e2; --muted: #a59c96; --rule: #302b28;
+    --gold-ink: #ffd34d; --accepted: #7fc79a; --proposed: #ff7ad9;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #141211; --raise: #1b1817; --ink: #ede7e2; --muted: #a59c96; --rule: #302b28;
+  --gold-ink: #ffd34d; --accepted: #7fc79a; --proposed: #ff7ad9;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 15px/1.55 var(--f-body); }
+.wrap { max-width: 1440px; margin: 0 auto; padding-inline: clamp(16px, 3vw, 40px); }
+h1, h2, h3 { font-family: var(--f-display); font-stretch: 82%; line-height: 1.1; text-wrap: balance; margin: 0; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* ── masthead ── */
+.masthead { padding-block: 28px 18px; display: grid; gap: 6px; }
+.eyebrow { font: 500 11px/1 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.masthead h1 { font-size: clamp(34px, 5vw, 56px); font-weight: 750; letter-spacing: -.01em; }
+.thesis { margin: 0; font-size: 18px; max-width: 60ch; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; list-style: none; padding: 0; margin: 8px 0 0; font: 12px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.meta b { color: var(--ink); font-weight: 500; }
+
+/* ── the register of sheets ── */
+.register { display: flex; flex-wrap: wrap; gap: 18px 28px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding-block: 12px; }
+.group { display: grid; gap: 6px; min-width: 0; }
+.group-label { font: 500 10px/1 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; }
+.tab { display: grid; grid-template-columns: auto 1fr; column-gap: 8px; align-items: baseline; text-align: left; background: none; border: 1px solid transparent; border-radius: 6px; padding: 6px 10px 7px; cursor: pointer; }
+.tab .no { font: 500 11px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.tab .nm { font: 650 16px var(--f-display); font-stretch: 85%; }
+.tab .sub { grid-column: 2; font-size: 12px; color: var(--muted); }
+.tab:hover { border-color: var(--rule); }
+.tab[aria-selected="true"] { background: var(--raise); border-color: var(--rule); box-shadow: inset 0 -3px 0 var(--gold); }
+.tab[aria-selected="true"] .no { color: var(--gold-ink); }
+
+/* ── the sheet ── */
+.sheet { padding-block: 20px 8px; display: grid; gap: 14px; }
+.sheet-head { display: grid; gap: 4px; }
+.sheet-head h2 { font-size: clamp(24px, 3vw, 32px); font-weight: 700; }
+.sheet-head p { margin: 0; color: var(--muted); max-width: 70ch; }
+.sheet-body { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+@media (max-width: 1060px) { .sheet-body { grid-template-columns: minmax(0, 1fr); } }
+
+.plate { margin: 0; background: var(--plate); color: var(--plate-ink); border-radius: 10px; overflow: hidden; border: 1px solid var(--plate-rule); min-width: 0; }
+.plate-tools { display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--plate-rule); background: var(--plate-2); }
+.tool { background: transparent; color: var(--plate-ink); border: 1px solid var(--plate-rule); border-radius: 5px; min-width: 32px; height: 28px; padding: 0 9px; cursor: pointer; font: 500 13px var(--f-mono); }
+.tool:hover { border-color: var(--plate-muted); }
+.tool[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+#zoom-level { font: 12px var(--f-mono); color: var(--plate-muted); min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; }
+.plate-scroll {
+  height: min(72vh, 820px); overflow: auto; cursor: grab; position: relative; overscroll-behavior: contain;
+  background-color: var(--plate);
+  background-image: linear-gradient(var(--plate-2) 1px, transparent 1px), linear-gradient(90deg, var(--plate-2) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.plate-scroll.dragging { cursor: grabbing; }
+.plate-scroll .drawing { display: block; margin: 12px auto; }
+@media (max-width: 640px) { .plate-scroll { height: 62vh; } }
+
+.plate-foot { display: flex; flex-wrap: wrap; gap: 14px 24px; justify-content: space-between; align-items: flex-end; padding: 12px 14px 14px; border-top: 1px solid var(--plate-rule); background: var(--plate-2); }
+.key { display: flex; flex-wrap: wrap; gap: 8px 16px; list-style: none; margin: 0; padding: 0; font-size: 12px; color: var(--plate-ink); min-width: 0; }
+.key li { display: flex; align-items: center; gap: 7px; }
+.key svg { flex: none; }
+.titleblock { display: grid; grid-template-columns: repeat(3, auto); border: 1px solid var(--plate-rule); margin: 0; font-variant-numeric: tabular-nums; }
+.titleblock div { padding: 5px 10px 6px; border-right: 1px solid var(--plate-rule); border-bottom: 1px solid var(--plate-rule); min-width: 0; }
+.titleblock div:nth-child(3n) { border-right: 0; }
+.titleblock div:nth-last-child(-n+3) { border-bottom: 0; }
+.titleblock dt { font: 500 9px/1.2 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--plate-muted); }
+.titleblock dd { margin: 2px 0 0; font: 600 13px/1.25 var(--f-display); font-stretch: 88%; color: var(--plate-ink); }
+@media (max-width: 640px) { .titleblock { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; } .titleblock div { border-right: 1px solid var(--plate-rule) !important; border-bottom: 1px solid var(--plate-rule) !important; } }
+
+/* the drawing's states */
+.drawing g.node { cursor: pointer; outline: none; }
+.drawing g.node:focus-visible polygon, .drawing g.node:focus-visible path { stroke: var(--gold); stroke-width: 6px; }
+.drawing g.edge, .drawing g.node { transition: opacity .18s ease; }
+.drawing.walking g.edge.future, .drawing.walking g.node:not(.lit) { opacity: .13; }
+.drawing.walking g.edge.past { opacity: .45; }
+.drawing.walking g.edge.now path { stroke: var(--gold); stroke-width: 5px; }
+.drawing.walking g.edge.now polygon { stroke: var(--gold); fill: var(--gold); }
+.drawing.walking g.edge.now text { fill: var(--gold); font-weight: 700; }
+.drawing.walking g.node.at { filter: drop-shadow(0 0 14px rgba(255, 196, 0, .6)); }
+
+/* ── the panel beside the plate ── */
+.panel { background: var(--raise); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; display: grid; gap: 12px; min-width: 0; }
+.panel h3 { font-size: 17px; font-weight: 700; }
+.walk-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.btn { border: 1px solid var(--rule); background: var(--paper); border-radius: 6px; padding: 5px 11px; cursor: pointer; font-size: 13px; font-weight: 500; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--gold); border-color: var(--gold); color: #1f1a17; }
+.btn:disabled { opacity: .45; cursor: default; }
+.count { margin-left: auto; font: 12px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; max-height: min(60vh, 640px); overflow: auto; }
+.step { width: 100%; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 2px 10px; text-align: left; background: none; border: 0; border-radius: 7px; padding: 7px 8px; cursor: pointer; }
+.step:hover { background: var(--paper); }
+.step .n { grid-row: span 3; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--rule); display: grid; place-items: center; font: 500 11px var(--f-mono); font-variant-numeric: tabular-nums; }
+.step .route { font: 500 11px var(--f-mono); color: var(--muted); overflow-wrap: anywhere; }
+.step .d { font-size: 14px; line-height: 1.35; }
+.step .t { font: 11px var(--f-mono); color: var(--muted); }
+.step.done .n { background: var(--paper); }
+.step[aria-current="step"] { background: var(--paper); box-shadow: inset 3px 0 0 var(--gold); }
+.step[aria-current="step"] .n { background: var(--gold); border-color: var(--gold); color: #1f1a17; }
+.marked { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.marked li { display: grid; gap: 3px; }
+.marked .nm { font-weight: 600; }
+.marked .why { font-size: 13px; color: var(--muted); }
+.chip { justify-self: start; font: 500 10px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; border-radius: 99px; padding: 4px 8px; border: 1px solid currentColor; }
+.chip.Modified { color: var(--gold-ink); }
+.chip.Proposal, .chip.Proposed { color: var(--proposed); }
+.chip.Accepted { color: var(--accepted); }
+.panel .note { margin: 0; font-size: 13px; color: var(--muted); }
+
+/* ── decisions ── */
+.why { padding-block: 34px 12px; display: grid; gap: 14px; }
+.why > h2 { font-size: clamp(22px, 2.6vw, 28px); font-weight: 700; }
+.adrs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 12px; }
+.adr { background: var(--raise); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.adr-top { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font: 11px var(--f-mono); color: var(--muted); }
+.adr h3 { font-size: 19px; font-weight: 680; }
+.adr p { margin: 0; }
+.adr details { font-size: 14px; color: var(--muted); }
+.adr summary { cursor: pointer; font-size: 13px; color: var(--ink); }
+.adr details p { margin-top: 8px; }
+.adr details b { color: var(--ink); font-weight: 600; }
+
+footer { padding-block: 22px 40px; font-size: 12px; color: var(--muted); display: grid; gap: 4px; }
+footer code { font-family: var(--f-mono); font-size: 12px; color: var(--ink); }
+
+/* ── details on hover ── */
+.tip { position: fixed; z-index: 10; max-width: min(340px, calc(100vw - 32px)); background: var(--plate-2); color: var(--plate-ink); border: 1px solid var(--plate-muted); border-radius: 8px; padding: 12px 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .35); display: grid; gap: 5px; pointer-events: none; font-size: 13px; }
+.tip.pinned { pointer-events: auto; }
+.tip .k { font: 11px var(--f-mono); color: var(--plate-muted); }
+.tip .nm { font: 700 18px var(--f-display); font-stretch: 85%; }
+.tip p { margin: 0; }
+.tip .st { font-size: 12px; }
+.tip .st b { color: var(--gold); font-weight: 600; }
+.tip .st b.Proposal { color: #ff8fe0; }
+
+@media (prefers-reduced-motion: reduce) { .drawing g.edge, .drawing g.node { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">C4 model · drawing-office</p>
+    <h1>%%NAME%%</h1>
+    <p class="thesis">%%THESIS%%</p>
+    <ul class="meta" id="meta"></ul>
+  </header>
+
+  <nav class="register" aria-label="Sheets" id="register"></nav>
+
+  <main class="sheet" id="sheet">
+    <div class="sheet-head">
+      <h2 id="sheet-title"></h2>
+      <p id="sheet-desc"></p>
+    </div>
+    <div class="sheet-body">
+      <figure class="plate">
+        <div class="plate-tools">
+          <button class="tool" id="zoom-fit" type="button" aria-pressed="true">Fit</button>
+          <button class="tool" id="zoom-out" type="button" aria-label="Zoom out">−</button>
+          <output id="zoom-level" aria-live="polite"></output>
+          <button class="tool" id="zoom-in" type="button" aria-label="Zoom in">+</button>
+        </div>
+        <div class="plate-scroll" id="plate-scroll" tabindex="0" aria-label="Diagram"></div>
+        <figcaption class="plate-foot">
+          <ul class="key" aria-label="Key">
+            <li><svg width="26" height="16" aria-hidden="true"><rect x="1" y="1" width="24" height="14" rx="2" fill="#5f64af" stroke="#b9bdf5"/></svg>Ours</li>
+            <li><svg width="26" height="16" aria-hidden="true"><rect x="1" y="1" width="24" height="14" rx="2" fill="#32433b" stroke="#6fa588"/></svg>Not ours</li>
+            <li><svg width="26" height="16" aria-hidden="true"><rect x="2" y="2" width="22" height="12" rx="2" fill="#5f64af" stroke="#ffb454" stroke-width="3"/></svg>Modified: a stand-in fills the seat</li>
+            <li><svg width="26" height="16" aria-hidden="true"><rect x="2" y="2" width="22" height="12" rx="2" fill="#5f64af" stroke="#ff2fd0" stroke-width="3"/></svg>Proposal: not built yet</li>
+            <li><svg width="18" height="20" aria-hidden="true"><path d="M2 5 v10 a7 3 0 0 0 14 0 v-10" fill="#5f64af" stroke="#b9bdf5"/><ellipse cx="9" cy="5" rx="7" ry="3" fill="#5f64af" stroke="#b9bdf5"/></svg>Data store</li>
+            <li><svg width="30" height="10" aria-hidden="true"><path d="M1 5 H24" stroke="#d7dbe3" stroke-width="1.5"/><path d="M23 1 L29 5 L23 9 Z" fill="#d7dbe3"/></svg>Request</li>
+            <li><svg width="30" height="10" aria-hidden="true"><path d="M1 5 H24" stroke="#d7dbe3" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M23 1 L29 5 L23 9 Z" fill="#d7dbe3"/></svg>Push notification</li>
+          </ul>
+          <dl class="titleblock" id="titleblock"></dl>
+        </figcaption>
+      </figure>
+      <aside class="panel" id="panel" aria-label="Sheet details"></aside>
+    </div>
+  </main>
+
+  <section class="why" aria-labelledby="why-title">
+    <h2 id="why-title">Why it’s drawn this way</h2>
+    <div class="adrs" id="adrs"></div>
+  </section>
+
+  <footer>
+    <span>Drawn from <code>%%SOURCE%%</code> to drawing-office’s conventions. Laid out by Graphviz through structurizr-cli %%CLI%%, the engine drawing-office’s own export uses.</span>
+    <span>Rebuild this page with <code>npm run c4:page</code>. The interactive drawing-office viewer runs locally: <code>npm run c4</code>, then <code>npm run c4:serve</code>.</span>
+  </footer>
+</div>
+
+<div class="tip" id="tip" role="tooltip" hidden></div>
+
+<!--%%DRAWINGS%%-->
+<script id="data" type="application/json">/*%%DATA%%*/</script>
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById("data").textContent);
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const EL = DATA.elements;
+  const VIEWS = DATA.views;
+  const META = DATA.meta;
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const state = { key: null, step: 0, zoom: 1, fit: true, w: 0, h: 0 };
+  const scroller = $("plate-scroll");
+  let svg = null;
+
+  /* masthead facts: counted from the model, or measured when the page was built */
+  const marked = Object.values(EL).filter((e) => e.state).length;
+  const c = META.checks;
+  $("meta").innerHTML = [
+    `<li><b>${VIEWS.length}</b> sheets</li>`,
+    `<li><b>${DATA.decisions.length}</b> decisions</li>`,
+    `<li><b>${marked}</b> boxes marked for change</li>`,
+    `<li>policy <b>${esc(META.policy)}</b></li>`,
+    `<li>drawing-office checks <b>${c.pass} pass</b>${c.na ? `, ${c.na} with nothing to check` : ""}${c.fail ? `, <b>${c.fail} fail</b>` : ""}</li>`,
+    `<li>drawn <b>${esc(META.drawn)}</b></li>`,
+  ].join("");
+
+  /* the register */
+  const groups = [["Structure", VIEWS.filter((v) => v.level !== "Trace")], ["Traces", VIEWS.filter((v) => v.level === "Trace")]];
+  $("register").innerHTML = groups.map(([label, vs]) => `
+    <div class="group"><span class="group-label">${label}</span><div class="tabs" role="tablist">
+      ${vs.map((v) => `<button class="tab" type="button" role="tab" id="tab-${v.key}" data-key="${v.key}" aria-selected="false" aria-controls="sheet">
+        <span class="no">${String(VIEWS.indexOf(v) + 1).padStart(2, "0")}</span><span class="nm">${esc(v.key)}</span>
+        <span class="sub">${v.level === "Trace" ? `${v.steps.length} steps` : esc(v.level)}</span></button>`).join("")}
+    </div></div>`).join("");
+  document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => open(b.dataset.key, true)));
+
+  /* the decisions */
+  $("adrs").innerHTML = DATA.decisions.map((d) => `
+    <article class="adr">
+      <div class="adr-top"><span class="chip ${esc(d.status)}">${esc(d.status)}</span><span>${d.scope ? esc(d.scope) : "Whole system"} · ${esc(d.id)}</span><span>${esc(d.date)}</span></div>
+      <h3>${esc(d.title)}</h3>
+      <p>${esc(d.decision)}</p>
+      <details><summary>Context and consequences</summary><p><b>Context.</b> ${esc(d.context)}</p><p><b>Consequences.</b> ${esc(d.consequences)}</p></details>
+    </article>`).join("");
+
+  /* zoom: 1 is Graphviz's own point size; "fit" shows the whole drawing */
+  function fitScale() {
+    const r = scroller.getBoundingClientRect();
+    return Math.min((r.width - 24) / state.w, (r.height - 24) / state.h);
+  }
+  function applyZoom(z, keepCentre = true) {
+    const lo = fitScale(), hi = 1.25;
+    const next = Math.max(Math.min(z, hi), Math.min(lo, hi));
+    const cx = (scroller.scrollLeft + scroller.clientWidth / 2) / (state.w * state.zoom || 1);
+    const cy = (scroller.scrollTop + scroller.clientHeight / 2) / (state.h * state.zoom || 1);
+    state.zoom = next;
+    svg.style.width = `${state.w * next}px`;
+    svg.style.height = `${state.h * next}px`;
+    if (keepCentre) {
+      scroller.scrollLeft = cx * state.w * next - scroller.clientWidth / 2;
+      scroller.scrollTop = cy * state.h * next - scroller.clientHeight / 2;
+    }
+    $("zoom-level").textContent = `${Math.round(next * 100)}%`;
+    $("zoom-fit").setAttribute("aria-pressed", String(state.fit));
+    $("zoom-out").disabled = next <= lo + 1e-3;
+    $("zoom-in").disabled = next >= hi - 1e-3;
+  }
+  $("zoom-fit").addEventListener("click", () => { state.fit = true; applyZoom(fitScale(), false); scroller.scrollTo(0, 0); });
+  $("zoom-in").addEventListener("click", () => { state.fit = false; applyZoom(state.zoom * 1.35); });
+  $("zoom-out").addEventListener("click", () => { state.fit = false; applyZoom(state.zoom / 1.35); });
+  new ResizeObserver(() => { if (svg && state.fit) applyZoom(fitScale(), false); }).observe(scroller);
+
+  /* drag to move, for a mouse; touch scrolls natively */
+  let drag = null;
+  scroller.addEventListener("pointerdown", (e) => {
+    if (e.pointerType !== "mouse" || e.button !== 0 || e.target.closest("g.node")) return;
+    drag = { x: e.clientX, y: e.clientY, l: scroller.scrollLeft, t: scroller.scrollTop };
+    scroller.setPointerCapture(e.pointerId);
+    scroller.classList.add("dragging");
+  });
+  scroller.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    scroller.scrollLeft = drag.l - (e.clientX - drag.x);
+    scroller.scrollTop = drag.t - (e.clientY - drag.y);
+  });
+  const endDrag = () => { drag = null; scroller.classList.remove("dragging"); };
+  scroller.addEventListener("pointerup", endDrag);
+  scroller.addEventListener("pointercancel", endDrag);
+
+  /* details on hover, focus or tap */
+  const tip = $("tip");
+  let pinned = null;
+  function describe(id) {
+    const e = EL[id];
+    if (!e) return "";
+    const kind = [e.kind, e.tech].filter(Boolean).join(" · ");
+    let st = "";
+    if (e.state) {
+      const why = e.decisions.length
+        ? e.decisions.map((d) => `${esc(d.title)} (${esc(d.status.toLowerCase())})`).join("; ")
+        : e.holds?.length ? `Holds ${esc(e.holds.join(", "))}` : "";
+      st = `<p class="st"><b class="${e.state}">${e.state === "Proposal" ? "Proposal" : "Modified"}</b> · ${why}</p>`;
+    }
+    const whose = e.ours ? "" : `<p class="st">Not ours</p>`;
+    return `<span class="k">${esc(kind)}</span><span class="nm">${esc(e.name)}</span><p>${esc(e.desc)}</p>${st}${whose}`;
+  }
+  function showTip(g) {
+    tip.innerHTML = describe(g.dataset.el);
+    tip.hidden = false;
+    const r = g.getBoundingClientRect(), t = tip.getBoundingClientRect();
+    let x = r.right + 10, y = r.top;
+    if (x + t.width > innerWidth - 12) x = Math.max(12, r.left - t.width - 10);
+    if (x < 12) x = 12;
+    y = Math.min(Math.max(12, y), innerHeight - t.height - 12);
+    tip.style.left = `${x}px`;
+    tip.style.top = `${y}px`;
+  }
+  const hideTip = () => { if (!pinned) tip.hidden = true; };
+  scroller.addEventListener("pointerover", (e) => { const g = e.target.closest("g.node"); if (g && !pinned) showTip(g); });
+  scroller.addEventListener("pointerout", (e) => { const g = e.target.closest("g.node"); if (g && !g.contains(e.relatedTarget)) hideTip(); });
+  scroller.addEventListener("focusin", (e) => { const g = e.target.closest("g.node"); if (g) showTip(g); });
+  scroller.addEventListener("focusout", (e) => { if (e.target.closest("g.node")) { pinned = null; tip.classList.remove("pinned"); hideTip(); } });
+  scroller.addEventListener("click", (e) => {
+    const g = e.target.closest("g.node");
+    if (!g) { pinned = null; tip.classList.remove("pinned"); tip.hidden = true; return; }
+    pinned = pinned === g ? null : g;
+    tip.classList.toggle("pinned", !!pinned);
+    if (pinned) showTip(g); else tip.hidden = true;
+  });
+  scroller.addEventListener("keydown", (e) => { const g = e.target.closest("g.node"); if (g && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); showTip(g); } });
+  scroller.addEventListener("scroll", () => { if (!tip.hidden) { pinned = null; tip.classList.remove("pinned"); tip.hidden = true; } }, { passive: true });
+
+  /* the walk through a trace */
+  const view = () => VIEWS.find((v) => v.key === state.key);
+  function paintWalk() {
+    const v = view(), k = state.step, cur = v.steps.find((s) => s.n === k);
+    svg.classList.toggle("walking", k > 0);
+    const lit = new Set();
+    svg.querySelectorAll("g.edge").forEach((g) => {
+      const n = Number(g.dataset.step);
+      g.classList.remove("past", "now", "future");
+      if (k > 0) g.classList.add(n < k ? "past" : n === k ? "now" : "future");
+    });
+    v.steps.filter((s) => s.n <= k).forEach((s) => { lit.add(s.from); lit.add(s.to); });
+    svg.querySelectorAll("g.node").forEach((g) => {
+      g.classList.toggle("lit", lit.has(g.dataset.el));
+      g.classList.toggle("at", !!cur && (g.dataset.el === cur.from || g.dataset.el === cur.to));
+    });
+    document.querySelectorAll(".step").forEach((b) => {
+      const n = Number(b.dataset.step);
+      b.classList.toggle("done", k > 0 && n < k);
+      if (n === k) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current");
+    });
+    const count = $("walk-count");
+    if (count) count.textContent = k > 0 ? `Step ${k} of ${v.steps.length}` : `${v.steps.length} steps`;
+    if ($("walk-back")) {
+      $("walk-back").disabled = k <= 1;
+      $("walk-next").disabled = k >= v.steps.length;
+      $("walk-all").disabled = k === 0;
+      $("walk-start").hidden = k > 0;
+    }
+    if (cur) {
+      const edge = svg.querySelector(`g.edge[data-step="${k}"]`);
+      if (edge) {
+        const er = edge.getBoundingClientRect(), sr = scroller.getBoundingClientRect();
+        if (er.left < sr.left || er.right > sr.right || er.top < sr.top || er.bottom > sr.bottom) {
+          scroller.scrollBy({ left: er.left + er.width / 2 - (sr.left + sr.width / 2), top: er.top + er.height / 2 - (sr.top + sr.height / 2), behavior: reduced ? "auto" : "smooth" });
+        }
+      }
+      document.querySelector(`.step[data-step="${k}"]`)?.scrollIntoView({ block: "nearest", behavior: reduced ? "auto" : "smooth" });
+    }
+  }
+  function go(k) {
+    const v = view();
+    if (!v.steps.length) return;
+    state.step = Math.max(0, Math.min(k, v.steps.length));
+    paintWalk();
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey || /input|textarea|select/i.test(e.target.tagName)) return;
+    if (e.key === "Escape" && !tip.hidden) { pinned = null; tip.classList.remove("pinned"); tip.hidden = true; return; }
+    if (!view()?.steps.length) return;
+    const k = e.key.toLowerCase();
+    if (k === "n") go(state.step + 1);
+    else if (k === "b") go(Math.max(1, state.step - 1));
+    else if (e.key === "Escape") go(0);
+  });
+
+  /* the panel beside the plate */
+  function panel(v) {
+    const name = (id) => esc(EL[id]?.name ?? id);
+    if (v.steps.length) {
+      return `
+        <h3>Steps</h3>
+        <div class="walk-bar">
+          <button class="btn primary" id="walk-start" type="button" title="Walk through (N)">Walk through</button>
+          <button class="btn" id="walk-back" type="button" title="Back (B)">Back</button>
+          <button class="btn" id="walk-next" type="button" title="Next (N)">Next</button>
+          <button class="btn" id="walk-all" type="button" title="Show all (Esc)">Show all</button>
+          <span class="count" id="walk-count"></span>
+        </div>
+        <ol class="steps">${v.steps.map((s) => `
+          <li><button class="step" type="button" data-step="${s.n}">
+            <span class="n">${s.n}</span>
+            <span class="route">${name(s.from)} → ${name(s.to)}</span>
+            <span class="d">${esc(s.desc)}</span>
+            ${s.tech ? `<span class="t">${esc(s.tech)}${s.async ? " · asynchronous" : ""}</span>` : ""}
+          </button></li>`).join("")}
+        </ol>`;
+    }
+    const here = v.elements.map((id) => [id, EL[id]]).filter(([, e]) => e?.state);
+    const list = here.map(([, e]) => {
+      const why = e.decisions.length ? e.decisions.map((d) => esc(d.title)).join("; ") : e.holds?.length ? `Holds ${esc(e.holds.join(", "))}` : "";
+      return `<li><span class="chip ${e.state}">${e.state}</span><span class="nm">${esc(e.name)}</span><span class="why">${why}</span></li>`;
+    }).join("");
+    const ours = v.elements.filter((id) => EL[id]?.ours).length;
+    return `
+      <h3>On this sheet</h3>
+      <p class="note">${v.elements.length} elements: ${ours} ours, ${v.elements.length - ours} not.</p>
+      ${here.length ? `<h3>Marked for change</h3><ul class="marked">${list}</ul>` : `<p class="note">Nothing on this sheet is marked for change.</p>`}`;
+  }
+
+  function open(key, fromClick) {
+    const v = VIEWS.find((x) => x.key === key) ?? VIEWS[0];
+    state.key = v.key;
+    state.step = 0;
+    state.fit = true;
+    pinned = null;
+    tip.hidden = true;
+    document.querySelectorAll(".tab").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.key === v.key)));
+    $("sheet-title").textContent = v.title;
+    $("sheet-desc").textContent = v.desc;
+    scroller.replaceChildren($(`drawing-${v.key}`).content.cloneNode(true));
+    svg = scroller.querySelector("svg");
+    state.w = Number(svg.dataset.w);
+    state.h = Number(svg.dataset.h);
+    scroller.setAttribute("aria-label", `${v.title} diagram`);
+    const i = VIEWS.indexOf(v) + 1;
+    const cells = [
+      ["Project", META.name], ["Sheet", `${i} of ${VIEWS.length}`], ["View", v.key],
+      ["Kind", v.level === "Trace" ? `Trace · ${v.steps.length} steps` : v.level], ["Drawn from", "workspace.dsl"], ["Revision", `Policy ${META.policy} · ${META.drawn}`],
+    ];
+    $("titleblock").innerHTML = cells.map(([k, val]) => `<div><dt>${k}</dt><dd>${esc(val)}</dd></div>`).join("");
+    $("panel").innerHTML = panel(v);
+    if (v.steps.length) {
+      $("walk-start").addEventListener("click", () => go(1));
+      $("walk-next").addEventListener("click", () => go(state.step + 1));
+      $("walk-back").addEventListener("click", () => go(Math.max(1, state.step - 1)));
+      $("walk-all").addEventListener("click", () => go(0));
+      document.querySelectorAll(".step").forEach((b) => b.addEventListener("click", () => go(Number(b.dataset.step))));
+      paintWalk();
+    }
+    applyZoom(fitScale(), false);
+    scroller.scrollTo(0, 0);
+    if (fromClick) { try { history.replaceState(null, "", `#${v.key}`); } catch { /* the frame may refuse */ } }
+  }
+
+  const asked = (location.hash || "").replace(/^#/, "");
+  open(VIEWS.some((v) => v.key === asked) ? asked : VIEWS[0].key, false);
+})();
+</script>

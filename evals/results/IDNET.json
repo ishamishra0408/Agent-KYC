@@ -1,0 +1,1357 @@
+{
+  "reader": "app",
+  "run": "2026-09-29T23:23:40.888Z",
+  "spentUsd": 0.1736,
+  "rows": [
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0033986.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10376
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0059837.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 11363
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_0139935.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 11423
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0136954.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 5121
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0082266.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7230
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0111624.png",
+      "flagged": true,
+      "signs": "Height field '7'-10\"' is inconsistent with the portrait",
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6732
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0198801_0420100_0306439.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6604
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0231340.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6997
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0165668.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9755
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0328996.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 5630
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0260057.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10837
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0295389.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10089
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0363477.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7703
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0401120_0267995_0068932.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7399
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0434383.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7513
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0467797.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10040
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0501047_0520022_0142485.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9984
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0538341.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10123
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0651772.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 5277
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0615917.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8132
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0729577_0884543_0381478.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 4376
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0684862.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7803
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0578502.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 24380
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0763862.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10358
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0796009.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 13290
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0903468_0939104_0272385.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 776
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0831906.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6109
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0937038.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 648
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0865316.png",
+      "flagged": true,
+      "signs": "Height field '7'-02\"' is inconsistent with the portrait",
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10000
+    },
+    {
+      "folder": "positive",
+      "file": "generated.photos_v3_0970065.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6693
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_0139935.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6233
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0033986.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6524
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0082266.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 11475
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0136954.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7893
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0059837.png",
+      "flagged": true,
+      "signs": "Licence number and DOB are in red, while other fields are black. EXP date, class, endorsements, restrictions and sex are in a larger bold font than the rest of the text.",
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 21424
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0165668.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6823
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0111624.png",
+      "flagged": true,
+      "signs": "Expiry date 10/24/2025 is larger and bolder than the issue date. Class, endorsements, restrictions, height, weight and eye colour are in a heavier font than the other text. Licence number and DOB are in red. Ghost portrait overlaps the sex and eyes text.",
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 23919
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0198801_0420100_0306439.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8469
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0231340.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8502
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0260057.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9591
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0328996.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6572
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0295389.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "DL",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 13348
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0363477.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7229
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0401120_0267995_0068932.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8200
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0434383.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7539
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0538341.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 2101
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0467797.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8231
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0501047_0520022_0142485.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6168
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0578502.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 5431
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0615917.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9386
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0684862.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "DL",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6300
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0651772.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10782
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0729577_0884543_0381478.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6624
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0763862.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8930
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0796009.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9048
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0865316.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7789
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0831906.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 14408
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0903468_0939104_0272385.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 13221
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0937038.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10621
+    },
+    {
+      "folder": "fraud1_copy_and_move",
+      "file": "generated.photos_v3_0970065.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8354
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_0139935.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 5907
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0059837.png",
+      "flagged": true,
+      "signs": "Height listed as 7'-10\"",
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8686
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0033986.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10693
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0082266.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8425
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0111624.png",
+      "flagged": true,
+      "signs": "HGT field value '7'-10\"' is highly improbable and appears inconsistent with the portrait",
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7498
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0136954.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 21158
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0165668.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 21676
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0198801_0420100_0306439.png",
+      "flagged": true,
+      "signs": "Main portrait sits on a flat blue block that looks pasted in, and the small ghost portrait box covers part of the SEX field. Licence number and DOB are in red while the other fields are black.",
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 21203
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0231340.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7170
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0260057.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 11670
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0295389.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6471
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0328996.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7182
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0401120_0267995_0068932.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7440
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0363477.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8881
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0434383.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8718
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0467797.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9192
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0501047_0520022_0142485.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8644
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0538341.png",
+      "flagged": true,
+      "signs": "Height field '7'-07\"' is inconsistent with the portrait",
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8502
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0578502.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6905
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0615917.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6874
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0651772.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6696
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0684862.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 5125
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0729577_0884543_0381478.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9715
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0831906.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 3606
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0796009.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8926
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0763862.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 21570
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0865316.png",
+      "flagged": true,
+      "signs": "Height field '7'-02\"' is inconsistent with the portrait",
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10830
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0937038.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6990
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0970065.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6545
+    },
+    {
+      "folder": "fraud2_face_morphing",
+      "file": "generated.photos_v3_0903468_0939104_0272385.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 23343
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_0139935.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7165
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0033986.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7419
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0082266.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 5216
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0059837.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9870
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0111624.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10049
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0136954.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 12452
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0165668.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9279
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0198801_0420100_0306439.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9506
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0231340.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9436
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0260057.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8352
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0295389.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9153
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0328996.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7154
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0363477.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8963
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0401120_0267995_0068932.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7952
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0434383.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7755
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0467797.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6546
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0578502.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6921
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0538341.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9952
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0501047_0520022_0142485.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 22723
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0684862.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10198
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0615917.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 21618
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0651772.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 21068
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0763862.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9179
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0729577_0884543_0381478.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10030
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0796009.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 11013
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0865316.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10832
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0831906.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 13894
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0970065.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7984
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0937038.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 13812
+    },
+    {
+      "folder": "fraud3_face_replacement",
+      "file": "generated.photos_v3_0903468_0939104_0272385.png",
+      "flagged": true,
+      "signs": "Portrait shows a young child, which does not fit a 1991 date of birth. Text appears to be in a different font and colour from the rest of the document.",
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 21318
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0059837.png",
+      "flagged": true,
+      "signs": "Height field '7'-10\"' is in a different font weight and size compared to other data fields",
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7813
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_0139935.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 11120
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0033986.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 13698
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0111624.png",
+      "flagged": true,
+      "signs": "Height '7'-10\"' is inconsistent with the portrait",
+      "docType": "DL",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7940
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0136954.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 3954
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0082266.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 14567
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0165668.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10302
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0231340.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 5243
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0198801_0420100_0306439.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 12373
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0260057.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8031
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0295389.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 12081
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0363477.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6030
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0434383.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 4039
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0401120_0267995_0068932.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 5549
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0328996.png",
+      "flagged": true,
+      "signs": "Expiry date 03/25/2028 is in a larger, bolder font than the issue date beside it; the licence number and DOB are in red.",
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 21705
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0467797.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7329
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0501047_0520022_0142485.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7393
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0615917.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 6088
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0578502.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 7706
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0684862.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 9661
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0538341.png",
+      "flagged": true,
+      "signs": "Licence number and DOB are in dark red while other fields are black; expiry date is in a larger, bolder font than the issue date",
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 22985
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0729577_0884543_0381478.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 5910
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0651772.png",
+      "flagged": true,
+      "signs": "Licence number and DOB are in red, unlike the black text elsewhere. Expiry date is in a larger, bolder font than the issue date. Class, End and Restrictions values also look bolder than the labels.",
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 22660
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0763862.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 12911
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0796009.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 12689
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0831906.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 14206
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0903468_0939104_0272385.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 8448
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0937038.png",
+      "flagged": false,
+      "signs": null,
+      "docType": "OTHER",
+      "answeredBy": "google/gemma-4-31b-it",
+      "ms": 10337
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0865316.png",
+      "flagged": true,
+      "signs": "Licence number and DOB are in red while the other fields are black; name, address and expiry look like a different font and weight from the rest of the card",
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 20608
+    },
+    {
+      "folder": "fraud4_combined",
+      "file": "generated.photos_v3_0970065.png",
+      "flagged": true,
+      "signs": "Expiry date is in a larger, bolder font than the issue date; licence number and DOB are in red while other fields are black",
+      "docType": "DL",
+      "answeredBy": "anthropic/claude-sonnet-5.5",
+      "ms": 22100
+    }
+  ]
+}

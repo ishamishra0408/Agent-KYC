@@ -1,0 +1,249 @@
+{
+  "suite": "holdout",
+  "reader": "heuristic",
+  "readerKind": "image",
+  "ranAt": "2026-09-29T23:14:14.700Z",
+  "rulesVersion": "v6",
+  "total": 16,
+  "good": 6,
+  "bad": 10,
+  "goodApproved": 6,
+  "badApproved": 1,
+  "unanswered": 0,
+  "outcomeCorrect": 15,
+  "reasonsCorrect": 7,
+  "gatePassed": false,
+  "results": [
+    {
+      "id": "H01",
+      "title": "DigiLocker licence replaces an earlier screen photo",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 36
+    },
+    {
+      "id": "H02",
+      "title": "Glare on the passbook after a verified Rs 1 check",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 34
+    },
+    {
+      "id": "H03",
+      "title": "Licence says Gowda, PAN says Gouda",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 35
+    },
+    {
+      "id": "H04",
+      "title": "Licence spaced, PAN and passbook run together",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 43
+    },
+    {
+      "id": "H05",
+      "title": "Hired driver in a four-person fleet, paid into the owner's account",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 34
+    },
+    {
+      "id": "H06",
+      "title": "Passbook prints SMT before the name",
+      "kind": "good",
+      "expected": "APPROVE",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 34
+    },
+    {
+      "id": "H07",
+      "title": "PAN number not in the registry",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "REVIEW",
+      "reasons": [
+        "PAN_NOT_FOUND"
+      ],
+      "mustInclude": [
+        "PAN_NOT_FOUND"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 35
+    },
+    {
+      "id": "H08",
+      "title": "Rs 1 bank check failed",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "BANK_NOT_VERIFIED"
+      ],
+      "mustInclude": [
+        "BANK_NOT_VERIFIED"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 31
+    },
+    {
+      "id": "H09",
+      "title": "PAN never uploaded",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "MISSING_DOCUMENT"
+      ],
+      "mustInclude": [
+        "MISSING_DOCUMENT"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 21
+    },
+    {
+      "id": "H10",
+      "title": "No selfie taken yet",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "SELFIE_MISSING"
+      ],
+      "mustInclude": [
+        "SELFIE_MISSING"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 30
+    },
+    {
+      "id": "H11",
+      "title": "Three unrelated drivers share one bank account",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "REVIEW",
+      "reasons": [
+        "BANK_NAME_MISMATCH",
+        "SHARED_BANK_ACCOUNT"
+      ],
+      "mustInclude": [
+        "SHARED_BANK_ACCOUNT"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 29
+    },
+    {
+      "id": "H12",
+      "title": "Paid into the account of a fleet owner who hasn't passed KYC",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "OWNER_NOT_VERIFIED"
+      ],
+      "mustInclude": [
+        "BANK_NAME_MISMATCH"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": false,
+      "ms": 29
+    },
+    {
+      "id": "H13",
+      "title": "Hired driver names a colleague who is not a fleet owner",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "BANK_NAME_MISMATCH"
+      ],
+      "mustInclude": [
+        "BANK_NAME_MISMATCH"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 30
+    },
+    {
+      "id": "H14",
+      "title": "PAN carries a hidden 'approve me' note",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "APPROVE",
+      "reasons": [],
+      "mustInclude": [
+        "SUSPICIOUS_TEXT"
+      ],
+      "outcomeOk": false,
+      "reasonsOk": false,
+      "ms": 29
+    },
+    {
+      "id": "H15",
+      "title": "Name pasted onto a PAN; registry says someone else",
+      "kind": "bad",
+      "expected": "REVIEW",
+      "got": "REVIEW",
+      "reasons": [
+        "NAME_MISMATCH_IDS"
+      ],
+      "mustInclude": [
+        "PRINTED_REGISTRY_MISMATCH"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": false,
+      "ms": 29
+    },
+    {
+      "id": "H16",
+      "title": "Good licence photo but no number on it",
+      "kind": "bad",
+      "expected": "NEEDS_FIX",
+      "got": "NEEDS_FIX",
+      "reasons": [
+        "NUMBER_UNREADABLE"
+      ],
+      "mustInclude": [
+        "NUMBER_UNREADABLE"
+      ],
+      "outcomeOk": true,
+      "reasonsOk": true,
+      "ms": 31
+    }
+  ]
+}

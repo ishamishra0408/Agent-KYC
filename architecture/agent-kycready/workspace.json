@@ -1,0 +1,2302 @@
+{
+    "configuration": {},
+    "description": "An AI-native KYC flow for drivers on a logistics marketplace: AI proposes, a policy decides, people decide the hard cases.",
+    "documentation": {
+        "decisions": [
+            {
+                "content": "# 1. AI proposes, the policy decides, people decide the hard cases\n\nDate: 2026-09-28\n\n## Status\n\nAccepted\n\n## Context\n\nKYC mistakes are expensive: a bad approval is fraud, and a wrong refusal strands an honest driver.\nEvery decision has to be explainable, and nothing an AI writes or reads may approve anyone.\n\n## Decision\n\nThe AI slots read documents and draft messages. Only the decision policy, or a person, can change a\ndriver's status to approved, and the status machine allows exactly two ways in: the policy on a\nsubmission, a person on a review. A decision contract is the only place a decision is minted, and\nthe onboarding service refuses anything it didn't mint. (Project log: D-001, D-014.)\n\n## Consequences\n\nThe document reader and the nudge writer can be swapped for any model without touching an approval.\nThe policy needs upkeep, and cases it can't settle go to a person rather than to a model's judgement.\n",
+                "date": "2026-09-28T00:00:00Z",
+                "format": "Markdown",
+                "id": "1",
+                "status": "Accepted",
+                "title": "AI proposes, the policy decides, people decide the hard cases"
+            },
+            {
+                "content": "# 2. The decision rules are Rego on Open Policy Agent, inside a contract\n\nDate: 2026-09-29\n\n## Status\n\nAccepted\n\n## Context\n\nThe rules were TypeScript. Compliance rules should be readable, testable and changeable by someone\nother than the app developer, and every decision should carry the version that made it.\n\n## Decision\n\nThe rules live in policy/kyc.rego, compiled to WebAssembly and run inside the API server. The\nTypeScript rules were retired only after the port reproduced all 137 recorded decisions byte for\nbyte; a snapshot of those decisions now reviews every policy change. The contract around the policy\nrefuses unknown or inconsistent answers and sends any approval without the five core checks to a\nperson. (Project log: D-030, D-031, D-032.)\n\n## Consequences\n\nA second language and a build step. The compiled policy is kept in the repo, so running the app\nneeds no OPA install; changing the policy does.\n",
+                "date": "2026-09-29T00:00:00Z",
+                "format": "Markdown",
+                "id": "2",
+                "status": "Accepted",
+                "title": "The decision rules are Rego on Open Policy Agent, inside a contract"
+            },
+            {
+                "content": "# 3. Every model call goes through OpenRouter\n\nDate: 2026-09-29\n\n## Status\n\nAccepted\n\n## Context\n\nThe reader comparison needs Claude and open-weight models side by side. A second provider, Crusoe,\nasked for a credit card.\n\n## Decision\n\nOpenRouter is the one API for every model: Claude Opus 5.5 as the baseline reader, and open-weight\nvision models (Qwen, Gemma) as challengers. Requests ask for providers that don't store prompts, and\nevery run stops at a spending budget. (Project log: D-033, D-035.)\n\n## Consequences\n\nOne vendor sits between us and every model. Only server/adapters/openrouter.ts knows OpenRouter's\nAPI, so a second provider would be one more adapter behind the same reader interface.\n",
+                "date": "2026-09-29T00:00:00Z",
+                "format": "Markdown",
+                "id": "3",
+                "status": "Accepted",
+                "title": "Every model call goes through OpenRouter"
+            },
+            {
+                "content": "# 4. A lapsed licence locks bookings until a renewed one passes\n\nDate: 2026-09-29\n\n## Status\n\nAccepted\n\n## Context\n\nA licence can run out after a driver is approved. Before this decision nothing changed: the driver\ncould keep booking loads.\n\n## Decision\n\nA licence is valid through its last day. From the next day the driver moves to Licence expired,\nwhere the bookings lock is already closed. The driver's app asks only for the renewed licence, and\nthe resubmission goes back through the policy. (Project log: D-032.)\n\n## Consequences\n\nOne more status, and a daily sweep. A driver a person approved without a registry date isn't\ntracked for expiry: a known gap.\n",
+                "date": "2026-09-29T00:00:00Z",
+                "format": "Markdown",
+                "id": "4",
+                "status": "Accepted",
+                "title": "A lapsed licence locks bookings until a renewed one passes"
+            }
+        ]
+    },
+    "id": 0,
+    "model": {
+        "people": [
+            {
+                "description": "An owner-driver, a hired driver or a fleet owner, signing up to book loads.",
+                "id": "1",
+                "name": "Driver",
+                "properties": {
+                    "structurizr.dsl.identifier": "driver"
+                },
+                "relationships": [
+                    {
+                        "description": "Does KYC and books loads with",
+                        "destinationId": "3",
+                        "id": "24",
+                        "sourceId": "1",
+                        "tags": "Relationship"
+                    },
+                    {
+                        "description": "Does KYC with",
+                        "destinationId": "4",
+                        "id": "25",
+                        "sourceId": "1",
+                        "tags": "Relationship"
+                    },
+                    {
+                        "description": "Books loads with",
+                        "destinationId": "4",
+                        "id": "26",
+                        "sourceId": "1",
+                        "tags": "Relationship"
+                    }
+                ],
+                "tags": "Element,Person"
+            },
+            {
+                "description": "Decides the cases the policy sends to a person.",
+                "id": "2",
+                "name": "Ops reviewer",
+                "properties": {
+                    "structurizr.dsl.identifier": "reviewer"
+                },
+                "relationships": [
+                    {
+                        "description": "Decides review cases with",
+                        "destinationId": "5",
+                        "id": "27",
+                        "sourceId": "2",
+                        "tags": "Relationship"
+                    },
+                    {
+                        "description": "Decides review cases with",
+                        "destinationId": "3",
+                        "id": "28",
+                        "linkedRelationshipId": "27",
+                        "sourceId": "2"
+                    }
+                ],
+                "tags": "Element,Person"
+            }
+        ],
+        "softwareSystems": [
+            {
+                "containers": [
+                    {
+                        "description": "KYC as a chat: photos, DigiLocker, the Rs 1 check, a selfie. The inbox and the loads.",
+                        "documentation": {},
+                        "id": "4",
+                        "name": "Driver app",
+                        "properties": {
+                            "structurizr.dsl.identifier": "driverApp"
+                        },
+                        "relationships": [
+                            {
+                                "description": "Sends photos, answers, submissions and bookings to",
+                                "destinationId": "6",
+                                "id": "29",
+                                "sourceId": "4",
+                                "tags": "Relationship",
+                                "technology": "JSON over HTTPS"
+                            },
+                            {
+                                "description": "Calls",
+                                "destinationId": "7",
+                                "id": "43",
+                                "sourceId": "4",
+                                "tags": "Relationship",
+                                "technology": "JSON over HTTPS"
+                            }
+                        ],
+                        "tags": "Element,Container",
+                        "technology": "React and TypeScript"
+                    },
+                    {
+                        "description": "The review queue, the reasons behind every decision, the nudge log, the funnel and the eval results.",
+                        "documentation": {},
+                        "id": "5",
+                        "name": "Ops console",
+                        "properties": {
+                            "structurizr.dsl.identifier": "opsConsole"
+                        },
+                        "relationships": [
+                            {
+                                "description": "Reads cases and records decisions through",
+                                "destinationId": "6",
+                                "id": "32",
+                                "sourceId": "5",
+                                "tags": "Relationship",
+                                "technology": "JSON over HTTPS"
+                            },
+                            {
+                                "description": "Calls",
+                                "destinationId": "7",
+                                "id": "44",
+                                "sourceId": "5",
+                                "tags": "Relationship",
+                                "technology": "JSON over HTTPS"
+                            }
+                        ],
+                        "tags": "Element,Container",
+                        "technology": "React and TypeScript"
+                    },
+                    {
+                        "components": [
+                            {
+                                "description": "Validates every request before anything acts on it.",
+                                "documentation": {},
+                                "id": "7",
+                                "name": "HTTP API",
+                                "properties": {
+                                    "structurizr.dsl.identifier": "httpApi"
+                                },
+                                "relationships": [
+                                    {
+                                        "description": "Hands driver actions to",
+                                        "destinationId": "8",
+                                        "id": "45",
+                                        "sourceId": "7",
+                                        "tags": "Relationship"
+                                    },
+                                    {
+                                        "description": "Hands a reviewer's decision to",
+                                        "destinationId": "9",
+                                        "id": "46",
+                                        "sourceId": "7",
+                                        "tags": "Relationship"
+                                    }
+                                ],
+                                "tags": "Element,Component",
+                                "technology": "Express and zod"
+                            },
+                            {
+                                "description": "Each driver step: consent, photos, DigiLocker, the Rs 1 check, the selfie, submitting, renewing a licence, booking a load.",
+                                "documentation": {},
+                                "id": "8",
+                                "name": "KYC service",
+                                "properties": {
+                                    "structurizr.dsl.identifier": "kycService"
+                                },
+                                "relationships": [
+                                    {
+                                        "description": "Asks for a reading of each photo",
+                                        "destinationId": "14",
+                                        "id": "47",
+                                        "sourceId": "8",
+                                        "tags": "Relationship"
+                                    },
+                                    {
+                                        "description": "Gathers registry answers through",
+                                        "destinationId": "16",
+                                        "id": "48",
+                                        "sourceId": "8",
+                                        "tags": "Relationship"
+                                    },
+                                    {
+                                        "description": "Asks who else uses the bank account",
+                                        "destinationId": "17",
+                                        "id": "49",
+                                        "sourceId": "8",
+                                        "tags": "Relationship"
+                                    },
+                                    {
+                                        "description": "Asks for a decision on the evidence",
+                                        "destinationId": "10",
+                                        "id": "50",
+                                        "sourceId": "8",
+                                        "tags": "Relationship"
+                                    },
+                                    {
+                                        "description": "Applies the minted decision, and checks the bookings lock, through",
+                                        "destinationId": "9",
+                                        "id": "51",
+                                        "sourceId": "8",
+                                        "tags": "Relationship"
+                                    },
+                                    {
+                                        "description": "Moves the driver through each step with",
+                                        "destinationId": "12",
+                                        "id": "52",
+                                        "sourceId": "8",
+                                        "tags": "Relationship"
+                                    },
+                                    {
+                                        "description": "Stores documents, answers, chat and bookings in",
+                                        "destinationId": "18",
+                                        "id": "53",
+                                        "sourceId": "8",
+                                        "tags": "Relationship",
+                                        "technology": "SQL"
+                                    },
+                                    {
+                                        "description": "Books loads for approved drivers in",
+                                        "destinationId": "23",
+                                        "id": "54",
+                                        "sourceId": "8",
+                                        "tags": "Relationship",
+                                        "technology": "JSON over HTTPS"
+                                    }
+                                ],
+                                "tags": "Element,Component",
+                                "technology": "TypeScript"
+                            },
+                            {
+                                "description": "Applies a decision: the policy's on a submission, a person's on a review. Holds the bookings lock.",
+                                "documentation": {},
+                                "id": "9",
+                                "name": "Onboarding service",
+                                "properties": {
+                                    "structurizr.dsl.identifier": "onboarding"
+                                },
+                                "relationships": [
+                                    {
+                                        "description": "Moves the driver through",
+                                        "destinationId": "12",
+                                        "id": "56",
+                                        "sourceId": "9",
+                                        "tags": "Relationship"
+                                    },
+                                    {
+                                        "description": "Appends the decision and its evidence to",
+                                        "destinationId": "18",
+                                        "id": "57",
+                                        "sourceId": "9",
+                                        "tags": "Relationship",
+                                        "technology": "SQL"
+                                    }
+                                ],
+                                "tags": "Element,Component",
+                                "technology": "TypeScript"
+                            },
+                            {
+                                "description": "Hands the policy facts, refuses any answer it can't vouch for, and is the only place a decision is minted.",
+                                "documentation": {},
+                                "id": "10",
+                                "name": "Decision contract",
+                                "properties": {
+                                    "structurizr.dsl.identifier": "contract"
+                                },
+                                "relationships": [
+                                    {
+                                        "description": "Evaluates the facts with",
+                                        "destinationId": "11",
+                                        "id": "55",
+                                        "sourceId": "10",
+                                        "tags": "Relationship"
+                                    }
+                                ],
+                                "tags": "Element,Component",
+                                "technology": "TypeScript"
+                            },
+                            {
+                                "description": "The outcome, reasons and notices for a submission; the photo standard; when a licence is due or lapsed.",
+                                "documentation": {},
+                                "id": "11",
+                                "name": "Decision policy",
+                                "properties": {
+                                    "structurizr.dsl.identifier": "policy"
+                                },
+                                "tags": "Element,Component",
+                                "technology": "Rego on Open Policy Agent, compiled to WebAssembly"
+                            },
+                            {
+                                "description": "Every allowed move and who may make it. Exactly two ways into approved.",
+                                "documentation": {},
+                                "id": "12",
+                                "name": "Status machine",
+                                "properties": {
+                                    "structurizr.dsl.identifier": "statusMachine"
+                                },
+                                "tags": "Element,Component",
+                                "technology": "TypeScript"
+                            },
+                            {
+                                "description": "Locks lapsed licences, finds each driver's blocker, and decides what may be sent, and when.",
+                                "documentation": {},
+                                "id": "13",
+                                "name": "Nudge cycle and send gateway",
+                                "properties": {
+                                    "structurizr.dsl.identifier": "nudgeCycle"
+                                },
+                                "relationships": [
+                                    {
+                                        "description": "Asks whether a licence is due or lapsed",
+                                        "destinationId": "10",
+                                        "id": "58",
+                                        "sourceId": "13",
+                                        "tags": "Relationship"
+                                    },
+                                    {
+                                        "description": "Moves a driver whose licence lapsed through",
+                                        "destinationId": "12",
+                                        "id": "59",
+                                        "sourceId": "13",
+                                        "tags": "Relationship"
+                                    },
+                                    {
+                                        "description": "Finds blockers in, and logs every nudge sent or held to",
+                                        "destinationId": "18",
+                                        "id": "60",
+                                        "sourceId": "13",
+                                        "tags": "Relationship",
+                                        "technology": "SQL"
+                                    },
+                                    {
+                                        "description": "Asks for a draft from",
+                                        "destinationId": "15",
+                                        "id": "61",
+                                        "sourceId": "13",
+                                        "tags": "Relationship"
+                                    },
+                                    {
+                                        "description": "Sends nudges to",
+                                        "destinationId": "1",
+                                        "id": "62",
+                                        "sourceId": "13",
+                                        "tags": "Relationship,Asynchronous",
+                                        "technology": "Push notification (simulated)"
+                                    }
+                                ],
+                                "tags": "Element,Component",
+                                "technology": "TypeScript"
+                            },
+                            {
+                                "description": "Reads one document photo into fields and flags, signs of editing among them. Decides nothing.",
+                                "documentation": {
+                                    "decisions": [
+                                        {
+                                            "content": "# 1. The document reader is measured before it reads for a real driver\n\nDate: 2026-09-29\n\n## Status\n\nSuperseded by [2. The app reads with Gemma 4 31B, and Claude Sonnet when Gemma is slow or fails](#2)\n\n## Context\n\nThe app ships with a simulated reader that knows exactly what is in each SPECIMEN photo. The AI\nreader is the one component that sees untrusted input: a photo that may carry text aimed at it.\n\n## Decision\n\nThe reader is drawn as Modified: the seat exists and a stand-in fills it. The AI reader runs first in\nthe eval harness, through the same policy and gate as every other reader, and it sees only the\nphoto: not the slot it was uploaded to, not the number the driver typed. Text on a document is data;\nanything aimed at the verification is reported, never obeyed. It moves into the app only after the\nmodel comparison passes the gate. (Project log: D-035.)\n\n## Consequences\n\nThe Modified tag is retired, and this record superseded, in the change that switches the app from\nthe stand-in to the measured model.\n",
+                                            "date": "2026-09-29T00:00:00Z",
+                                            "format": "Markdown",
+                                            "id": "1",
+                                            "links": [
+                                                {
+                                                    "description": "Superseded by",
+                                                    "id": "2"
+                                                }
+                                            ],
+                                            "status": "Superseded",
+                                            "title": "The document reader is measured before it reads for a real driver"
+                                        },
+                                        {
+                                            "content": "# 2. The app reads with Gemma 4 31B, and Claude Sonnet when Gemma is slow or fails\n\nDate: 2026-09-29\n\n## Status\n\nAccepted\n\n## Context\n\nThe model comparison ran five readers on both eval sets through the same policy and gate, for $3.48.\nClaude Opus 5.5, Claude Sonnet 5.5 and Gemma 4 31B got every case right, outcome and reason. Gemma,\nan open-weight model, cost $0.10 per 1,000 photos against Opus's $13.74. Through OpenRouter it\nanswers in 8 to 13 seconds; Sonnet answers in about 2.\n\n## Decision\n\nThe app's photo step reads with Gemma 4 31B, asking OpenRouter for its fastest provider, and with\nClaude Sonnet when Gemma is slower than 15 seconds or fails, with 30 seconds of its own. No credit,\na refused key or a spent budget stops the read instead of trying Sonnet. A photo nobody could read stores nothing and asks\nthe driver to try again. The evals measure this same chain (`--reader=app`). The demo's seeded cast\nis still read by the stand-in, so starting the demo calls no model. Real drivers wait for a round of\nreal phone photos of printed SPECIMEN cards. (Project log: D-038.)\n\n## Consequences\n\nAbout 9 seconds per photo, counted from the start, and the price of the cheaper model. It rarely\nnotices an edited document (D-040). The prompt's allowance for SPECIMEN notices has to come out\nbefore a real document is read.\n",
+                                            "date": "2026-09-29T00:00:00Z",
+                                            "format": "Markdown",
+                                            "id": "2",
+                                            "status": "Accepted",
+                                            "title": "The app reads with Gemma 4 31B, and Claude Sonnet when Gemma is slow or fails"
+                                        }
+                                    ]
+                                },
+                                "id": "14",
+                                "name": "Document reader",
+                                "properties": {
+                                    "structurizr.dsl.identifier": "reader"
+                                },
+                                "relationships": [
+                                    {
+                                        "description": "Sends the photo to",
+                                        "destinationId": "21",
+                                        "id": "63",
+                                        "sourceId": "14",
+                                        "tags": "Relationship",
+                                        "technology": "JSON over HTTPS"
+                                    }
+                                ],
+                                "tags": "Element,Component",
+                                "technology": "Gemma 4 31B through OpenRouter; Claude Sonnet when Gemma is slow or fails"
+                            },
+                            {
+                                "description": "Drafts nudges and chat replies. The send gateway decides what goes out. modified — hover for details",
+                                "documentation": {
+                                    "decisions": [
+                                        {
+                                            "content": "# 1. The nudge writer and assistant stay templates until they're measured\n\nDate: 2026-09-29\n\n## Status\n\nAccepted\n\n## Context\n\nNudges and chat replies are drafted by templates today. A model could write them better, but a\nwriter never decides anything: the send gateway decides what goes out and when.\n\n## Decision\n\nDrawn as Modified: the seat exists, filled by templates. A model replaces them after the document\nreader, behind the same interface, and the gateway's limits (one nudge per two days, nothing at\nnight) stay in code.\n\n## Consequences\n\nThe Modified tag goes when a model writes the drafts; the gateway is unchanged either way.\n",
+                                            "date": "2026-09-29T00:00:00Z",
+                                            "format": "Markdown",
+                                            "id": "1",
+                                            "status": "Accepted",
+                                            "title": "The nudge writer and assistant stay templates until they're measured"
+                                        }
+                                    ]
+                                },
+                                "id": "15",
+                                "name": "Nudge writer and assistant",
+                                "properties": {
+                                    "structurizr.dsl.identifier": "writer"
+                                },
+                                "tags": "Element,Component,Modified",
+                                "technology": "Templates today; a model next"
+                            },
+                            {
+                                "description": "Licence, PAN, bank and selfie checks, and DigiLocker. Simulated in this project.",
+                                "documentation": {},
+                                "id": "16",
+                                "name": "Registry adapter",
+                                "properties": {
+                                    "structurizr.dsl.identifier": "registryAdapter"
+                                },
+                                "relationships": [
+                                    {
+                                        "description": "Checks with",
+                                        "destinationId": "22",
+                                        "id": "64",
+                                        "sourceId": "16",
+                                        "tags": "Relationship",
+                                        "technology": "JSON over HTTPS"
+                                    }
+                                ],
+                                "tags": "Element,Component",
+                                "technology": "TypeScript"
+                            },
+                            {
+                                "description": "Who else is paid into this bank account, and are they a real fleet? No answer means a person decides.",
+                                "documentation": {},
+                                "id": "17",
+                                "name": "Trust graph adapter",
+                                "properties": {
+                                    "structurizr.dsl.identifier": "graphAdapter"
+                                },
+                                "relationships": [
+                                    {
+                                        "description": "Brings up to date, then asks who is on the account",
+                                        "destinationId": "19",
+                                        "id": "65",
+                                        "sourceId": "17",
+                                        "tags": "Relationship",
+                                        "technology": "Cypher over HTTPS (Query API)"
+                                    }
+                                ],
+                                "tags": "Element,Component",
+                                "technology": "TypeScript; Neo4j, or in memory in tests"
+                            }
+                        ],
+                        "description": "The only place a driver's status changes. modified — hover for details",
+                        "documentation": {},
+                        "id": "6",
+                        "name": "API server",
+                        "properties": {
+                            "structurizr.dsl.identifier": "api"
+                        },
+                        "relationships": [
+                            {
+                                "description": "Sends nudges and status updates to",
+                                "destinationId": "1",
+                                "id": "30",
+                                "sourceId": "6",
+                                "tags": "Relationship,Asynchronous",
+                                "technology": "Push notification (simulated)"
+                            },
+                            {
+                                "description": "Reads from and appends to",
+                                "destinationId": "18",
+                                "id": "33",
+                                "sourceId": "6",
+                                "tags": "Relationship",
+                                "technology": "SQL"
+                            },
+                            {
+                                "description": "Asks who shares a bank account",
+                                "destinationId": "19",
+                                "id": "34",
+                                "sourceId": "6",
+                                "tags": "Relationship",
+                                "technology": "Cypher over HTTPS (Query API)"
+                            },
+                            {
+                                "description": "Asks a model to read a document photo",
+                                "destinationId": "21",
+                                "id": "35",
+                                "sourceId": "6",
+                                "tags": "Relationship",
+                                "technology": "JSON over HTTPS"
+                            },
+                            {
+                                "description": "Checks the licence, PAN, bank account and selfie with",
+                                "destinationId": "22",
+                                "id": "37",
+                                "sourceId": "6",
+                                "tags": "Relationship",
+                                "technology": "JSON over HTTPS"
+                            },
+                            {
+                                "description": "Books loads for approved drivers in",
+                                "destinationId": "23",
+                                "id": "39",
+                                "sourceId": "6",
+                                "tags": "Relationship",
+                                "technology": "JSON over HTTPS"
+                            }
+                        ],
+                        "tags": "Element,Container,Modified",
+                        "technology": "Node.js, Express and TypeScript"
+                    },
+                    {
+                        "description": "Drivers, documents and chat, plus append-only logs of every event and decision.",
+                        "documentation": {},
+                        "id": "18",
+                        "name": "KYC database",
+                        "properties": {
+                            "structurizr.dsl.identifier": "database"
+                        },
+                        "tags": "Element,Container,Data Store",
+                        "technology": "SQLite"
+                    },
+                    {
+                        "description": "Drivers, bank accounts and fleet owners, to tell a fraud ring from a real fleet.",
+                        "documentation": {
+                            "decisions": [
+                                {
+                                    "content": "# 1. The trust graph moves to Neo4j\n\nDate: 2026-09-29\n\n## Status\n\nAccepted\n\n## Context\n\nThe policy asks the graph one question: is this bank account shared with drivers who have no link\nto its holder? An in-memory graph answered it for the demo's few dozen drivers. A graph database\ncan follow links further, and reviewers can look at it.\n\n## Decision\n\nBuilt in Phase 5: Neo4j Aura holds drivers, bank accounts and fleet owners. The trust graph adapter\ntalks to it over the HTTPS Query API, so there's no driver package. Each check brings the graph up\nto date with the platform, then asks who else is on the account, and the meaning of a shared\naccount stays in one piece of TypeScript both graphs use. When Neo4j can't answer, the adapter says\nso and policy v5 sends the case to a person: no answer is never read as \"no shared account\". The\nswitch was proven the way the OPA one was: 94 of 94 eval decisions identical on Neo4j and in memory.\nThe ops console draws the account and its users from the graph. (Project log: D-039.)\n\n## Consequences\n\nA hosted database and a network hop, about 0.15 seconds per check. The Free instance pauses after\nthree days without writes; until it's resumed, cases go to a person. New signals, such as a shared\nphone or one licence on two signups, would be new facts and new rules: a new policy version,\nreviewed through the decision snapshot like any other change.\n",
+                                    "date": "2026-09-29T00:00:00Z",
+                                    "format": "Markdown",
+                                    "id": "1",
+                                    "status": "Accepted",
+                                    "title": "The trust graph moves to Neo4j"
+                                }
+                            ]
+                        },
+                        "id": "19",
+                        "name": "Trust graph",
+                        "properties": {
+                            "structurizr.dsl.identifier": "trustGraph"
+                        },
+                        "tags": "Element,Container,Data Store",
+                        "technology": "Neo4j Aura"
+                    },
+                    {
+                        "description": "47 made-up drivers with SPECIMEN documents, the gate, the model comparison, real phone photos, IDNet forgeries and the graph parity check. Runs the same compiled policy as the API server.",
+                        "documentation": {},
+                        "id": "20",
+                        "name": "Eval harness",
+                        "properties": {
+                            "structurizr.dsl.identifier": "evals"
+                        },
+                        "relationships": [
+                            {
+                                "description": "Runs every model on the same SPECIMEN photos through",
+                                "destinationId": "21",
+                                "id": "41",
+                                "sourceId": "20",
+                                "tags": "Relationship",
+                                "technology": "JSON over HTTPS"
+                            },
+                            {
+                                "description": "Checks every decision comes out the same on",
+                                "destinationId": "19",
+                                "id": "42",
+                                "sourceId": "20",
+                                "tags": "Relationship",
+                                "technology": "Cypher over HTTPS (Query API)"
+                            }
+                        ],
+                        "tags": "Element,Container",
+                        "technology": "Node.js and TypeScript"
+                    }
+                ],
+                "description": "Nudges drivers through KYC, verifies them, and opens bookings only for verified drivers. modified — hover for details",
+                "documentation": {},
+                "id": "3",
+                "name": "Agent KYCReady",
+                "properties": {
+                    "structurizr.dsl.identifier": "kyc"
+                },
+                "relationships": [
+                    {
+                        "description": "Sends nudges and status updates to",
+                        "destinationId": "1",
+                        "id": "31",
+                        "linkedRelationshipId": "30",
+                        "sourceId": "3",
+                        "technology": "Push notification (simulated)"
+                    },
+                    {
+                        "description": "Asks a model to read a document photo",
+                        "destinationId": "21",
+                        "id": "36",
+                        "linkedRelationshipId": "35",
+                        "sourceId": "3",
+                        "technology": "JSON over HTTPS"
+                    },
+                    {
+                        "description": "Checks the licence, PAN, bank account and selfie with",
+                        "destinationId": "22",
+                        "id": "38",
+                        "linkedRelationshipId": "37",
+                        "sourceId": "3",
+                        "technology": "JSON over HTTPS"
+                    },
+                    {
+                        "description": "Books loads for approved drivers in",
+                        "destinationId": "23",
+                        "id": "40",
+                        "linkedRelationshipId": "39",
+                        "sourceId": "3",
+                        "technology": "JSON over HTTPS"
+                    }
+                ],
+                "tags": "Element,Software System,Modified"
+            },
+            {
+                "description": "One API for Claude and for open-weight models.",
+                "documentation": {},
+                "id": "21",
+                "name": "OpenRouter",
+                "properties": {
+                    "structurizr.dsl.identifier": "openRouter"
+                },
+                "tags": "Element,Software System,Existing System"
+            },
+            {
+                "description": "DigiLocker, the licence and PAN registries, the bank's Rs 1 check, face match. Simulated in this project.",
+                "documentation": {},
+                "id": "22",
+                "name": "Identity and bank registries",
+                "properties": {
+                    "structurizr.dsl.identifier": "registries"
+                },
+                "tags": "Element,Software System,Existing System"
+            },
+            {
+                "description": "The marketplace's own load booking. Simulated in this project: sample loads.",
+                "documentation": {},
+                "id": "23",
+                "name": "Load marketplace",
+                "properties": {
+                    "structurizr.dsl.identifier": "marketplace"
+                },
+                "tags": "Element,Software System,Existing System"
+            }
+        ]
+    },
+    "name": "Agent KYCReady",
+    "properties": {
+        "structurizr.inspection.error": "21",
+        "structurizr.inspection.info": "0",
+        "structurizr.inspection.ignore": "0",
+        "structurizr.inspection.warning": "0"
+    },
+    "views": {
+        "componentViews": [
+            {
+                "automaticLayout": {
+                    "applied": false,
+                    "edgeSeparation": 0,
+                    "implementation": "Graphviz",
+                    "nodeSeparation": 200,
+                    "rankDirection": "LeftRight",
+                    "rankSeparation": 500,
+                    "vertices": false
+                },
+                "containerId": "6",
+                "description": "Inside the API server: the AI proposes, the policy decides inside a contract, only the onboarding service applies a decision, and every status move goes through the status machine.",
+                "elements": [
+                    {
+                        "id": "1",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "4",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "5",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "7",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "8",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "9",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "10",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "11",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "12",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "13",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "14",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "15",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "16",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "17",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "18",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "19",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "21",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "22",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "23",
+                        "x": 0,
+                        "y": 0
+                    }
+                ],
+                "externalContainerBoundariesVisible": false,
+                "key": "Components",
+                "name": "Component View: Agent KYCReady - API server",
+                "order": 3,
+                "properties": {
+                    "structurizr.tooltips": "true"
+                },
+                "relationships": [
+                    {
+                        "id": "25"
+                    },
+                    {
+                        "id": "26"
+                    },
+                    {
+                        "id": "43"
+                    },
+                    {
+                        "id": "44"
+                    },
+                    {
+                        "id": "45"
+                    },
+                    {
+                        "id": "46"
+                    },
+                    {
+                        "id": "47"
+                    },
+                    {
+                        "id": "48"
+                    },
+                    {
+                        "id": "49"
+                    },
+                    {
+                        "id": "50"
+                    },
+                    {
+                        "id": "51"
+                    },
+                    {
+                        "id": "52"
+                    },
+                    {
+                        "id": "53"
+                    },
+                    {
+                        "id": "54"
+                    },
+                    {
+                        "id": "55"
+                    },
+                    {
+                        "id": "56"
+                    },
+                    {
+                        "id": "57"
+                    },
+                    {
+                        "id": "58"
+                    },
+                    {
+                        "id": "59"
+                    },
+                    {
+                        "id": "60"
+                    },
+                    {
+                        "id": "61"
+                    },
+                    {
+                        "id": "62"
+                    },
+                    {
+                        "id": "63"
+                    },
+                    {
+                        "id": "64"
+                    },
+                    {
+                        "id": "65"
+                    }
+                ],
+                "title": "Inside the API server"
+            }
+        ],
+        "configuration": {
+            "branding": {},
+            "styles": {
+                "elements": [
+                    {
+                        "background": "#5f64af",
+                        "shape": "Pipe",
+                        "stroke": "#b9bdf5",
+                        "tag": "Channel"
+                    },
+                    {
+                        "background": "#8b92ce",
+                        "color": "#14162b",
+                        "stroke": "#d2d5fa",
+                        "tag": "Component"
+                    },
+                    {
+                        "background": "#5f64af",
+                        "stroke": "#b9bdf5",
+                        "tag": "Container"
+                    },
+                    {
+                        "tag": "Container Instance"
+                    },
+                    {
+                        "background": "#5f64af",
+                        "shape": "Cylinder",
+                        "stroke": "#b9bdf5",
+                        "tag": "Data Store"
+                    },
+                    {
+                        "color": "#ffffff",
+                        "fontSize": 26,
+                        "strokeWidth": 2,
+                        "tag": "Element"
+                    },
+                    {
+                        "background": "#32433b",
+                        "stroke": "#6fa588",
+                        "tag": "Existing System"
+                    },
+                    {
+                        "background": "#5f64af",
+                        "color": "#ffffff",
+                        "stroke": "#b9bdf5",
+                        "tag": "Infrastructure Node"
+                    },
+                    {
+                        "stroke": "#ffb454",
+                        "strokeWidth": 4,
+                        "tag": "Modified"
+                    },
+                    {
+                        "background": "#32433b",
+                        "shape": "Person",
+                        "stroke": "#6fa588",
+                        "tag": "Person"
+                    },
+                    {
+                        "stroke": "#ff2fd0",
+                        "strokeWidth": 6,
+                        "tag": "Proposal"
+                    },
+                    {
+                        "background": "#494d97",
+                        "stroke": "#a5a9f0",
+                        "tag": "Software System"
+                    },
+                    {
+                        "tag": "Software System Instance"
+                    }
+                ],
+                "relationships": [
+                    {
+                        "color": "#d7dbe3",
+                        "dashed": true,
+                        "fontSize": 24,
+                        "tag": "Asynchronous"
+                    },
+                    {
+                        "color": "#d7dbe3",
+                        "dashed": false,
+                        "fontSize": 24,
+                        "tag": "Relationship"
+                    }
+                ]
+            },
+            "terminology": {}
+        },
+        "containerViews": [
+            {
+                "automaticLayout": {
+                    "applied": false,
+                    "edgeSeparation": 0,
+                    "implementation": "Graphviz",
+                    "nodeSeparation": 400,
+                    "rankDirection": "LeftRight",
+                    "rankSeparation": 500,
+                    "vertices": false
+                },
+                "description": "The two apps, the API server that decides, where data rests, and the eval harness.",
+                "elements": [
+                    {
+                        "id": "1",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "2",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "4",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "5",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "6",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "18",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "19",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "20",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "21",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "22",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "23",
+                        "x": 0,
+                        "y": 0
+                    }
+                ],
+                "externalSoftwareSystemBoundariesVisible": false,
+                "key": "Containers",
+                "name": "Container View: Agent KYCReady",
+                "order": 2,
+                "properties": {
+                    "structurizr.tooltips": "true"
+                },
+                "relationships": [
+                    {
+                        "id": "25"
+                    },
+                    {
+                        "id": "26"
+                    },
+                    {
+                        "id": "27"
+                    },
+                    {
+                        "id": "29"
+                    },
+                    {
+                        "id": "30"
+                    },
+                    {
+                        "id": "32"
+                    },
+                    {
+                        "id": "33"
+                    },
+                    {
+                        "id": "34"
+                    },
+                    {
+                        "id": "35"
+                    },
+                    {
+                        "id": "37"
+                    },
+                    {
+                        "id": "39"
+                    },
+                    {
+                        "id": "41"
+                    },
+                    {
+                        "id": "42"
+                    }
+                ],
+                "softwareSystemId": "3",
+                "title": "Containers"
+            }
+        ],
+        "dynamicViews": [
+            {
+                "automaticLayout": {
+                    "applied": false,
+                    "edgeSeparation": 0,
+                    "implementation": "Graphviz",
+                    "nodeSeparation": 400,
+                    "rankDirection": "LeftRight",
+                    "rankSeparation": 500,
+                    "vertices": false
+                },
+                "description": "A driver, from the first nudge to a first booked load. Step 4: Gemma 4 31B reads the photo, Claude Sonnet if Gemma is slow or fails.",
+                "elementId": "3",
+                "elements": [
+                    {
+                        "id": "1",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "4",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "6",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "18",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "21",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "22",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "23",
+                        "x": 0,
+                        "y": 0
+                    }
+                ],
+                "externalBoundariesVisible": false,
+                "key": "Onboard",
+                "name": "Dynamic View: Agent KYCReady",
+                "order": 4,
+                "properties": {
+                    "structurizr.tooltips": "true"
+                },
+                "relationships": [
+                    {
+                        "description": "Nudges them at the step they're stuck on",
+                        "id": "30",
+                        "order": "1",
+                        "response": false
+                    },
+                    {
+                        "description": "Takes a photo of their licence",
+                        "id": "25",
+                        "order": "2",
+                        "response": false
+                    },
+                    {
+                        "description": "Sends the photo",
+                        "id": "29",
+                        "order": "3",
+                        "response": false
+                    },
+                    {
+                        "description": "Asks a model to read it",
+                        "id": "35",
+                        "order": "4",
+                        "response": false
+                    },
+                    {
+                        "description": "Submits for checking",
+                        "id": "25",
+                        "order": "5",
+                        "response": false
+                    },
+                    {
+                        "description": "Sends the submission",
+                        "id": "29",
+                        "order": "6",
+                        "response": false
+                    },
+                    {
+                        "description": "Checks the licence, PAN, bank account and selfie",
+                        "id": "37",
+                        "order": "7",
+                        "response": false
+                    },
+                    {
+                        "description": "Records the decision and its evidence",
+                        "id": "33",
+                        "order": "8",
+                        "response": false
+                    },
+                    {
+                        "description": "Tells them they're approved",
+                        "id": "30",
+                        "order": "9",
+                        "response": false
+                    },
+                    {
+                        "description": "Books a first load",
+                        "id": "25",
+                        "order": "10",
+                        "response": false
+                    },
+                    {
+                        "description": "Sends the booking",
+                        "id": "29",
+                        "order": "11",
+                        "response": false
+                    },
+                    {
+                        "description": "Books the load, now that the driver is approved",
+                        "id": "39",
+                        "order": "12",
+                        "response": false
+                    }
+                ],
+                "title": "Onboarding",
+                "animations": [
+                    {
+                        "order": 1,
+                        "elements": [
+                            "6",
+                            "1"
+                        ],
+                        "relationships": [
+                            "30"
+                        ]
+                    },
+                    {
+                        "order": 2,
+                        "elements": [
+                            "4"
+                        ],
+                        "relationships": [
+                            "25"
+                        ]
+                    },
+                    {
+                        "order": 3,
+                        "elements": [],
+                        "relationships": [
+                            "29"
+                        ]
+                    },
+                    {
+                        "order": 4,
+                        "elements": [
+                            "21"
+                        ],
+                        "relationships": [
+                            "35"
+                        ]
+                    },
+                    {
+                        "order": 5,
+                        "elements": [],
+                        "relationships": [
+                            "25"
+                        ]
+                    },
+                    {
+                        "order": 6,
+                        "elements": [],
+                        "relationships": [
+                            "29"
+                        ]
+                    },
+                    {
+                        "order": 7,
+                        "elements": [
+                            "22"
+                        ],
+                        "relationships": [
+                            "37"
+                        ]
+                    },
+                    {
+                        "order": 8,
+                        "elements": [
+                            "18"
+                        ],
+                        "relationships": [
+                            "33"
+                        ]
+                    },
+                    {
+                        "order": 9,
+                        "elements": [],
+                        "relationships": [
+                            "30"
+                        ]
+                    },
+                    {
+                        "order": 10,
+                        "elements": [],
+                        "relationships": [
+                            "25"
+                        ]
+                    },
+                    {
+                        "order": 11,
+                        "elements": [],
+                        "relationships": [
+                            "29"
+                        ]
+                    },
+                    {
+                        "order": 12,
+                        "elements": [
+                            "23"
+                        ],
+                        "relationships": [
+                            "39"
+                        ]
+                    }
+                ]
+            },
+            {
+                "automaticLayout": {
+                    "applied": false,
+                    "edgeSeparation": 0,
+                    "implementation": "Graphviz",
+                    "nodeSeparation": 400,
+                    "rankDirection": "LeftRight",
+                    "rankSeparation": 500,
+                    "vertices": false
+                },
+                "description": "A decision that needs a fix, and the way out. A third request for the same fix goes to a person instead.",
+                "elementId": "3",
+                "elements": [
+                    {
+                        "id": "1",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "4",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "6",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "18",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "22",
+                        "x": 0,
+                        "y": 0
+                    }
+                ],
+                "externalBoundariesVisible": false,
+                "key": "Fix",
+                "name": "Dynamic View: Agent KYCReady",
+                "order": 5,
+                "properties": {
+                    "structurizr.tooltips": "true"
+                },
+                "relationships": [
+                    {
+                        "description": "Submits for checking",
+                        "id": "25",
+                        "order": "1",
+                        "response": false
+                    },
+                    {
+                        "description": "Sends the submission",
+                        "id": "29",
+                        "order": "2",
+                        "response": false
+                    },
+                    {
+                        "description": "Checks the licence, PAN, bank account and selfie",
+                        "id": "37",
+                        "order": "3",
+                        "response": false
+                    },
+                    {
+                        "description": "Records the decision: needs a fix, the bank account is in someone else's name",
+                        "id": "33",
+                        "order": "4",
+                        "response": false
+                    },
+                    {
+                        "description": "Asks for an account in their own name, opening the app at the bank step",
+                        "id": "30",
+                        "order": "5",
+                        "response": false
+                    },
+                    {
+                        "description": "Adds their own account and submits again",
+                        "id": "25",
+                        "order": "6",
+                        "response": false
+                    },
+                    {
+                        "description": "Sends the new submission",
+                        "id": "29",
+                        "order": "7",
+                        "response": false
+                    },
+                    {
+                        "description": "Checks everything again, the new account included",
+                        "id": "37",
+                        "order": "8",
+                        "response": false
+                    },
+                    {
+                        "description": "Records the decision: approved",
+                        "id": "33",
+                        "order": "9",
+                        "response": false
+                    }
+                ],
+                "title": "A fix, and the way out",
+                "animations": [
+                    {
+                        "order": 1,
+                        "elements": [
+                            "1",
+                            "4"
+                        ],
+                        "relationships": [
+                            "25"
+                        ]
+                    },
+                    {
+                        "order": 2,
+                        "elements": [
+                            "6"
+                        ],
+                        "relationships": [
+                            "29"
+                        ]
+                    },
+                    {
+                        "order": 3,
+                        "elements": [
+                            "22"
+                        ],
+                        "relationships": [
+                            "37"
+                        ]
+                    },
+                    {
+                        "order": 4,
+                        "elements": [
+                            "18"
+                        ],
+                        "relationships": [
+                            "33"
+                        ]
+                    },
+                    {
+                        "order": 5,
+                        "elements": [],
+                        "relationships": [
+                            "30"
+                        ]
+                    },
+                    {
+                        "order": 6,
+                        "elements": [],
+                        "relationships": [
+                            "25"
+                        ]
+                    },
+                    {
+                        "order": 7,
+                        "elements": [],
+                        "relationships": [
+                            "29"
+                        ]
+                    },
+                    {
+                        "order": 8,
+                        "elements": [],
+                        "relationships": [
+                            "37"
+                        ]
+                    },
+                    {
+                        "order": 9,
+                        "elements": [],
+                        "relationships": [
+                            "33"
+                        ]
+                    }
+                ]
+            },
+            {
+                "automaticLayout": {
+                    "applied": false,
+                    "edgeSeparation": 0,
+                    "implementation": "Graphviz",
+                    "nodeSeparation": 400,
+                    "rankDirection": "LeftRight",
+                    "rankSeparation": 500,
+                    "vertices": false
+                },
+                "description": "A case the policy can't settle, decided by a person: the second way into approved.",
+                "elementId": "3",
+                "elements": [
+                    {
+                        "id": "1",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "2",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "4",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "5",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "6",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "18",
+                        "x": 0,
+                        "y": 0
+                    }
+                ],
+                "externalBoundariesVisible": false,
+                "key": "Review",
+                "name": "Dynamic View: Agent KYCReady",
+                "order": 6,
+                "properties": {
+                    "structurizr.tooltips": "true"
+                },
+                "relationships": [
+                    {
+                        "description": "Submits a case the policy sends to a person",
+                        "id": "29",
+                        "order": "1",
+                        "response": false
+                    },
+                    {
+                        "description": "Queues it for review, with the reasons",
+                        "id": "33",
+                        "order": "2",
+                        "response": false
+                    },
+                    {
+                        "description": "Approves it, or asks for a fix and picks the step to redo",
+                        "id": "27",
+                        "order": "3",
+                        "response": false
+                    },
+                    {
+                        "description": "Records the reviewer's decision",
+                        "id": "32",
+                        "order": "4",
+                        "response": false
+                    },
+                    {
+                        "description": "Moves the driver to Approved and logs who decided",
+                        "id": "33",
+                        "order": "5",
+                        "response": false
+                    },
+                    {
+                        "description": "Tells them they're approved, or opens their app at the step to redo",
+                        "id": "30",
+                        "order": "6",
+                        "response": false
+                    }
+                ],
+                "title": "A person decides",
+                "animations": [
+                    {
+                        "order": 1,
+                        "elements": [
+                            "4",
+                            "6"
+                        ],
+                        "relationships": [
+                            "29"
+                        ]
+                    },
+                    {
+                        "order": 2,
+                        "elements": [
+                            "18"
+                        ],
+                        "relationships": [
+                            "33"
+                        ]
+                    },
+                    {
+                        "order": 3,
+                        "elements": [
+                            "2",
+                            "5"
+                        ],
+                        "relationships": [
+                            "27"
+                        ]
+                    },
+                    {
+                        "order": 4,
+                        "elements": [],
+                        "relationships": [
+                            "32"
+                        ]
+                    },
+                    {
+                        "order": 5,
+                        "elements": [],
+                        "relationships": [
+                            "33"
+                        ]
+                    },
+                    {
+                        "order": 6,
+                        "elements": [
+                            "1"
+                        ],
+                        "relationships": [
+                            "30"
+                        ]
+                    }
+                ]
+            },
+            {
+                "automaticLayout": {
+                    "applied": false,
+                    "edgeSeparation": 0,
+                    "implementation": "Graphviz",
+                    "nodeSeparation": 400,
+                    "rankDirection": "LeftRight",
+                    "rankSeparation": 500,
+                    "vertices": false
+                },
+                "description": "A licence runs out after approval: bookings lock until a renewed licence passes the rules.",
+                "elementId": "3",
+                "elements": [
+                    {
+                        "id": "1",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "4",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "6",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "18",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "22",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "23",
+                        "x": 0,
+                        "y": 0
+                    }
+                ],
+                "externalBoundariesVisible": false,
+                "key": "Lapse",
+                "name": "Dynamic View: Agent KYCReady",
+                "order": 7,
+                "properties": {
+                    "structurizr.tooltips": "true"
+                },
+                "relationships": [
+                    {
+                        "description": "Moves a driver whose licence lapsed to Licence expired, which locks bookings",
+                        "id": "33",
+                        "order": "1",
+                        "response": false
+                    },
+                    {
+                        "description": "Asks for the renewed licence",
+                        "id": "30",
+                        "order": "2",
+                        "response": false
+                    },
+                    {
+                        "description": "Fetches the renewed licence from DigiLocker",
+                        "id": "25",
+                        "order": "3",
+                        "response": false
+                    },
+                    {
+                        "description": "Resubmits",
+                        "id": "29",
+                        "order": "4",
+                        "response": false
+                    },
+                    {
+                        "description": "Checks the renewed licence",
+                        "id": "37",
+                        "order": "5",
+                        "response": false
+                    },
+                    {
+                        "description": "Records the decision: approved again",
+                        "id": "33",
+                        "order": "6",
+                        "response": false
+                    },
+                    {
+                        "description": "Books a load again",
+                        "id": "25",
+                        "order": "7",
+                        "response": false
+                    },
+                    {
+                        "description": "Sends the booking",
+                        "id": "29",
+                        "order": "8",
+                        "response": false
+                    },
+                    {
+                        "description": "Books the load",
+                        "id": "39",
+                        "order": "9",
+                        "response": false
+                    }
+                ],
+                "title": "A licence lapses",
+                "animations": [
+                    {
+                        "order": 1,
+                        "elements": [
+                            "6",
+                            "18"
+                        ],
+                        "relationships": [
+                            "33"
+                        ]
+                    },
+                    {
+                        "order": 2,
+                        "elements": [
+                            "1"
+                        ],
+                        "relationships": [
+                            "30"
+                        ]
+                    },
+                    {
+                        "order": 3,
+                        "elements": [
+                            "4"
+                        ],
+                        "relationships": [
+                            "25"
+                        ]
+                    },
+                    {
+                        "order": 4,
+                        "elements": [],
+                        "relationships": [
+                            "29"
+                        ]
+                    },
+                    {
+                        "order": 5,
+                        "elements": [
+                            "22"
+                        ],
+                        "relationships": [
+                            "37"
+                        ]
+                    },
+                    {
+                        "order": 6,
+                        "elements": [],
+                        "relationships": [
+                            "33"
+                        ]
+                    },
+                    {
+                        "order": 7,
+                        "elements": [],
+                        "relationships": [
+                            "25"
+                        ]
+                    },
+                    {
+                        "order": 8,
+                        "elements": [],
+                        "relationships": [
+                            "29"
+                        ]
+                    },
+                    {
+                        "order": 9,
+                        "elements": [
+                            "23"
+                        ],
+                        "relationships": [
+                            "39"
+                        ]
+                    }
+                ]
+            },
+            {
+                "automaticLayout": {
+                    "applied": false,
+                    "edgeSeparation": 0,
+                    "implementation": "Graphviz",
+                    "nodeSeparation": 400,
+                    "rankDirection": "LeftRight",
+                    "rankSeparation": 500,
+                    "vertices": false
+                },
+                "description": "Inside the API server when a driver submits.",
+                "elementId": "6",
+                "elements": [
+                    {
+                        "id": "7",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "8",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "9",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "10",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "11",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "12",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "16",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "17",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "18",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "19",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "22",
+                        "x": 0,
+                        "y": 0
+                    }
+                ],
+                "externalBoundariesVisible": false,
+                "key": "Decide",
+                "name": "Dynamic View: Agent KYCReady - API server",
+                "order": 8,
+                "properties": {
+                    "structurizr.tooltips": "true"
+                },
+                "relationships": [
+                    {
+                        "description": "Hands over the submission",
+                        "id": "45",
+                        "order": "1",
+                        "response": false
+                    },
+                    {
+                        "description": "Gathers registry answers",
+                        "id": "48",
+                        "order": "2",
+                        "response": false
+                    },
+                    {
+                        "description": "Checks the licence, PAN, bank account and selfie",
+                        "id": "64",
+                        "order": "3",
+                        "response": false
+                    },
+                    {
+                        "description": "Asks who else uses the bank account",
+                        "id": "49",
+                        "order": "4",
+                        "response": false
+                    },
+                    {
+                        "description": "Brings the graph up to date and asks; no answer sends the case to a person",
+                        "id": "65",
+                        "order": "5",
+                        "response": false
+                    },
+                    {
+                        "description": "Asks for a decision on the evidence",
+                        "id": "50",
+                        "order": "6",
+                        "response": false
+                    },
+                    {
+                        "description": "Evaluates the facts",
+                        "id": "55",
+                        "order": "7",
+                        "response": false
+                    },
+                    {
+                        "description": "Applies the minted decision",
+                        "id": "51",
+                        "order": "8",
+                        "response": false
+                    },
+                    {
+                        "description": "Moves the driver",
+                        "id": "56",
+                        "order": "9",
+                        "response": false
+                    },
+                    {
+                        "description": "Appends the decision and its evidence",
+                        "id": "57",
+                        "order": "10",
+                        "response": false
+                    }
+                ],
+                "title": "Inside a decision",
+                "animations": [
+                    {
+                        "order": 1,
+                        "elements": [
+                            "7",
+                            "8"
+                        ],
+                        "relationships": [
+                            "45"
+                        ]
+                    },
+                    {
+                        "order": 2,
+                        "elements": [
+                            "16"
+                        ],
+                        "relationships": [
+                            "48"
+                        ]
+                    },
+                    {
+                        "order": 3,
+                        "elements": [
+                            "22"
+                        ],
+                        "relationships": [
+                            "64"
+                        ]
+                    },
+                    {
+                        "order": 4,
+                        "elements": [
+                            "17"
+                        ],
+                        "relationships": [
+                            "49"
+                        ]
+                    },
+                    {
+                        "order": 5,
+                        "elements": [
+                            "19"
+                        ],
+                        "relationships": [
+                            "65"
+                        ]
+                    },
+                    {
+                        "order": 6,
+                        "elements": [
+                            "10"
+                        ],
+                        "relationships": [
+                            "50"
+                        ]
+                    },
+                    {
+                        "order": 7,
+                        "elements": [
+                            "11"
+                        ],
+                        "relationships": [
+                            "55"
+                        ]
+                    },
+                    {
+                        "order": 8,
+                        "elements": [
+                            "9"
+                        ],
+                        "relationships": [
+                            "51"
+                        ]
+                    },
+                    {
+                        "order": 9,
+                        "elements": [
+                            "12"
+                        ],
+                        "relationships": [
+                            "56"
+                        ]
+                    },
+                    {
+                        "order": 10,
+                        "elements": [
+                            "18"
+                        ],
+                        "relationships": [
+                            "57"
+                        ]
+                    }
+                ]
+            },
+            {
+                "automaticLayout": {
+                    "applied": false,
+                    "edgeSeparation": 0,
+                    "implementation": "Graphviz",
+                    "nodeSeparation": 400,
+                    "rankDirection": "LeftRight",
+                    "rankSeparation": 500,
+                    "vertices": false
+                },
+                "description": "The nudge cycle, each tick of the clock (a daily job in production): at most one nudge per driver every two days, nothing between 9 pm and 8 am.",
+                "elementId": "6",
+                "elements": [
+                    {
+                        "id": "1",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "10",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "12",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "13",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "15",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "18",
+                        "x": 0,
+                        "y": 0
+                    }
+                ],
+                "externalBoundariesVisible": false,
+                "key": "Nudge",
+                "name": "Dynamic View: Agent KYCReady - API server",
+                "order": 9,
+                "properties": {
+                    "structurizr.tooltips": "true"
+                },
+                "relationships": [
+                    {
+                        "description": "Asks whether any approved driver's licence has lapsed",
+                        "id": "58",
+                        "order": "1",
+                        "response": false
+                    },
+                    {
+                        "description": "Moves each one to Licence expired",
+                        "id": "59",
+                        "order": "2",
+                        "response": false
+                    },
+                    {
+                        "description": "Finds each driver's blocker and their last nudge",
+                        "id": "60",
+                        "order": "3",
+                        "response": false
+                    },
+                    {
+                        "description": "Asks for a draft for that blocker",
+                        "id": "61",
+                        "order": "4",
+                        "response": false
+                    },
+                    {
+                        "description": "Sends it, unless it's night or under two days since the last one",
+                        "id": "62",
+                        "order": "5",
+                        "response": false
+                    },
+                    {
+                        "description": "Logs what was sent and what was held, and why",
+                        "id": "60",
+                        "order": "6",
+                        "response": false
+                    }
+                ],
+                "title": "The nudge cycle",
+                "animations": [
+                    {
+                        "order": 1,
+                        "elements": [
+                            "13",
+                            "10"
+                        ],
+                        "relationships": [
+                            "58"
+                        ]
+                    },
+                    {
+                        "order": 2,
+                        "elements": [
+                            "12"
+                        ],
+                        "relationships": [
+                            "59"
+                        ]
+                    },
+                    {
+                        "order": 3,
+                        "elements": [
+                            "18"
+                        ],
+                        "relationships": [
+                            "60"
+                        ]
+                    },
+                    {
+                        "order": 4,
+                        "elements": [
+                            "15"
+                        ],
+                        "relationships": [
+                            "61"
+                        ]
+                    },
+                    {
+                        "order": 5,
+                        "elements": [
+                            "1"
+                        ],
+                        "relationships": [
+                            "62"
+                        ]
+                    },
+                    {
+                        "order": 6,
+                        "elements": [],
+                        "relationships": [
+                            "60"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "systemContextViews": [
+            {
+                "automaticLayout": {
+                    "applied": false,
+                    "edgeSeparation": 0,
+                    "implementation": "Graphviz",
+                    "nodeSeparation": 400,
+                    "rankDirection": "LeftRight",
+                    "rankSeparation": 500,
+                    "vertices": false
+                },
+                "description": "Who uses Agent KYCReady, and what it calls.",
+                "elements": [
+                    {
+                        "id": "1",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "2",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "3",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "21",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "22",
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "id": "23",
+                        "x": 0,
+                        "y": 0
+                    }
+                ],
+                "enterpriseBoundaryVisible": true,
+                "key": "Context",
+                "name": "System Context View: Agent KYCReady",
+                "order": 1,
+                "properties": {
+                    "structurizr.tooltips": "true"
+                },
+                "relationships": [
+                    {
+                        "id": "24"
+                    },
+                    {
+                        "id": "28"
+                    },
+                    {
+                        "id": "31"
+                    },
+                    {
+                        "id": "36"
+                    },
+                    {
+                        "id": "38"
+                    },
+                    {
+                        "id": "40"
+                    }
+                ],
+                "softwareSystemId": "3",
+                "title": "System context"
+            }
+        ]
+    }
+}

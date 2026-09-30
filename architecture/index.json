@@ -1,0 +1,10 @@
+{
+  "generated": "checks/diagram-contrast.mjs --index",
+  "projects": [
+    {
+      "dir": "agent-kycready",
+      "name": "Agent KYCReady",
+      "description": "An AI-native KYC flow for drivers on a logistics marketplace: AI proposes, a policy decides, people decide the hard cases."
+    }
+  ]
+}

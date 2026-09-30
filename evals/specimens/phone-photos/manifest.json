@@ -1,0 +1,161 @@
+{
+  "_what": "The real-photo round (D-038): what to shoot, and what the app's reader must make of each photo. A clean shot (expectIssue null) must pass the photo check and reach its case's expected decision; a bad shot must be caught as that problem. The photos themselves are git-ignored.",
+  "shots": {
+    "daylight": "By a window in daylight, card flat on a plain dark surface, filling most of the frame.",
+    "evening": "Indoor bulb in the evening, card tilted about 15 degrees, from a normal arm's length.",
+    "glare": "Phone flash on, or a lamp reflecting in a bright patch across the card.",
+    "blurry": "Move the phone as you press the shutter, so the text smears.",
+    "cropped": "Frame the card so its bottom third is cut off.",
+    "screen": "Open evals/specimens/print/C01-DL.png on a laptop screen and photograph the screen.",
+    "dark": "Lights off, flash off: only the light from another room."
+  },
+  "photos": [
+    {
+      "file": "C01-DL-daylight.jpg",
+      "case": "C01",
+      "slot": "DL",
+      "shot": "daylight",
+      "expectIssue": null
+    },
+    {
+      "file": "C01-DL-evening.jpg",
+      "case": "C01",
+      "slot": "DL",
+      "shot": "evening",
+      "expectIssue": null
+    },
+    {
+      "file": "C01-PAN-daylight.jpg",
+      "case": "C01",
+      "slot": "PAN",
+      "shot": "daylight",
+      "expectIssue": null
+    },
+    {
+      "file": "C01-PAN-evening.jpg",
+      "case": "C01",
+      "slot": "PAN",
+      "shot": "evening",
+      "expectIssue": null
+    },
+    {
+      "file": "C01-BANK_PROOF-daylight.jpg",
+      "case": "C01",
+      "slot": "BANK_PROOF",
+      "shot": "daylight",
+      "expectIssue": null
+    },
+    {
+      "file": "C01-BANK_PROOF-evening.jpg",
+      "case": "C01",
+      "slot": "BANK_PROOF",
+      "shot": "evening",
+      "expectIssue": null
+    },
+    {
+      "file": "C02-BANK_PROOF-daylight.jpg",
+      "case": "C02",
+      "slot": "BANK_PROOF",
+      "shot": "daylight",
+      "expectIssue": null
+    },
+    {
+      "file": "C02-BANK_PROOF-evening.jpg",
+      "case": "C02",
+      "slot": "BANK_PROOF",
+      "shot": "evening",
+      "expectIssue": null
+    },
+    {
+      "file": "C21-BANK_PROOF-daylight.jpg",
+      "case": "C21",
+      "slot": "BANK_PROOF",
+      "shot": "daylight",
+      "expectIssue": null
+    },
+    {
+      "file": "C21-BANK_PROOF-evening.jpg",
+      "case": "C21",
+      "slot": "BANK_PROOF",
+      "shot": "evening",
+      "expectIssue": null
+    },
+    {
+      "file": "C26-DL-daylight.jpg",
+      "case": "C26",
+      "slot": "DL",
+      "shot": "daylight",
+      "expectIssue": null
+    },
+    {
+      "file": "C26-DL-evening.jpg",
+      "case": "C26",
+      "slot": "DL",
+      "shot": "evening",
+      "expectIssue": null
+    },
+    {
+      "file": "C27-DL-daylight.jpg",
+      "case": "C27",
+      "slot": "DL",
+      "shot": "daylight",
+      "expectIssue": null
+    },
+    {
+      "file": "C27-DL-evening.jpg",
+      "case": "C27",
+      "slot": "DL",
+      "shot": "evening",
+      "expectIssue": null
+    },
+    {
+      "file": "C31-DL-daylight.jpg",
+      "case": "C31",
+      "slot": "DL",
+      "shot": "daylight",
+      "expectIssue": null
+    },
+    {
+      "file": "C31-DL-evening.jpg",
+      "case": "C31",
+      "slot": "DL",
+      "shot": "evening",
+      "expectIssue": null
+    },
+    {
+      "file": "C01-DL-glare.jpg",
+      "case": "C01",
+      "slot": "DL",
+      "shot": "glare",
+      "expectIssue": "PHOTO_GLARE"
+    },
+    {
+      "file": "C01-DL-blurry.jpg",
+      "case": "C01",
+      "slot": "DL",
+      "shot": "blurry",
+      "expectIssue": "PHOTO_BLURRY"
+    },
+    {
+      "file": "C01-DL-cropped.jpg",
+      "case": "C01",
+      "slot": "DL",
+      "shot": "cropped",
+      "expectIssue": "PHOTO_CROPPED"
+    },
+    {
+      "file": "C01-DL-screen.jpg",
+      "case": "C01",
+      "slot": "DL",
+      "shot": "screen",
+      "expectIssue": "SCREEN_PHOTO"
+    },
+    {
+      "file": "C01-DL-dark.jpg",
+      "case": "C01",
+      "slot": "DL",
+      "shot": "dark",
+      "expectIssue": "PHOTO_DARK"
+    }
+  ]
+}

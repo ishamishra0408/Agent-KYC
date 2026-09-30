@@ -1,0 +1,31 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+data/*.sqlite
+data/*.sqlite-*
+# Generated test images are reproducible: npm run specimens
+evals/specimens/*.jpg
+evals/specimens/demo/
+evals/specimens/print/
+# Phone photos stay on this machine: only the instructions and the shot list are tracked
+evals/specimens/phone-photos/*
+!evals/specimens/phone-photos/README.md
+!evals/specimens/phone-photos/manifest.json
+architecture.svg
+.DS_Store
+tools/
+# drawing-office's viewer and palette: no upstream license, so npm run c4 copies them in from tools/
+architecture/viewer.html
+architecture/theme.json
+# drawing-office exports are rebuilt from workspace.dsl (workspace.json stays tracked)
+architecture/*/site/
+architecture/svg/
+# the shareable page and its Graphviz scratch (npm run c4:page)
+architecture/*/page.html
+architecture/*/page/
+# IDNet sample, fetched on demand (npm run idnet:fetch)
+evals/idnet/SD/
+# Claude Code app settings (local preview)
+.claude/

@@ -1,0 +1,15 @@
+{
+  "note": "Written by `npm run policy:build`. Don't edit.",
+  "opa": "1.21.0",
+  "entrypoints": [
+    "kyc/decision",
+    "kyc/photo_check",
+    "kyc/renewal",
+    "kyc/severities",
+    "kyc/version"
+  ],
+  "sources": {
+    "kyc.rego": "ea90b48922be8154634b4cb00fd1f09d60dae03efef0cadde3e0e74e796abeac"
+  },
+  "wasm": "5a551d9f7ed9029262c80deffbb494922cc636f0da497311b7f99f1e174d643f"
+}
