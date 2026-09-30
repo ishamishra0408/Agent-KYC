@@ -3,8 +3,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-// The link preview card (1200 x 630) for the live demo, built from the README screenshot so the two
-// never drift apart: the wordmark with its gold KYC block, one line of value, and the screenshot.
+// The link preview card (1200 x 630) for the live demo, and the picture at the top of the README: the
+// wordmark with its gold KYC block, one line of value, and the demo screenshot (docs/demo.jpg).
 // Public skin only. Usage: npm run og (after re-shooting docs/demo.jpg)
 const root = fileURLToPath(new URL("..", import.meta.url));
 const W = 1200;

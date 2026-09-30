@@ -6,7 +6,7 @@
 
 **Live:** [demo](https://agent-kycready.onrender.com) · [ops console](https://agent-kycready.onrender.com/#/ops) — no login, nothing to install. It runs on stand-ins for the AI reader and the graph, and the first visit can take a minute to wake up.
 
-![A driver's phone beside the ops console: the phone shows a licence renewal reminder; the console shows a case sent to a person because a bank account is shared with strangers](docs/demo.jpg)
+[![Agent KYCReady: driver KYC, rebuilt AI-first. A model reads the documents, a policy decides, people decide the hard cases. Beside it, the demo: a driver's phone with a licence renewal reminder, and the ops console with a case sent to a person because a bank account is shared with strangers](public/og.jpg)](https://agent-kycready.onrender.com)
 
 ## Who it's for
 
