@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { api, type Status } from "../api";
 import { useAction, useData } from "../data";
 import { istTime, t } from "../i18n";
-import { StatusPill, tabList } from "../ui";
+import { Skeleton, StatusPill, tabList } from "../ui";
 import { confetti, play } from "../whimsy";
 import { Inbox } from "./Inbox";
 import { Kyc } from "./Kyc";
@@ -61,7 +61,7 @@ export function PhoneApp({ id, bare = false }: { id: string; bare?: boolean }) {
   if (!view) {
     return (
       <div className={shell} ref={phoneRef}>
-        {error ? <div className="empty">Couldn't load this driver: {error.message}</div> : <div className="empty">Loading…</div>}
+        {error ? <div className="empty">Couldn't load this driver: {error.message}</div> : <Skeleton lines={5} />}
       </div>
     );
   }

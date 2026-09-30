@@ -74,12 +74,43 @@
   --glass-accent: var(--primary);
   --glass-shadow: 0 1px 1px hsl(20deg 30% 20% / 0.06), 0 10px 30px hsl(20deg 40% 15% / 0.16);
   --glass-blur: blur(20px) saturate(180%);
+  --shot-filter: none;
+  --glass-btn: hsl(0deg 0% 100% / 0.6);
+  /* The story's cards (D-043): 4:3, as wide as the screen's height allows. */
+  --story-card: min(44vw, 640px, max(260px, (100dvh - 300px) * 4 / 3));
+  --story-gap: 6vw;
   --phone-ambient:
     radial-gradient(360px 280px at 0% 0%, var(--bg-accent), transparent 70%),
     radial-gradient(340px 320px at 100% 100%, var(--bg-accent-2), transparent 70%),
     var(--surface);
-  --radius: 10px;
-  --radius-lg: 18px;
+  /* Shape (D-042): a pill for buttons, chips, tabs and toggles; --radius-lg for cards and panels,
+     clickable ones included; --radius for small inner pieces. Circles, the phone frame, the bottom
+     sheet and tiny decorations are the only exceptions; the logo keeps its own. */
+  --radius: 8px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+  /* Type scale: seven steps, nothing in between. */
+  --fs-2xs: 11px;
+  --fs-xs: 12px;
+  --fs-sm: 13.5px;
+  --fs-base: 14.5px;
+  --fs-md: 16px;
+  --fs-lg: 18px;
+  --fs-xl: 24px;
+  /* Spacing scale. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  /* Motion: one easing and three durations; the spring stays for the playful moves. */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-med: 300ms;
+  --dur-slow: 700ms;
+  /* A keycap's shadow, tinted to the page (never pure black on a light ground). */
+  --press-shadow: hsl(20deg 30% 20% / 0.22);
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --font-body: "Mukta", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: "Baloo 2", "Mukta", system-ui, sans-serif;
@@ -89,6 +120,7 @@
 /* Two copies of the dark tokens: one follows the system, one follows the theme button. Keep them identical. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    --press-shadow: hsl(15deg 50% 2% / 0.5);
     --bg: hsl(15deg 30% 6%);
     --bg-accent: hsl(46deg 100% 50% / 0.06);
     --bg-accent-2: hsl(21deg 40% 35% / 0.16);
@@ -145,11 +177,14 @@
     --glass-well: hsl(0deg 0% 0% / 0.28);
     --glass-accent: var(--gold);
     --glass-shadow: 0 1px 2px hsl(15deg 50% 2% / 0.5), 0 12px 32px hsl(15deg 50% 2% / 0.55);
+    --shot-filter: brightness(0.86);
+    --glass-btn: hsl(20deg 14% 24% / 0.82);
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
+  --press-shadow: hsl(15deg 50% 2% / 0.5);
   --bg: hsl(15deg 30% 6%);
   --bg-accent: hsl(46deg 100% 50% / 0.06);
   --bg-accent-2: hsl(21deg 40% 35% / 0.16);
@@ -206,6 +241,8 @@
   --glass-well: hsl(0deg 0% 0% / 0.28);
   --glass-accent: var(--gold);
   --glass-shadow: 0 1px 2px hsl(15deg 50% 2% / 0.5), 0 12px 32px hsl(15deg 50% 2% / 0.55);
+  --shot-filter: brightness(0.86);
+  --glass-btn: hsl(20deg 14% 24% / 0.82);
   color-scheme: dark;
 }
 
@@ -222,7 +259,7 @@ body {
   margin: 0;
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--fs-base);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -234,6 +271,7 @@ body {
     var(--bg);
   background-attachment: fixed;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 button {
@@ -261,7 +299,7 @@ code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.88em;
   padding: 1px 6px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: var(--surface-2);
 }
 
@@ -273,7 +311,7 @@ select {
   background: var(--surface);
   color: var(--text);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 :focus-visible {
@@ -290,14 +328,14 @@ select {
   gap: 6px;
   min-height: 36px;
   padding: 0 14px;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   border: 1.5px solid var(--border-2);
   background: var(--surface);
   color: var(--text);
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: transform 160ms var(--spring), background 120ms, border-color 120ms;
+  transition: transform var(--dur-fast) var(--spring), background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
 }
 .btn:hover {
   background: var(--surface-2);
@@ -322,7 +360,7 @@ select {
 .btn.small {
   min-height: 30px;
   padding: 0 11px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .btn.block {
   width: 100%;
@@ -364,13 +402,13 @@ select {
 .push-edge {
   position: absolute;
   inset: 0;
-  border-radius: 12px;
+  border-radius: var(--radius-pill);
 }
 .push-shadow {
-  background: hsl(0deg 0% 0% / 0.22);
+  background: var(--press-shadow);
   transform: translateY(2px);
   filter: blur(3px);
-  transition: transform 500ms var(--spring);
+  transition: transform var(--dur-med) var(--spring);
 }
 .push-edge {
   background: var(--primary-edge);
@@ -383,17 +421,17 @@ select {
   gap: 7px;
   min-height: 40px;
   padding: 0 18px;
-  border-radius: 12px;
+  border-radius: var(--radius-pill);
   background: var(--primary);
   color: var(--on-primary);
   transform: translateY(-4px);
-  transition: transform 500ms var(--spring);
-  font-size: 15px;
+  transition: transform var(--dur-med) var(--spring);
+  font-size: var(--fs-base);
 }
 .push.sm .push-front {
   min-height: 30px;
   padding: 0 12px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   transform: translateY(-3px);
 }
 .push.gold .push-edge {
@@ -442,8 +480,8 @@ select {
   align-items: center;
   gap: 4px;
   padding: 1px 9px;
-  border-radius: 999px;
-  font-size: 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
   font-weight: 600;
   border: 1.5px solid transparent;
   white-space: nowrap;
@@ -508,7 +546,7 @@ select {
   background: transparent;
   color: var(--sim);
   border: 1px dashed var(--sim);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 500;
   line-height: 1.5;
 }
@@ -527,11 +565,11 @@ select {
   color: var(--text-3);
 }
 .small {
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .error-text {
   color: var(--danger);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   margin: 0;
 }
 .row {
@@ -552,7 +590,7 @@ select {
 }
 /* Icons that wiggle when you hover them. */
 .boop svg {
-  transition: transform 450ms var(--spring);
+  transition: transform var(--dur-med) var(--spring);
 }
 .boop:hover svg {
   transform: rotate(-12deg) scale(1.12);
@@ -642,7 +680,7 @@ select {
 }
 .demo-bar .error-text {
   padding: 2px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 /* High-contrast mode drops the pill backgrounds, so the selection gets an outline instead. */
 @media (forced-colors: active) {
@@ -685,8 +723,11 @@ select {
   gap: 8px;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 19px;
+  font-size: var(--fs-lg);
   letter-spacing: -0.01em;
+}
+.brand-mark {
+  display: inline-flex;
 }
 .brand .accent {
   background: var(--gold);
@@ -700,7 +741,7 @@ select {
   align-items: center;
   gap: 6px;
   padding: 4px 11px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-2);
   border: 1.5px solid var(--border);
   font-variant-numeric: tabular-nums;
@@ -711,7 +752,7 @@ select {
   place-items: center;
   width: 34px;
   height: 34px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1.5px solid var(--border-2);
   background: var(--surface);
   cursor: pointer;
@@ -723,7 +764,13 @@ select {
 }
 /* The demo fills the window exactly: bar on top, phone and console share the rest. */
 .demo-page {
+  position: relative;
+}
+.demo-screen {
+  position: relative;
+  z-index: 1;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -759,9 +806,9 @@ select {
   transform: translateX(-50%);
   z-index: 50;
   padding: 10px 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-weight: 600;
   animation: toast-in 380ms var(--spring);
 }
@@ -809,9 +856,10 @@ select {
 }
 
 @media (max-width: 980px) {
-  .demo-page {
+  .demo-screen {
     height: auto;
     min-height: 100vh;
+    min-height: 100dvh;
   }
   .demo-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -832,6 +880,7 @@ select {
   width: 390px;
   max-width: 100%;
   height: min(790px, calc(100vh - 190px));
+  height: min(790px, calc(100dvh - 190px));
   min-height: 560px;
   margin: 0 auto;
   border-radius: 46px;
@@ -848,13 +897,14 @@ select {
   border-radius: 0;
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   box-shadow: none;
 }
 .phone-status {
   display: flex;
   justify-content: space-between;
   padding: 8px 24px 0;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -873,7 +923,7 @@ select {
   margin: 0;
   line-height: 1.3;
   font-family: var(--font-display);
-  font-size: 17px;
+  font-size: var(--fs-lg);
 }
 /* Where focus lands when a sheet closes and its opener is busy: a landing spot, not a control. */
 .phone-body:focus,
@@ -903,7 +953,7 @@ select {
   grid-template-columns: repeat(3, 1fr);
   gap: 4px;
   padding: 5px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 .tabbar button {
   display: flex;
@@ -912,17 +962,17 @@ select {
   gap: 1px;
   padding: 6px 0 7px;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: none;
-  font-size: 12px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--text-2);
   cursor: pointer;
   position: relative;
-  transition: background 250ms, color 250ms, box-shadow 250ms;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
 }
 .tabbar button svg {
-  transition: transform 450ms var(--spring);
+  transition: transform var(--dur-med) var(--spring);
 }
 .tabbar button[aria-selected="true"] {
   color: var(--glass-accent);
@@ -939,10 +989,10 @@ select {
   min-width: 17px;
   height: 17px;
   padding: 0 4px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--gold);
   color: var(--on-gold);
-  font-size: 10.5px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   display: grid;
   place-items: center;
@@ -956,19 +1006,19 @@ select {
 .lang-toggle {
   display: inline-flex;
   padding: 3px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--glass-well);
 }
 .lang-toggle button {
   border: none;
   background: transparent;
   padding: 1px 11px;
-  border-radius: 999px;
-  font-size: 13px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
   font-weight: 600;
   cursor: pointer;
   color: var(--text);
-  transition: background 200ms, color 200ms, box-shadow 200ms;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
 }
 .lang-toggle button[aria-pressed="true"] {
   background: var(--glass-pill);
@@ -992,7 +1042,7 @@ select {
 .road-lane {
   position: relative;
   height: 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--road);
   overflow: hidden;
 }
@@ -1013,13 +1063,13 @@ select {
   bottom: 0;
   background: var(--caramel);
   opacity: 0.55;
-  transition: width 700ms var(--spring);
+  transition: width var(--dur-slow) var(--spring);
 }
 .road-truck {
   position: absolute;
   top: 0;
   transform: translateX(-50%);
-  transition: left 900ms var(--spring);
+  transition: left var(--dur-slow) var(--spring);
   z-index: 2;
 }
 .milestones {
@@ -1032,7 +1082,7 @@ select {
   flex-direction: column;
   align-items: center;
   gap: 1px;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 600;
   color: var(--text-3);
   text-align: center;
@@ -1044,7 +1094,7 @@ select {
   background: var(--surface-3);
   border: 1.5px solid var(--border-2);
   transform: rotate(45deg);
-  transition: background 300ms, transform 400ms var(--spring);
+  transition: background var(--dur-fast) var(--ease), transform var(--dur-med) var(--spring);
 }
 .milestone.done {
   color: var(--primary);
@@ -1078,9 +1128,9 @@ select {
 }
 .doc-tile {
   border: 1.5px dashed var(--border-2);
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 4px;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 600;
   text-align: center;
   color: var(--text-3);
@@ -1091,13 +1141,13 @@ select {
   align-items: center;
   justify-content: center;
   gap: 2px;
-  transition: transform 300ms var(--spring);
+  transition: transform var(--dur-med) var(--spring);
 }
 .doc-tile img {
   width: 100%;
   height: 32px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: calc(var(--radius) - 2px);
 }
 .doc-tile.ok {
   border-style: solid;
@@ -1134,8 +1184,8 @@ select {
   white-space: pre-line;
   max-width: 86%;
   padding: 8px 12px;
-  border-radius: 16px;
-  font-size: 14.5px;
+  border-radius: var(--radius-lg);
+  font-size: var(--fs-base);
   line-height: 1.45;
   border: 1.5px solid transparent;
   animation: bubble-in 380ms var(--spring);
@@ -1148,7 +1198,7 @@ select {
 }
 .bubble .who {
   display: block;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   margin-bottom: 1px;
   letter-spacing: 0.01em;
@@ -1220,13 +1270,13 @@ select {
   flex: none;
   border: 1.5px solid var(--border-2);
   background: var(--surface);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 3px 11px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--text-2);
   cursor: pointer;
-  transition: transform 250ms var(--spring), border-color 150ms;
+  transition: transform var(--dur-med) var(--spring), border-color var(--dur-fast) var(--ease);
 }
 .faq-row button:hover {
   transform: translateY(-2px);
@@ -1243,7 +1293,7 @@ select {
 }
 .action-bar strong {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: var(--fs-md);
 }
 /* Two actions side by side: keep each label on one line (Hindi labels run longer). */
 .action-bar .row .push-front {
@@ -1251,7 +1301,7 @@ select {
   white-space: nowrap;
 }
 .consent {
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   color: var(--text-2);
   line-height: 1.45;
 }
@@ -1291,7 +1341,7 @@ select {
 }
 .sheet strong {
   font-family: var(--font-display);
-  font-size: 17px;
+  font-size: var(--fs-lg);
 }
 .shot-grid {
   display: grid;
@@ -1300,21 +1350,21 @@ select {
 }
 .shot {
   border: 1.5px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 5px;
   background: var(--surface-2);
   cursor: pointer;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--text-2);
-  transition: transform 300ms var(--spring), border-color 150ms;
+  transition: transform var(--dur-med) var(--spring), border-color var(--dur-fast) var(--ease);
 }
 .shot img {
   width: 100%;
   height: 90px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--radius);
   display: block;
   margin-bottom: 4px;
 }
@@ -1331,7 +1381,7 @@ select {
   padding: 14px;
 }
 .label-card {
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   border: 1.5px solid var(--border);
   border-top: 5px solid var(--gold);
   background: var(--surface);
@@ -1347,7 +1397,7 @@ select {
   padding: 6px 12px;
   background: var(--surface-2);
   border-bottom: 1.5px dashed var(--border-2);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1380,7 +1430,7 @@ select {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 104px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--surface);
   border: 1.5px solid var(--border);
   box-shadow: var(--shadow-sm);
@@ -1416,7 +1466,7 @@ select {
   column-gap: 8px;
   font-weight: 700;
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: var(--fs-base);
   line-height: 1.25;
 }
 .route .dot {
@@ -1445,12 +1495,12 @@ select {
   justify-content: center;
   gap: 8px;
   background: var(--surface-2);
-  border-radius: 0 16px 16px 0;
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
 }
 .fare {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 18px;
+  font-size: var(--fs-lg);
 }
 .stamp {
   position: absolute;
@@ -1460,11 +1510,11 @@ select {
   rotate: -14deg;
   padding: 1px 10px;
   border: 3px solid var(--rules);
-  border-radius: 8px;
+  border-radius: var(--radius);
   color: var(--rules);
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 17px;
+  font-size: var(--fs-lg);
   letter-spacing: 0.08em;
   opacity: 0.85;
   pointer-events: none;
@@ -1480,7 +1530,7 @@ select {
   margin: 24px 14px;
   padding: 22px;
   text-align: center;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   border: 2px dashed var(--border-2);
   color: var(--text-2);
   display: flex;
@@ -1490,7 +1540,7 @@ select {
 }
 .locked strong {
   font-family: var(--font-display);
-  font-size: 17px;
+  font-size: var(--fs-lg);
   color: var(--text);
 }
 .empty {
@@ -1552,11 +1602,13 @@ select {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 160px);
+  height: calc(100dvh - 160px);
   min-height: 560px;
   overflow: hidden;
 }
 .ops.bare {
   height: 100vh;
+  height: 100dvh;
   border-radius: 0;
 }
 .ops-head {
@@ -1565,7 +1617,7 @@ select {
 .ops-head h1,
 .ops-head h2 {
   margin: 0;
-  font-size: 19px;
+  font-size: var(--fs-lg);
 }
 /* A segmented control: a well on the solid card, the selected section a raised pill with a gold edge. */
 .ops-tabs {
@@ -1573,7 +1625,7 @@ select {
   gap: 2px;
   margin: 10px 12px 0;
   padding: 4px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--glass-well);
   overflow-x: auto;
   scrollbar-width: none;
@@ -1586,9 +1638,9 @@ select {
   cursor: pointer;
   color: var(--text-2);
   font-weight: 600;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   white-space: nowrap;
-  transition: color 150ms, background 150ms, box-shadow 150ms;
+  transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
 }
 .ops-tabs button:hover {
   color: var(--text);
@@ -1628,17 +1680,24 @@ select {
   text-align: left;
   border: 1.5px solid var(--border);
   background: var(--surface);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   padding: 10px 12px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: 6px;
   box-shadow: var(--shadow-sm);
-  transition: transform 300ms var(--spring), border-color 150ms;
+  transition: transform var(--dur-med) var(--spring), border-color var(--dur-fast) var(--ease);
 }
 .queue button:hover {
   transform: translateY(-2px);
+}
+/* A small press on anything clickable that isn't a keycap, like the keycaps' own. */
+.queue button:active,
+.shot:active,
+.faq-row button:active {
+  transform: scale(0.98);
+  transition-duration: 40ms;
 }
 .queue button[aria-pressed="true"] {
   border-color: var(--focus);
@@ -1646,7 +1705,17 @@ select {
 }
 .queue strong {
   font-family: var(--font-display);
-  font-size: 15.5px;
+  font-size: var(--fs-md);
+}
+/* All drivers: the same cards, tighter, since the whole platform is listed. */
+.queue.compact {
+  gap: 6px;
+}
+.queue.compact button {
+  padding: 8px 10px;
+}
+.queue.compact strong {
+  font-size: var(--fs-base);
 }
 .section {
   display: flex;
@@ -1654,30 +1723,35 @@ select {
   gap: 8px;
 }
 .section h3 {
-  font-size: 12px;
-  color: var(--text-3);
-  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  color: var(--text);
+  font-family: var(--font-display);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+}
+.summary span {
+  max-width: 65ch;
 }
 .summary {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 4px 8px;
-  font-size: 14px;
+  margin: 0;
+  font-size: var(--fs-base);
   color: var(--text-2);
+}
+.summary-text {
+  flex-basis: 100%;
 }
 .doc-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 10px;
 }
 .doc-card {
   border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 8px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-2);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1685,7 +1759,7 @@ select {
 }
 .doc-card img {
   width: 100%;
-  border-radius: 9px;
+  border-radius: var(--radius);
   display: block;
   aspect-ratio: 1280 / 860;
   object-fit: cover;
@@ -1695,7 +1769,7 @@ select {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 2px 10px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   margin: 0;
 }
 .kv dt {
@@ -1704,13 +1778,13 @@ select {
 .kv dd {
   margin: 0;
   font-variant-numeric: tabular-nums;
-  word-break: break-word;
+  white-space: nowrap; /* document fields are short: a number must not break mid-way */
 }
 .warn-box {
   padding: 2px 0 2px 10px;
   border-left: 3px solid var(--danger);
   color: var(--danger);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .reason {
   display: flex;
@@ -1733,7 +1807,7 @@ select {
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-2);
 }
 .checks li {
@@ -1756,6 +1830,38 @@ select {
 .result.pass {
   color: var(--rules);
 }
+.result .why {
+  font-weight: 500;
+  color: var(--text-2);
+}
+/* A row's label is body text, not a column heading: no header underline. */
+table.table tbody th[scope="row"] {
+  border-bottom: none;
+}
+/* A reader's name labels its row: body text, not a column heading. */
+.table.tests th[scope="row"] {
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text);
+  padding: 9px 8px;
+}
+.table.tests tr.group th {
+  border-bottom: none;
+  padding-top: var(--space-4);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--text-2);
+  text-align: left;
+}
+.table.tests tbody + tbody tr.group th {
+  border-top: 1px solid var(--border);
+}
+.table.tests td.bad-count {
+  color: var(--danger);
+  font-weight: 600;
+}
 .result.fail {
   color: var(--danger);
 }
@@ -1763,14 +1869,14 @@ select {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 14px;
-  border-radius: 16px;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
   border: 1.5px solid var(--border);
   background: var(--surface-2);
 }
 .decide strong {
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: var(--fs-md);
 }
 .decide textarea {
   min-height: 64px;
@@ -1789,7 +1895,7 @@ select {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 .timeline li {
   display: grid;
@@ -1800,61 +1906,518 @@ select {
 table.table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
 }
 table.table th {
   text-align: left;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-3);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 6px 8px;
+  font-size: var(--fs-xs);
+  padding: var(--space-2);
   border-bottom: 1.5px solid var(--border);
   white-space: nowrap;
 }
+/* Rows are separated by space, not a line under each one; groups get one soft divider. */
 table.table td {
-  padding: 9px 8px;
-  border-bottom: 1.5px solid var(--border);
+  padding: 10px var(--space-2);
   vertical-align: top;
 }
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--space-3);
+}
+.case-stack {
+  gap: var(--space-5);
+}
+.case-name {
+  font-size: var(--fs-lg);
 }
 .metric {
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
   background: var(--surface-2);
   border: 1.5px solid var(--border);
 }
 .metric .value {
   font-family: var(--font-display);
-  font-size: 26px;
-  font-weight: 800;
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  line-height: 1.3;
   font-variant-numeric: tabular-nums;
 }
-.funnel-row {
-  display: grid;
-  grid-template-columns: 150px 1fr 40px;
-  gap: 10px;
-  align-items: center;
+/* The funnel: a slim, solid bar per stage; the numbers carry the story. */
+.table.funnel th[scope="row"] {
+  font-size: var(--fs-sm);
   font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text);
+  padding: 9px 8px;
+  white-space: nowrap;
+}
+.table.funnel td {
+  vertical-align: middle;
+}
+.table.funnel .funnel-cell {
+  width: 55%;
+}
+.table.funnel .num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.table.funnel .worst {
+  color: var(--danger);
+  font-weight: 700;
 }
 .funnel-bar {
-  height: 24px;
-  border-radius: 999px;
-  background: var(--surface-3);
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: transparent;
   position: relative;
   overflow: hidden;
 }
 .funnel-bar span {
   position: absolute;
   inset: 0 auto 0 0;
-  border-radius: 999px;
-  background: repeating-linear-gradient(-45deg, var(--primary) 0 10px, color-mix(in srgb, var(--primary) 82%, white) 10px 20px);
-  transition: width 900ms var(--spring);
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  transition: width var(--dur-slow) var(--spring);
+}
+
+/* Background paths (D-043, ported from Kokonut UI, MIT): slow, faint routes behind the demo page,
+   in the theme's warm tones. Still under reduced motion; gone in high contrast. */
+.bg-paths {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.35;
+}
+.bg-paths svg {
+  width: 100%;
+  height: 100%;
+  /* The whole drawing drifts as one layer, so the browser moves it without repainting the paths. */
+  will-change: translate;
+  animation: drift 16s ease-in-out infinite alternate;
+}
+.bg-paths-stop-a {
+  stop-color: var(--kraft);
+}
+.bg-paths-stop-b {
+  stop-color: var(--caramel);
+}
+.bg-paths-stop-c {
+  stop-color: var(--gold);
+}
+.bg-paths-secondary {
+  opacity: 0.8;
+}
+.bg-paths-accent {
+  opacity: 0.6;
+}
+@keyframes drift {
+  to {
+    translate: 0 -14px;
+  }
+}
+@media (forced-colors: active) {
+  .bg-paths {
+    display: none;
+  }
+}
+
+/* Liquid-glass buttons (D-043): only on the page itself (the story's step buttons, over the page and
+   its background paths), never on a glass bar, which would leave them nothing to show (D-037). A frost layer everywhere, and a
+   lens layer that Chromium bends through the SVG filter; other browsers skip the lens. */
+.glass-btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--glass-btn);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 var(--glass-sheen),
+    inset 0 0 0 1px var(--glass-edge),
+    inset 0 -1px 1px var(--glass-rim),
+    0 1px 2px var(--press-shadow),
+    0 6px 16px var(--press-shadow);
+  transition:
+    transform var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+.glass-btn::before,
+.glass-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.glass-btn::before {
+  -webkit-backdrop-filter: blur(3px) saturate(170%);
+  backdrop-filter: blur(3px) saturate(170%);
+}
+.glass-btn::after {
+  backdrop-filter: url(#liquid-glass);
+}
+.glass-btn:hover:not(:disabled) {
+  transform: translateY(-1px) scale(1.04);
+}
+.glass-btn:active:not(:disabled) {
+  transform: scale(0.96);
+  transition-duration: 40ms;
+}
+.glass-btn:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .glass-btn {
+    background: var(--surface);
+  }
+  .glass-btn::before,
+  .glass-btn::after {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .glass-btn {
+    border: 1px solid ButtonText;
+  }
+}
+
+/* The streamed summary (D-043): citations as small numbered links, sources a click away. */
+.summary-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.cite {
+  display: inline-block;
+  margin-left: 3px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--link);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  line-height: 1.5;
+  vertical-align: 2px;
+  text-decoration: none;
+}
+.cite:hover {
+  text-decoration: underline;
+}
+.streaming {
+  display: block;
+}
+/* While streaming: an invisible copy of the whole text gives the box its final size; the words so far
+   are drawn over it. */
+.stream-frame {
+  position: relative;
+  display: block;
+}
+.stream-ghost {
+  visibility: hidden;
+}
+.stream-live {
+  position: absolute;
+  inset: 0;
+}
+.stream-caret {
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -2px;
+  border-radius: 2px;
+  background: var(--ai);
+  animation: caret 0.9s steps(1) infinite;
+}
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+.sources {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+}
+.sources summary {
+  cursor: pointer;
+  width: fit-content;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.sources ol {
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.sources li:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/* How it works (D-043): the steps as cards on a track, after Hyperiux's Cards Rotate Slider. A plain grid
+   by default; where scroll-driven animation is on, scrolling pans the track and each card turns in, sits
+   flat, then turns away. */
+.story {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 48px;
+}
+.story-stage {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+.story-title {
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  text-align: center;
+}
+.story-track {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.story-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: top;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  background: var(--surface-2);
+  /* Light-theme pictures, dimmed a little on a dark page. */
+  filter: var(--shot-filter);
+}
+.story-caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 0;
+  font-size: var(--fs-md);
+  color: var(--text-2);
+}
+.story-caption strong {
+  font-family: var(--font-display);
+  color: var(--text);
+}
+.story-num {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+.story-nav {
+  display: none;
+}
+@media (max-width: 560px) {
+  .story-track {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 761px) {
+    /* The stage sticks while the section scrolls by (two screens of scroll). */
+    .story {
+      height: 300vh;
+      view-timeline: --story block;
+      padding-bottom: 0;
+    }
+    .story-stage {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100dvh;
+      max-width: none;
+      padding: 0;
+      overflow: hidden;
+      perspective: 1300px;
+    }
+    .story-title {
+      position: absolute;
+      top: 7vh;
+      left: 0;
+      right: 0;
+      margin: 0;
+    }
+    .story-track {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: flex;
+      gap: var(--story-gap);
+      transform-style: preserve-3d;
+      animation: story-pan linear both;
+      animation-timeline: --story;
+      animation-range: contain 0% contain 100%;
+    }
+    .story-card {
+      flex: none;
+      width: var(--story-card);
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --story;
+    }
+    /* Each card turns while the track moves to or from it: story-pan's moves are 10-30%, 40-60% and
+       70-90% of the scroll. */
+    .story-card.s1 {
+      animation-name: story-turn-out;
+      animation-range: contain 10% contain 30%;
+    }
+    .story-card.s2 {
+      animation-name: story-turn;
+      animation-range: contain 10% contain 60%;
+    }
+    .story-card.s3 {
+      animation-name: story-turn;
+      animation-range: contain 40% contain 90%;
+    }
+    .story-card.s4 {
+      animation-name: story-turn-in;
+      animation-range: contain 70% contain 90%;
+    }
+    .story-nav {
+      position: absolute;
+      bottom: 6vh;
+      left: 50%;
+      translate: -50% 0;
+      display: flex;
+      gap: var(--space-2);
+    }
+    .story-nav .glass-btn {
+      justify-content: center;
+      width: 40px;
+      min-height: 40px;
+      padding: 0;
+      animation: story-step-on linear none;
+      animation-timeline: --story;
+    }
+    /* The step whose card is nearest the middle is marked. */
+    .story-nav .s1 {
+      animation-range: cover 0% contain 20%;
+    }
+    .story-nav .s2 {
+      animation-range: contain 20% contain 50%;
+    }
+    .story-nav .s3 {
+      animation-range: contain 50% contain 80%;
+    }
+    .story-nav .s4 {
+      /* The page ends where the section does, so the last step's range runs past it. */
+      animation-range: contain 80% cover 100%;
+    }
+  }
+}
+@keyframes story-pan {
+  0%,
+  10% {
+    translate: calc(var(--story-card) / -2) -50%;
+  }
+  30%,
+  40% {
+    translate: calc(var(--story-card) * -1.5 - var(--story-gap)) -50%;
+  }
+  60%,
+  70% {
+    translate: calc(var(--story-card) * -2.5 - var(--story-gap) * 2) -50%;
+  }
+  90%,
+  100% {
+    translate: calc(var(--story-card) * -3.5 - var(--story-gap) * 3) -50%;
+  }
+}
+@keyframes story-turn {
+  0% {
+    transform: rotateY(-62deg) rotateZ(-3deg) scale(0.88);
+    opacity: 0.55;
+  }
+  40%,
+  60% {
+    transform: none;
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(52deg) rotateZ(2deg) scale(0.88);
+    opacity: 0.55;
+  }
+}
+@keyframes story-turn-in {
+  from {
+    transform: rotateY(-62deg) rotateZ(-3deg) scale(0.88);
+    opacity: 0.55;
+  }
+}
+@keyframes story-turn-out {
+  to {
+    transform: rotateY(52deg) rotateZ(2deg) scale(0.88);
+    opacity: 0.55;
+  }
+}
+@keyframes story-step-on {
+  from,
+  to {
+    background: var(--primary);
+    color: var(--on-primary);
+  }
+}
+
+/* Loading: the shape of what's coming, not a word. */
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+}
+.skeleton-line {
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--surface-2), var(--surface-3), var(--surface-2));
+  background-size: 200% 100%;
+  animation: shimmer 1.4s var(--ease) infinite;
+}
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }
 
 /* Trust graph */
@@ -1885,17 +2448,28 @@ table.table td {
   stroke-dasharray: 6 5;
 }
 .g-title {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   fill: var(--text);
   font-family: var(--font-display);
 }
 .g-sub {
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   fill: var(--text-2);
 }
 
 @media (max-width: 760px) {
+  /* All drivers on a phone: a strip to swipe through, so the case stays in view beneath it. */
+  .queue.compact {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scroll-snap-type: x mandatory;
+  }
+  .queue.compact button {
+    flex: 0 0 210px;
+    scroll-snap-align: start;
+  }
   .review-grid {
     grid-template-columns: minmax(0, 1fr);
   }

@@ -23,14 +23,20 @@ function detail(r: Reason): string {
   return r.opsMessage;
 }
 
-export function caseSummary(d: { reasons: readonly Reason[]; passed: readonly PassedCheck[] }): string | null {
-  // The same sentence for two documents is said once, naming both.
-  const sentences = new Map<string, string[]>();
-  for (const r of d.reasons) {
-    const docs = sentences.get(detail(r)) ?? [];
-    if (r.doc) docs.push(DOC[r.doc] ?? r.doc);
-    sentences.set(detail(r), docs);
-  }
+// The summary sentence by sentence, each with the reasons it comes from (1-based, in the decision's
+// order), so the console can cite them. The same sentence for two documents is said once, naming both.
+export function caseSummaryParts(d: { reasons: readonly Reason[]; passed: readonly PassedCheck[] }): { text: string; sources: number[] }[] | null {
+  const sentences = new Map<string, { docs: string[]; sources: number[] }>();
+  d.reasons.forEach((r, i) => {
+    const entry = sentences.get(detail(r)) ?? { docs: [], sources: [] };
+    if (r.doc) entry.docs.push(DOC[r.doc] ?? r.doc);
+    entry.sources.push(i + 1);
+    sentences.set(detail(r), entry);
+  });
   if (sentences.size === 0) return null;
-  return [...sentences].map(([text, docs]) => (docs.length > 1 ? `${plain(text)} (${docs.join(" and ")}).` : text)).join(" ");
+  return [...sentences].map(([text, { docs, sources }]) => ({ text: docs.length > 1 ? `${plain(text)} (${docs.join(" and ")}).` : text, sources }));
+}
+
+export function caseSummary(d: { reasons: readonly Reason[]; passed: readonly PassedCheck[] }): string | null {
+  return caseSummaryParts(d)?.map((p) => p.text).join(" ") ?? null;
 }

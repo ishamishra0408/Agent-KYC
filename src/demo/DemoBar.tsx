@@ -45,7 +45,9 @@ export function DemoBar({
   return (
     <header className="demo-bar">
       <h1 className="brand boop">
-        <Truck size={38} />
+        <span className="brand-mark">
+          <Truck size={38} />
+        </span>
         <span>
           Agent <span className="accent">KYC</span>Ready
         </span>

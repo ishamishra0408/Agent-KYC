@@ -1,8 +1,8 @@
 import { ListChecks, Sparkles, UserRound } from "lucide-react";
-import { type ButtonHTMLAttributes, type KeyboardEvent, type ReactNode, useEffect, useRef } from "react";
+import { type ButtonHTMLAttributes, Fragment, type KeyboardEvent, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import type { Lang, Status } from "./api";
 import { STATUS_LABEL, STATUS_LABEL_HI } from "./i18n";
-import { play } from "./whimsy";
+import { play, reducedMotion } from "./whimsy";
 
 export function Sim({ label = "Simulated" }: { label?: string }) {
   return <span className="chip sim">{label}</span>;
@@ -36,6 +36,158 @@ export function Source({ kind, children }: { kind: "ai" | "rules" | "human"; chi
       <Icon size={12} strokeWidth={2.4} className="chip-icon" aria-hidden="true" />
       {children}
     </span>
+  );
+}
+
+// A liquid-glass button for the glass navigation layer: frosted, and in Chromium the backdrop also bends
+// through an SVG displacement lens (#liquid-glass, drawn once by LiquidGlassFilter). Other browsers get
+// the frost; high contrast and reduced transparency get a solid button (styles.css). Written for this
+// app after the 21st.dev "Liquid Glass Button", whose code ships without a licence.
+export function GlassButton({ className = "", children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button type="button" className={`glass-btn ${className}`} {...rest}>
+      {children}
+    </button>
+  );
+}
+
+export function LiquidGlassFilter() {
+  return (
+    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true" focusable="false">
+      <filter id="liquid-glass" x="0" y="0" width="100%" height="100%" colorInterpolationFilters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.011 0.028" numOctaves="2" seed="7" result="noise" />
+        <feGaussianBlur in="noise" stdDeviation="1.4" result="lens" />
+        <feDisplacementMap in="SourceGraphic" in2="lens" scale="16" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </svg>
+  );
+}
+
+// Text that arrives word by word, the way an AI answer streams, then settles into plain text with its
+// citations as links to the elements sourceId names (a link opens the <details> around its source).
+// The box takes its final size at once, citations included, so nothing below it jumps and a chat stays
+// at its end. Screen readers get one copy of the whole text; without citations it stays put when the
+// stream ends, so a live region speaks it once (the cited summary isn't in one). Reduced motion shows it at once, and a key that has streamed to the end once on this page
+// shows at once after that. Written for this app after the 21st.dev
+// "Streaming Text", whose code ships without a licence.
+const streamed = new Set<string>();
+
+export function StreamingText({
+  parts,
+  streamKey,
+  sourceId,
+}: {
+  parts: { text: string; sources?: number[] }[];
+  streamKey: string;
+  sourceId?: (n: number) => string;
+}) {
+  const tokens = useMemo(() => parts.map((p) => p.text.split(/(\s+)/).filter(Boolean)), [parts]);
+  const total = tokens.reduce((n, t) => n + t.length, 0);
+  const full = parts.map((p) => p.text).join(" ");
+  const [shown, setShown] = useState(() => (streamed.has(streamKey) || reducedMotion() ? Number.POSITIVE_INFINITY : 0));
+  useEffect(() => {
+    if (streamed.has(streamKey) || reducedMotion()) {
+      setShown(Number.POSITIVE_INFINITY);
+      return;
+    }
+    setShown(0);
+    const id = window.setInterval(() => {
+      setShown((n) => {
+        if (n + 2 >= total) {
+          window.clearInterval(id);
+          streamed.add(streamKey);
+          return Number.POSITIVE_INFINITY;
+        }
+        return n + 2;
+      });
+    }, 34);
+    return () => window.clearInterval(id);
+  }, [streamKey, total]);
+
+  const cite = (sources?: number[]) =>
+    sourceId &&
+    sources?.map((n) => (
+      <a
+        key={n}
+        className="cite"
+        href={`#${sourceId(n)}`}
+        aria-label={`Source ${n}`}
+        onClick={(e) => {
+          // The hash is the router's, so move focus by hand.
+          e.preventDefault();
+          const item = document.getElementById(sourceId(n));
+          item?.closest("details")?.setAttribute("open", "");
+          item?.focus();
+        }}
+      >
+        {n}
+      </a>
+    ));
+
+  const done = shown >= total;
+  if (done && sourceId && parts.some((p) => p.sources?.length)) {
+    return (
+      <span className="streaming">
+        {parts.map((p, i) => (
+          <Fragment key={i}>
+            {i > 0 && " "}
+            {p.text}
+            {cite(p.sources)}
+          </Fragment>
+        ))}
+      </span>
+    );
+  }
+  let left = shown;
+  return (
+    <span className="streaming">
+      <span className="sr-only">{full}</span>
+      {done ? (
+        <span aria-hidden="true">{full}</span>
+      ) : (
+        <span className="stream-frame" aria-hidden="true">
+          <span className="stream-ghost">
+            {parts.map((p, i) => (
+              <Fragment key={i}>
+                {i > 0 && " "}
+                {p.text}
+                {sourceId &&
+                  p.sources?.map((n) => (
+                    <span key={n} className="cite">
+                      {n}
+                    </span>
+                  ))}
+              </Fragment>
+            ))}
+          </span>
+          <span className="stream-live">
+            {tokens.map((t, i) => {
+              const take = Math.max(0, Math.min(t.length, left));
+              left -= take;
+              return take ? (
+                <Fragment key={i}>
+                  {i > 0 && " "}
+                  {t.slice(0, take).join("")}
+                </Fragment>
+              ) : null;
+            })}
+            <span className="stream-caret" />
+          </span>
+        </span>
+      )}
+    </span>
+  );
+}
+
+// While data loads: grey lines in the shape of what's coming, announced once for screen readers.
+export function Skeleton({ lines = 3 }: { lines?: number }) {
+  return (
+    <div className="skeleton" role="status">
+      <span className="sr-only">Loading</span>
+      {Array.from({ length: lines }, (_, i) => (
+        <div key={i} className="skeleton-line" style={{ width: `${92 - i * 14}%` }} aria-hidden="true" />
+      ))}
+    </div>
   );
 }
 

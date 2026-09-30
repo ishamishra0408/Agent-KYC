@@ -21,6 +21,7 @@
     "idnet:fetch": "tsx evals/idnet/fetch.ts",
     "evals:idnet": "tsx evals/idnet/run.ts",
     "specimens": "tsx evals/generate-specimens.ts",
+    "og": "tsx scripts/og-image.ts",
     "policy:build": "tsx scripts/build-policy.ts",
     "policy:test": "tsx scripts/opa.ts test policy -v",
     "policy:fmt": "tsx scripts/opa.ts fmt -w policy",

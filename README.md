@@ -54,7 +54,7 @@ Five AI models were compared on the same cases. The open-weight Gemma got every 
 | What drivers see | Fix reasons in full; review reasons never ([D-021](DECISIONS.md#d-021--drivers-never-see-why-they-were-sent-to-review)) | Every reason shown | Less transparency for a flagged driver: saying what was noticed teaches them to hide it |
 | Test data | Made-up SPECIMEN documents only ([D-005](DECISIONS.md#d-005--fake-specimen-documents-only)) | Real IDs | Less realism; a phone-photo kit and public IDNet forgeries fill some of the gap |
 
-Every decision, with its options and what it cost: [DECISIONS.md](DECISIONS.md), 41 in all. What went wrong and what changed: [FAILURES.md](FAILURES.md).
+Every decision, with its options and what it cost: [DECISIONS.md](DECISIONS.md), 43 in all. What went wrong and what changed: [FAILURES.md](FAILURES.md).
 
 ## Try it
 
@@ -78,7 +78,7 @@ No keys needed. For the real AI reader and the Neo4j graph, copy `.env.example` 
 <summary>More commands</summary>
 
 ```bash
-npm test                                    # 189 tests, no keys
+npm test                                    # 191 tests, no keys
 npm run evals:gate                          # the policy against the answer key
 npm run policy:test                         # 29 Rego tests
 npm run evals -- --reader=app               # the AI reader on the test cases (needs OPENROUTER_API_KEY)
@@ -92,8 +92,8 @@ npm run c4 && npm run c4:check              # the architecture diagrams (needs D
 
 ## Learn more
 
-[PRD](PRD.md) · [41 decisions](DECISIONS.md) · [26 failures and fixes](FAILURES.md) · [architecture](architecture/agent-kycready/workspace.dsl) · [evals](evals/README.md)
+[PRD](PRD.md) · [43 decisions](DECISIONS.md) · [26 failures and fixes](FAILURES.md) · [architecture](architecture/agent-kycready/workspace.dsl) · [evals](evals/README.md)
 
 Stack: React · Express · SQLite · Open Policy Agent (Rego compiled to WebAssembly) · OpenRouter · Neo4j Aura.
 
-Built by Isha Mishra with Claude Code: a rebuild of a driver KYC flow she owned at a logistics marketplace. Every document is a made-up SPECIMEN; registries and notifications are simulated. The architecture diagrams use [drawing-office](https://github.com/devpath56/drawing-office), fetched separately. MIT.
+Built by Isha Mishra with Claude Code: a rebuild of a driver KYC flow she owned at a logistics marketplace. Every document is a made-up SPECIMEN; registries and notifications are simulated. The architecture diagrams use [drawing-office](https://github.com/devpath56/drawing-office), fetched separately; the background paths are ported from [Kokonut UI](https://github.com/kokonut-labs/kokonutui) ([MIT notice](THIRD-PARTY-NOTICES.md)). MIT.

@@ -3,7 +3,7 @@ import { useState, type RefObject } from "react";
 import { api, type DriverView } from "../api";
 import { useAction, useData } from "../data";
 import { t } from "../i18n";
-import { ErrorNote, Push, Sim, Truck } from "../ui";
+import { ErrorNote, Push, Sim, Skeleton, Truck } from "../ui";
 import { confetti, play } from "../whimsy";
 
 // Behind the bookings lock: the API answers 403 until the rules (or a reviewer) approve.
@@ -27,7 +27,7 @@ export function Loads({ view, phone, onGoKyc }: { view: DriverView; phone: RefOb
       </div>
     );
   }
-  if (!data) return <div className="empty">Loading…</div>;
+  if (!data) return <Skeleton lines={4} />;
 
   const book = async (loadId: string) => {
     const r = await run(() => api.book(id, loadId));

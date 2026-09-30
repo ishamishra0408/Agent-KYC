@@ -3,7 +3,9 @@ import { RefreshProvider, readStored, writeStored } from "./data";
 import { DemoBar } from "./demo/DemoBar";
 import { PhoneApp } from "./driver/PhoneApp";
 import { OpsConsole } from "./ops/OpsConsole";
-import { Truck } from "./ui";
+import { BackgroundPaths } from "./BackgroundPaths";
+import { Story } from "./Story";
+import { LiquidGlassFilter, Truck } from "./ui";
 import { useTheme } from "./whimsy";
 
 // Three ways in: the side-by-side demo (#/), the driver app alone (#/driver/<id>), the ops console alone (#/ops).
@@ -34,15 +36,20 @@ function DemoPage({ theme, onTheme }: { theme: ReturnType<typeof useTheme>[0]; o
   };
   return (
     <div className="demo-page">
-      <DemoBar driverId={driverId} onDriver={choose} theme={theme} onTheme={onTheme} />
-      <div className="demo-grid">
-        <div className="demo-col">
-          <PhoneApp key={driverId} id={driverId} />
-        </div>
-        <div className="demo-col">
-          <OpsConsole onOpenDriver={choose} />
+      <BackgroundPaths />
+      <LiquidGlassFilter />
+      <div className="demo-screen">
+        <DemoBar driverId={driverId} onDriver={choose} theme={theme} onTheme={onTheme} />
+        <div className="demo-grid">
+          <div className="demo-col">
+            <PhoneApp key={driverId} id={driverId} />
+          </div>
+          <div className="demo-col">
+            <OpsConsole onOpenDriver={choose} />
+          </div>
         </div>
       </div>
+      <Story />
       <div className="road-strip" aria-hidden="true">
         <Truck size={46} className="driving" />
       </div>

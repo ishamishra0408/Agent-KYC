@@ -4,7 +4,7 @@ import { api, type CaseView, type Choice, type FixStep, type Sharer, type Slot }
 import { useAction, useData } from "../data";
 import { istTime, PARTNER_LABEL, STATUS_LABEL } from "../i18n";
 import { CHECK_LABEL, FIELD_LABEL, FIX_STEP_LABEL, MODEL_LABEL, NOTICE_LABEL, OUTCOME_DONE, OUTCOME_LABEL, REASON_LABEL, SLOT_LABEL } from "../labels";
-import { ErrorNote, Push, Sim, Source, StatusPill } from "../ui";
+import { ErrorNote, Push, Sim, Skeleton, Source, StatusPill, StreamingText } from "../ui";
 import { play } from "../whimsy";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -32,7 +32,7 @@ function evidenceText(e: Record<string, unknown> | undefined): string | null {
   const parts = Object.entries(e)
     .filter(([, v]) => v !== undefined && v !== null && v !== "")
     .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : String(v)}`);
-  return parts.length ? parts.join(" · ") : null;
+  return parts.length ? parts.join("; ") : null;
 }
 
 // A shared bank account, drawn: the holder, and everyone paid into it.
@@ -213,19 +213,23 @@ function OwnerConfirm({ id }: { id: string }) {
 // Everything behind one driver's status: what the reader saw, what the rules checked, and why.
 export function CaseDetail({ id, canDecide = false, onOpenDriver }: { id: string; canDecide?: boolean; onOpenDriver?: (id: string) => void }) {
   const { data: c, error } = useData(() => api.caseView(id), [id]);
-  if (!c) return error ? <ErrorNote message={error.message} /> : <div className="empty">Loading…</div>;
+  if (!c) return error ? <ErrorNote message={error.message} /> : <Skeleton lines={6} />;
   const d = c.decision;
   const slots = (Object.keys(c.documents) as Slot[]).filter((s) => c.documents[s]);
 
   return (
-    <div className="stack" style={{ gap: 18 }}>
+    <div className="stack case-stack">
       <div className="spread" style={{ alignItems: "flex-start" }}>
         <div>
-          <h2 style={{ fontSize: 17 }}>{c.driver.name}</h2>
+          <h2 className="case-name">{c.driver.name}</h2>
           <div className="small muted">
             {PARTNER_LABEL[c.driver.partnerType] ?? c.driver.partnerType} · {c.driver.phone}
-            {c.driver.fleetOwnerId && ` · fleet owner ${c.driver.fleetOwnerId}, ${c.driver.ownerLinkVerified ? "confirmed" : "not confirmed"}`}
           </div>
+          {c.driver.fleetOwnerId && (
+            <div className="small muted">
+              Fleet owner {c.driver.fleetOwnerId}, {c.driver.ownerLinkVerified ? "confirmed" : "not confirmed"}
+            </div>
+          )}
         </div>
         <div className="row">
           <StatusPill status={c.driver.status} />
@@ -237,11 +241,32 @@ export function CaseDetail({ id, canDecide = false, onOpenDriver }: { id: string
         </div>
       </div>
 
-      {c.summary && (
-        <p className="summary">
-          <Source kind="ai">AI summary · template</Source>
-          <span>{c.summary}</span>
-        </p>
+      {c.summaryParts && d && (
+        <div className="summary-block">
+          <p className="summary">
+            <Source kind="ai">AI summary · template</Source>
+            <span className="summary-text">
+              <StreamingText
+                key={`summary-${c.driver.id}-${d.at}`}
+                parts={c.summaryParts}
+                streamKey={`summary-${c.driver.id}-${d.at}`}
+                sourceId={(n) => `source-${c.driver.id}-${n}`}
+              />
+            </span>
+          </p>
+          <details className="sources">
+            <summary>Sources ({d.reasons.length})</summary>
+            <ol>
+              {d.reasons.map((r, i) => (
+                <li key={`${r.code}-${i}`} id={`source-${c.driver.id}-${i + 1}`} tabIndex={-1}>
+                  <strong>{REASON_LABEL[r.code] ?? r.code}</strong>
+                  {r.doc && <span className="muted"> ({SLOT_LABEL[r.doc]})</span>}: {r.opsMessage}
+                  {evidenceText(r.evidence) && <div className="small muted">{evidenceText(r.evidence)}</div>}
+                </li>
+              ))}
+            </ol>
+          </details>
+        </div>
       )}
 
       {d ? (

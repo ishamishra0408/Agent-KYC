@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { caseSummary } from "../server/ai/caseSummary";
+import { caseSummary, caseSummaryParts } from "../server/ai/caseSummary";
 import type { PassedCheck, Reason } from "../server/domain/types";
 
 // The one line a reviewer reads first (D-041): only what needs explaining, each thing once.
@@ -24,6 +24,15 @@ describe("the case summary", () => {
   it("says the same thing once for two documents, naming both", () => {
     const blurry = (doc: "DL" | "PAN") => reason({ code: "PHOTO_BLURRY", severity: "fix", doc, opsMessage: "Photo too blurry to read." });
     expect(caseSummary({ reasons: [blurry("DL"), blurry("PAN")], passed: [] })).toBe("Photo too blurry to read (licence and PAN).");
+  });
+
+  it("cites the reasons each sentence comes from, one sentence for two documents", () => {
+    const blurry = (doc: "DL" | "PAN") => reason({ code: "PHOTO_BLURRY", severity: "fix", doc, opsMessage: "Photo too blurry to read." });
+    const shared = reason({ code: "SHARED_BANK_ACCOUNT", opsMessage: "Bank account shared with drivers who have no link to its holder.", evidence: { holder: "RAJU", sharers: ["Raju", "Anil K"] } });
+    expect(caseSummaryParts({ reasons: [shared, blurry("DL"), blurry("PAN")], passed: [] })).toEqual([
+      { text: "Bank account shared with drivers who have no link to its holder (RAJU): Anil K.", sources: [1] },
+      { text: "Photo too blurry to read (licence and PAN).", sources: [2, 3] },
+    ]);
   });
 
   it("doesn't double the full stop after quoted text that has one", () => {

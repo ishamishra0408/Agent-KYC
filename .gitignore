@@ -27,5 +27,7 @@ architecture/*/page.html
 architecture/*/page/
 # IDNet sample, fetched on demand (npm run idnet:fetch)
 evals/idnet/SD/
+# Local-only overrides for one machine (src/main.tsx loads them when present): never committed
+src/local/
 # Claude Code app settings (local preview)
 .claude/

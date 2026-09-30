@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { caseSummary } from "../ai/caseSummary";
+import { caseSummary, caseSummaryParts } from "../ai/caseSummary";
 import type { DocType, GraphSignals, Notice, PassedCheck, Reason } from "../domain/types";
 import { type KycContext, nextStep } from "./kyc";
 
@@ -39,6 +39,7 @@ export interface CaseView {
   decision: { outcome: string; actor: string; at: string; rulesVersion: string | null; reasons: Reason[]; passed: PassedCheck[]; note: string | null } | null;
   notices: Notice[]; // from the latest rules decision: worth knowing, not blocking
   summary: string | null;
+  summaryParts: { text: string; sources: number[] }[] | null; // the same, sentence by sentence, citing its reasons (1-based)
   documents: Partial<
     Record<
       DocType,
@@ -81,6 +82,7 @@ export async function caseView(ctx: KycContext, id: string): Promise<CaseView> {
       : null,
     notices: store.decisions(id).filter((x) => x.actor === "rules").at(-1)?.notices ?? [],
     summary: decision && decision.actor === "rules" ? caseSummary(decision) : null,
+    summaryParts: decision && decision.actor === "rules" ? caseSummaryParts(decision) : null,
     documents: Object.fromEntries(
       (Object.keys(docs) as DocType[]).map((slot) => {
         const doc = docs[slot];
@@ -148,6 +150,11 @@ export function funnel(ctx: KycContext) {
       ? rulesDecisions.filter((x) => x.outcome !== "REVIEW").length / rulesDecisions.length
       : null,
     nudgesPerActivated: activated ? sent / activated : null,
+    // The counts behind the two ratios, so each can be shown with what it's out of.
+    rulesDecisions: rulesDecisions.length,
+    rulesAlone: rulesDecisions.filter((x) => x.outcome !== "REVIEW").length,
+    nudgesSent: sent,
+    approvedDrivers: activated,
   };
 }
 
@@ -173,7 +180,11 @@ export function evalSummaries(resultsDir: string) {
       badApproved: Number(s.badApproved),
       good: Number(s.good),
       goodApproved: Number(s.goodApproved),
+      unanswered: Number(s.unanswered ?? 0),
       gatePassed: Boolean(s.gatePassed),
+      // AI readers only: what reading the set's photos cost.
+      reads: Number((s.model as { reads?: number } | undefined)?.reads ?? 0),
+      costUsd: Number((s.model as { costUsd?: number } | undefined)?.costUsd ?? 0),
     }))
     .sort((a, b) => a.suite.localeCompare(b.suite) * -1 || order.indexOf(a.reader) - order.indexOf(b.reader));
 }

@@ -112,6 +112,7 @@ export interface CaseView {
   } | null;
   notices: { code: string; opsMessage: string; evidence: Record<string, unknown> }[];
   summary: string | null;
+  summaryParts: { text: string; sources: number[] }[] | null; // the summary sentence by sentence, citing reasons (1-based)
   documents: Partial<
     Record<
       Slot,
@@ -160,6 +161,10 @@ export interface Funnel {
   now: { inReview: number; needsFix: number };
   decidedWithoutPerson: number | null;
   nudgesPerActivated: number | null;
+  rulesDecisions: number;
+  rulesAlone: number;
+  nudgesSent: number;
+  approvedDrivers: number;
 }
 
 export interface EvalSummary {
@@ -172,7 +177,10 @@ export interface EvalSummary {
   badApproved: number;
   good: number;
   goodApproved: number;
+  unanswered: number;
   gatePassed: boolean;
+  reads: number; // AI readers only, with costUsd
+  costUsd: number;
 }
 
 export interface CycleItem {

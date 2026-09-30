@@ -104,6 +104,15 @@ describe("theme", () => {
     }
   });
 
+  it("keeps the glass buttons' labels readable over any backdrop", () => {
+    // The story's step buttons (D-043) are glass over page content: measured over the worst backdrop.
+    for (const [theme, tokens] of Object.entries(THEMES)) {
+      const back = over(colour(tokens, "glass-btn"), theme === "light" ? [0, 0, 0, 1] : [1, 1, 1, 1]);
+      const [a, b] = [luminance(over(colour(tokens, "text"), back)), luminance(back)].sort((x, y) => y - x);
+      expect((a + 0.05) / (b + 0.05), `${theme}: text on a glass button`).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
   it("keeps the two copies of the dark tokens identical", () => {
     expect(darkBySystem).toEqual(darkByButton);
   });

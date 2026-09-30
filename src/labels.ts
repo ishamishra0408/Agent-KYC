@@ -102,13 +102,20 @@ export const MODEL_LABEL: Record<string, string> = {
 };
 
 export const READER_LABEL: Record<string, string> = {
-  naive: "No document reading",
-  heuristic: "Plain image checks, no AI",
-  oracle: "Perfect reading (upper bound)",
-  "claude-opus": "Claude Opus 5.5",
+  app: "Gemma 4 31B, then Claude Sonnet",
+  gemma: "Gemma 4 31B (open-weight)",
   "claude-sonnet": "Claude Sonnet 5.5",
+  "claude-opus": "Claude Opus 5.5",
   "claude-haiku": "Claude Haiku 4.5",
-  qwen: "Qwen 3.8 27B",
-  gemma: "Gemma 4 31B",
-  app: "App reader: Gemma, then Sonnet",
+  qwen: "Qwen 3.8 27B (open-weight)",
+  oracle: "Perfect reading: the answer key",
+  heuristic: "Image checks only: blur, glare, brightness",
+  naive: "Reads nothing: trusts what the driver typed",
 };
+
+// The Tests tab's groups, in order.
+export const READER_GROUPS: { title: string; readers: string[] }[] = [
+  { title: "Used in the app", readers: ["app"] },
+  { title: "AI models compared", readers: ["gemma", "claude-sonnet", "claude-opus", "claude-haiku", "qwen"] },
+  { title: "Without AI, for comparison", readers: ["oracle", "heuristic", "naive"] },
+];

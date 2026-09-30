@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { api, type ChatMessage, type DriverView, type Faq, type Lang, type Slot, type Step, type Variant } from "../api";
 import { useAction, useData } from "../data";
 import { ISSUE_LABEL, STEP_LABEL, t } from "../i18n";
-import { ErrorNote, Push, Sim, Truck, useDialog } from "../ui";
+import { ErrorNote, Push, Sim, StreamingText, Truck, useDialog } from "../ui";
 import { play, reducedMotion } from "../whimsy";
 
 const STEPS: Step[] = ["CONSENT", "DL", "PAN", "BANK", "SELFIE", "SUBMIT"];
@@ -123,7 +123,7 @@ function DocTile({ label, doc, done, lang, simulatedLabel }: { label: string; do
   return <div className="doc-tile">{label}</div>;
 }
 
-function Bubble({ m, lang }: { m: ChatMessage; lang: Lang }) {
+function Bubble({ m, lang, stream }: { m: ChatMessage; lang: Lang; stream?: string }) {
   const kind =
     m.role === "driver"
       ? "driver"
@@ -151,7 +151,7 @@ function Bubble({ m, lang }: { m: ChatMessage; lang: Lang }) {
           {who} {kind === "owner" && <Sim label="Owner app simulated" />}
         </span>
       )}
-      {m.text}
+      {stream ? <StreamingText parts={[{ text: m.text }]} streamKey={stream} /> : m.text}
     </div>
   );
 }
@@ -190,6 +190,10 @@ export function Kyc({ view, focus }: { view: DriverView; focus: string | null })
   const [camera, setCamera] = useState<Slot | null>(null);
   const [reading, setReading] = useState(false); // a photo is with the reader: 10 to 25 s with a real model
   const chatRef = useRef<HTMLDivElement>(null);
+  // Messages already there when this driver's chat opened show at once; later ones stream in. A reset
+  // that shortens the chat starts the count again.
+  const seen = useRef({ id, count: view.chat.length });
+  if (seen.current.id !== id || view.chat.length < seen.current.count) seen.current = { id, count: view.chat.length };
 
   useEffect(() => {
     chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: reducedMotion() ? "auto" : "smooth" });
@@ -219,7 +223,7 @@ export function Kyc({ view, focus }: { view: DriverView; focus: string | null })
 
       <div className="chat" ref={chatRef} aria-live="polite">
         {view.chat.map((m, i) => (
-          <Bubble key={`${m.at}-${i}`} m={m} lang={lang} />
+          <Bubble key={`${m.at}-${i}`} m={m} lang={lang} stream={i >= seen.current.count && m.role !== "driver" ? `${id}-${i}-${m.at}` : undefined} />
         ))}
         {reading && (
           <div className="bubble assistant typing" role="status">
