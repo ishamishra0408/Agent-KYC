@@ -6,13 +6,16 @@
 /* Layout: a drawing register. The sheet list runs across the top; each view is a dark drawing plate
    with its key and title block along the bottom edge, and the trace steps sit beside the plate. */
 :root {
-  --paper: #f3f2ef;
-  --raise: #fbfaf8;
-  --ink: #1f1a17;
-  --muted: #675f5a;
-  --rule: #d6d1cc;
-  --gold: #ffc400;
-  --gold-ink: #7a5600;
+  /* The app's own palette (D-044): a blue-grey ground, near-black ink, one orange-red accent. */
+  --paper: #e9ebf2;
+  --raise: #ffffff;
+  --ink: #0e0a0f;
+  --muted: #48464e;
+  --rule: #ced1da;
+  --accent: #e04f38;
+  --accent-ink: #af301d;
+  /* "Modified" matches the drawings' own amber outline, not the brand. */
+  --modified-ink: #8a4f00;
   --accepted: #2f6b45;
   --proposed: #a3177f;
   /* The plate is one look in both themes: the model's colours are drawn for a dark canvas. */
@@ -21,20 +24,21 @@
   --plate-rule: #3a4048;
   --plate-ink: #d7dbe3;
   --plate-muted: #9aa3ae;
+  --plate-accent: #ff8f73;
   --f-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
   --f-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #141211; --raise: #1b1817; --ink: #ede7e2; --muted: #a59c96; --rule: #302b28;
-    --gold-ink: #ffd34d; --accepted: #7fc79a; --proposed: #ff7ad9;
+    --paper: #0d0b0f; --raise: #171519; --ink: #f0f1f5; --muted: #bcbfc8; --rule: #3d3a41;
+    --accent: #ed5c45; --accent-ink: #ff8f73; --modified-ink: #ffb454; --accepted: #7fc79a; --proposed: #ff7ad9;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #141211; --raise: #1b1817; --ink: #ede7e2; --muted: #a59c96; --rule: #302b28;
-  --gold-ink: #ffd34d; --accepted: #7fc79a; --proposed: #ff7ad9;
+  --paper: #0d0b0f; --raise: #171519; --ink: #f0f1f5; --muted: #bcbfc8; --rule: #3d3a41;
+  --accent: #ed5c45; --accent-ink: #ff8f73; --modified-ink: #ffb454; --accepted: #7fc79a; --proposed: #ff7ad9;
   color-scheme: dark;
 }
 
@@ -43,7 +47,7 @@ body { background: var(--paper); color: var(--ink); font: 15px/1.55 var(--f-body
 .wrap { max-width: 1440px; margin: 0 auto; padding-inline: clamp(16px, 3vw, 40px); }
 h1, h2, h3 { font-family: var(--f-display); font-stretch: 82%; line-height: 1.1; text-wrap: balance; margin: 0; }
 button { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ── masthead ── */
 .masthead { padding-block: 28px 18px; display: grid; gap: 6px; }
@@ -63,8 +67,8 @@ button { font: inherit; color: inherit; }
 .tab .nm { font: 650 16px var(--f-display); font-stretch: 85%; }
 .tab .sub { grid-column: 2; font-size: 12px; color: var(--muted); }
 .tab:hover { border-color: var(--rule); }
-.tab[aria-selected="true"] { background: var(--raise); border-color: var(--rule); box-shadow: inset 0 -3px 0 var(--gold); }
-.tab[aria-selected="true"] .no { color: var(--gold-ink); }
+.tab[aria-selected="true"] { background: var(--raise); border-color: var(--rule); box-shadow: inset 0 -3px 0 var(--accent); }
+.tab[aria-selected="true"] .no { color: var(--accent-ink); }
 
 /* ── the sheet ── */
 .sheet { padding-block: 20px 8px; display: grid; gap: 14px; }
@@ -78,7 +82,7 @@ button { font: inherit; color: inherit; }
 .plate-tools { display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--plate-rule); background: var(--plate-2); }
 .tool { background: transparent; color: var(--plate-ink); border: 1px solid var(--plate-rule); border-radius: 5px; min-width: 32px; height: 28px; padding: 0 9px; cursor: pointer; font: 500 13px var(--f-mono); }
 .tool:hover { border-color: var(--plate-muted); }
-.tool[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+.tool[aria-pressed="true"] { border-color: var(--plate-accent); color: var(--plate-accent); }
 #zoom-level { font: 12px var(--f-mono); color: var(--plate-muted); min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; }
 .plate-scroll {
   height: min(72vh, 820px); overflow: auto; cursor: grab; position: relative; overscroll-behavior: contain;
@@ -104,13 +108,13 @@ button { font: inherit; color: inherit; }
 
 /* the drawing's states */
 .drawing g.node { cursor: pointer; outline: none; }
-.drawing g.node:focus-visible polygon, .drawing g.node:focus-visible path { stroke: var(--gold); stroke-width: 6px; }
+.drawing g.node:focus-visible polygon, .drawing g.node:focus-visible path { stroke: var(--plate-accent); stroke-width: 6px; }
 .drawing g.edge, .drawing g.node { transition: opacity .18s ease; }
 .drawing.walking g.edge.future, .drawing.walking g.node:not(.lit) { opacity: .13; }
 .drawing.walking g.edge.past { opacity: .45; }
-.drawing.walking g.edge.now path { stroke: var(--gold); stroke-width: 5px; }
-.drawing.walking g.edge.now polygon { stroke: var(--gold); fill: var(--gold); }
-.drawing.walking g.edge.now text { fill: var(--gold); font-weight: 700; }
+.drawing.walking g.edge.now path { stroke: var(--plate-accent); stroke-width: 5px; }
+.drawing.walking g.edge.now polygon { stroke: var(--plate-accent); fill: var(--plate-accent); }
+.drawing.walking g.edge.now text { fill: var(--plate-accent); font-weight: 700; }
 .drawing.walking g.node.at { filter: drop-shadow(0 0 14px rgba(255, 196, 0, .6)); }
 
 /* ── the panel beside the plate ── */
@@ -119,7 +123,7 @@ button { font: inherit; color: inherit; }
 .walk-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .btn { border: 1px solid var(--rule); background: var(--paper); border-radius: 6px; padding: 5px 11px; cursor: pointer; font-size: 13px; font-weight: 500; }
 .btn:hover { border-color: var(--muted); }
-.btn.primary { background: var(--gold); border-color: var(--gold); color: #1f1a17; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #0e0a0f; }
 .btn:disabled { opacity: .45; cursor: default; }
 .count { margin-left: auto; font: 12px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; max-height: min(60vh, 640px); overflow: auto; }
@@ -130,14 +134,14 @@ button { font: inherit; color: inherit; }
 .step .d { font-size: 14px; line-height: 1.35; }
 .step .t { font: 11px var(--f-mono); color: var(--muted); }
 .step.done .n { background: var(--paper); }
-.step[aria-current="step"] { background: var(--paper); box-shadow: inset 3px 0 0 var(--gold); }
-.step[aria-current="step"] .n { background: var(--gold); border-color: var(--gold); color: #1f1a17; }
+.step[aria-current="step"] { background: var(--paper); box-shadow: inset 3px 0 0 var(--accent); }
+.step[aria-current="step"] .n { background: var(--accent); border-color: var(--accent); color: #0e0a0f; }
 .marked { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .marked li { display: grid; gap: 3px; }
 .marked .nm { font-weight: 600; }
 .marked .why { font-size: 13px; color: var(--muted); }
 .chip { justify-self: start; font: 500 10px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; border-radius: 99px; padding: 4px 8px; border: 1px solid currentColor; }
-.chip.Modified { color: var(--gold-ink); }
+.chip.Modified { color: var(--modified-ink); }
 .chip.Proposal, .chip.Proposed { color: var(--proposed); }
 .chip.Accepted { color: var(--accepted); }
 .panel .note { margin: 0; font-size: 13px; color: var(--muted); }
@@ -165,7 +169,7 @@ footer code { font-family: var(--f-mono); font-size: 12px; color: var(--ink); }
 .tip .nm { font: 700 18px var(--f-display); font-stretch: 85%; }
 .tip p { margin: 0; }
 .tip .st { font-size: 12px; }
-.tip .st b { color: var(--gold); font-weight: 600; }
+.tip .st b { color: var(--plate-accent); font-weight: 600; }
 .tip .st b.Proposal { color: #ff8fe0; }
 
 @media (prefers-reduced-motion: reduce) { .drawing g.edge, .drawing g.node { transition: none; } }
