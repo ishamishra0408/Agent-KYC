@@ -15,8 +15,12 @@ import { ManualClock } from "./domain/clock";
 import { istAt } from "./domain/time";
 import type { KycContext } from "./services/kyc";
 
-// API_PORT, not PORT: dev launchers often set PORT for the web server, and the two must differ.
-const PORT = Number(process.env.API_PORT ?? 3101);
+// Local, the API listens on this machine only, on API_PORT, not PORT: dev launchers often set PORT
+// for the web server, and the two must differ. Hosted (HOST=0.0.0.0, as on Render: render.yaml), it
+// takes the platform's PORT and serves the built app itself.
+const HOST = process.env.HOST ?? "127.0.0.1";
+const hosted = HOST !== "127.0.0.1";
+const PORT = Number(process.env.API_PORT ?? (hosted ? process.env.PORT : undefined) ?? 3101);
 const root = fileURLToPath(new URL("..", import.meta.url));
 const specimenDir = path.join(root, "evals", "specimens");
 const resultsDir = path.join(root, "evals", "results");
@@ -86,8 +90,9 @@ if (!existsSync(path.join(specimenDir, "demo"))) {
   console.warn("Demo photos are missing. Run: npm run specimens");
 }
 
-// A local demo with no authentication: the ops routes can decide cases, so the API only
-// listens on this machine.
-createApp({ ctx, specimenDir, resultsDir, reset }).listen(PORT, "127.0.0.1", () => {
-  console.log(`Agent KYCReady API on http://127.0.0.1:${PORT} (local demo, no auth)`);
+// No authentication: the ops routes can decide cases. Local, only this machine can reach them;
+// hosted, anyone with the link can, which is why render.yaml keeps the live reader and Neo4j off.
+const webDir = path.join(root, "dist");
+createApp({ ctx, specimenDir, resultsDir, reset, webDir: hosted && existsSync(webDir) ? webDir : undefined }).listen(PORT, HOST, () => {
+  console.log(`Agent KYCReady on http://${HOST}:${PORT} (${hosted ? "hosted demo" : "local demo"}, no auth)`);
 });

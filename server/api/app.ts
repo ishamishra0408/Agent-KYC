@@ -30,6 +30,7 @@ export interface AppDeps {
   specimenDir: string;
   resultsDir: string;
   reset: () => Promise<void>;
+  webDir?: string; // the built app (dist/), served when hosted; local, Vite serves it
 }
 
 const Slot = z.enum(["DL", "PAN", "BANK_PROOF"]);
@@ -52,6 +53,8 @@ export function createApp(deps: AppDeps): express.Express {
   const { ctx } = deps;
   app.use(express.json({ limit: "100kb" }));
   app.use("/specimens", express.static(deps.specimenDir, { fallthrough: false }));
+  // The app routes with #/..., so the files themselves are all it needs.
+  if (deps.webDir) app.use(express.static(deps.webDir));
 
   const id = (req: Request) => {
     const driverId = String(req.params.id);

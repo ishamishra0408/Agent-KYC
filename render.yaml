@@ -1,0 +1,21 @@
+# The hosted demo on Render: one web service, the API serving the built app.
+# The demo has no login, so a public URL runs on the stand-ins: the simulated reader (no OpenRouter
+# credit spent) and the in-memory trust graph (no writes to a private Neo4j). The seeded cast and
+# every decision work the same; photos are read by the stand-in.
+services:
+  - type: web
+    name: agent-kycready
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run specimens && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/state
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: HOST
+        value: 0.0.0.0
+      - key: READER
+        value: simulated
+      - key: GRAPH
+        value: memory
