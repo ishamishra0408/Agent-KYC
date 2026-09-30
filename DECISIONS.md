@@ -2,6 +2,52 @@
 
 Each entry: what was decided, what else was on the table, and why. Newest at the bottom.
 
+## At a glance
+
+| # | Decision | What it cost |
+|---|---|---|
+| 001 | [AI proposes; code and people decide](#d-001--ai-proposes-code-and-people-decide) | Rules need upkeep; what they can't settle goes to a person, not to the model |
+| 002 | [Tests before prompts](#d-002--tests-before-prompts) | A slower start: 30 cases and a gate before any model code |
+| 003 | [TypeScript, Vite + React + Express + SQLite](#d-003--typescript-vite--react--express--sqlite) | More work up front than Python + Streamlit, for a product-grade UI and one language for app and evals |
+| 004 | [Sponsor services behind interfaces](#d-004--sponsor-services-behind-interfaces) | An interface per provider; Claude through OpenRouter rather than Anthropic's own SDK |
+| 005 | [Fake SPECIMEN documents only](#d-005--fake-specimen-documents-only) | Less realism than real IDs; printed-card phone photos and public IDNet forgeries fill some of the gap |
+| 006 | [Nudge rules](#d-006--nudge-rules) | Fewer reminders: at most one every two days, none from 9 PM to 8 AM |
+| 007 | [Fleet owners and shared accounts](#d-007--fleet-owners-and-shared-accounts) | A confirmation step before a hired driver can be paid into an owner's account |
+| 008 | [Name matching understands transliteration](#d-008--name-matching-understands-transliteration) | "R Kumar" matches "Ramesh Kumar"; the registry checks catch impostors |
+| 009 | [A photo of a screen is a fix, not fraud](#d-009--a-photo-of-a-screen-is-a-fix-not-fraud) | A fraudster's screen photo gets a retake request, not a review |
+| 010 | [Review outranks fix](#d-010--review-outranks-fix) | A fixable driver waits for a person if anything else is risky |
+| 011 | [Graph checks in memory first](#d-011--graph-checks-in-memory-first) | No real graph until Phase 5; the in-memory one keeps its interface |
+| 012 | [Only trust numbers from good photos](#d-012--only-trust-numbers-from-good-photos) | A retake instead of a registry lookup on a poor photo |
+| 013 | [Approval needs positive evidence](#d-013--approval-needs-positive-evidence) | More cases reach a person; an absence of problems never approves |
+| 014 | [Only the rules engine's own decisions can be applied](#d-014--only-the-rules-engines-own-decisions-can-be-applied) | A contract layer between the policy and the database, and append-only logs |
+| 015 | [The passbook photo is optional](#d-015--the-passbook-photo-is-optional) | A poor passbook photo no longer blocks; the Rs 1 check carries the proof |
+| 016 | [A third request for the same fix goes to a person](#d-016--a-third-request-for-the-same-fix-goes-to-a-person) | More reviewer load instead of an endless fix loop |
+| 017 | [Only a verified fleet owner can vouch for a hired driver](#d-017--only-a-verified-fleet-owner-can-vouch-for-a-hired-driver) | Friction for fleets: every new hired driver starts unconfirmed |
+| 018 | [Cheap checks before AI](#d-018--cheap-checks-before-ai) | A no-AI baseline to build and keep, to show where AI earns its cost |
+| 019 | [A holdout written by someone who never saw the code](#d-019--a-holdout-written-by-someone-who-never-saw-the-code) | Fewer cases to tune on; the holdout's numbers are the ones reported |
+| 020 | [The gate is relative](#d-020--the-gate-is-relative) | On a large set, one miss is stricter than any percentage |
+| 021 | [Drivers never see why they were sent to review](#d-021--drivers-never-see-why-they-were-sent-to-review) | Less transparency for a driver sent to review |
+| 022 | [One standard for photos, applied twice](#d-022--one-standard-for-photos-applied-twice) | Coaching and the rules are coupled: one change moves both |
+| 023 | [The demo is seeded by running the real flow](#d-023--the-demo-is-seeded-by-running-the-real-flow) | Seeding breaks whenever the flow changes, by design |
+| 024 | [Scripted stand-ins until Phase 3, labeled as such](#d-024--scripted-stand-ins-until-phase-3-labeled-as-such) | Until a model passed the gate, the demo showed labelled templates, not AI |
+| 025 | [The demo runs on its own clock](#d-025--the-demo-runs-on-its-own-clock) | A demo-only clock to maintain |
+| 026 | [A logistics theme, playful but never vague about trust](#d-026--a-logistics-theme-playful-but-never-vague-about-trust) | More design work, with whimsy kept off every trust signal |
+| 027 | [Sounds off by default; motion follows the system](#d-027--sounds-off-by-default-motion-follows-the-system) | Less delight on first use |
+| 028 | [Every "needs a fix" has a way out](#d-028--every-needs-a-fix-has-a-way-out) | A resubmission path, and a labelled stand-in for the owner's confirmation |
+| 029 | [UPS colours, with provenance kept apart from the brand](#d-029--ups-colours-with-provenance-kept-apart-from-the-brand) | Cool colours are reserved for provenance, never for the brand |
+| 030 | [The decision rules are policy as code, on Open Policy Agent](#d-030--the-decision-rules-are-policy-as-code-on-open-policy-agent) | A second language (Rego) and a build step |
+| 031 | [The eight policy questions, settled (policy v3)](#d-031--the-eight-policy-questions-settled-policy-v3) | Each answer is a test; holdout case H12 no longer matches its author's reason |
+| 032 | [Question 9: a lapsed licence locks bookings (policy v4)](#d-032--question-9-a-lapsed-licence-locks-bookings-policy-v4) | A new status and a daily job; a driver approved by hand without a registry date isn't tracked for expiry |
+| 033 | [OpenRouter only](#d-033--openrouter-only) | One vendor between us and every model |
+| 034 | [The demo UI assumes an informed viewer](#d-034--the-demo-ui-assumes-an-informed-viewer) | No onboarding copy: a first-time visitor gets less help |
+| 035 | [The AI document reader is measured before it reads for a driver (Phase 3)](#d-035--the-ai-document-reader-is-measured-before-it-reads-for-a-driver-phase-3) | The comparison ran ($3.48) before any driver saw a model |
+| 036 | [The architecture is a C4 model, drawn with drawing-office](#d-036--the-architecture-is-a-c4-model-drawn-with-drawing-office) | Rendering needs Docker and a drawing-office clone |
+| 037 | [Liquid glass on the navigation layer, and accessibility built in](#d-037--liquid-glass-on-the-navigation-layer-and-accessibility-built-in) | An 85% tint, less see-through than glass usually is, so every label passes contrast |
+| 038 | [The app reads photos with Gemma 4 31B, and Claude Sonnet when Gemma is slow or fails](#d-038--the-app-reads-photos-with-gemma-4-31b-and-claude-sonnet-when-gemma-is-slow-or-fails) | About 9 s a photo, and up to 45 s before "try again" |
+| 039 | [The trust graph runs on Neo4j, and no answer sends the case to a person (policy v5)](#d-039--the-trust-graph-runs-on-neo4j-and-no-answer-sends-the-case-to-a-person-policy-v5) | A network hop per check; while the free tier is paused, cases go to a person |
+| 040 | [The reader reports signs of editing, and an edited document goes to a person (policy v6)](#d-040--the-reader-reports-signs-of-editing-and-an-edited-document-goes-to-a-person-policy-v6) | The reader rarely notices a forgery: a safety net, not a detector |
+| 041 | [Provenance as small markers, not coloured bands; each message said once](#d-041--provenance-as-small-markers-not-coloured-bands-each-message-said-once) | Colour says less; icons and labels say who produced what |
+
 ## D-001 · AI proposes; code and people decide
 
 - **Options:** (a) the model decides above a confidence threshold; (b) the model extracts and flags, rules decide; (c) rules only, no model.

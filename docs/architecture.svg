@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+
+<svg width="2630pt" height="1652pt"
+ viewBox="0.00 0.00 2629.51 1651.72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 1622.92)">
+<title>%3</title>
+<polygon fill="#1f2226" stroke="transparent" points="-28.8,28.8 -28.8,-1622.92 2600.71,-1622.92 2600.71,28.8 -28.8,28.8"/>
+<g id="clust1" class="cluster">
+<title>cluster_3</title>
+<polygon fill="#1f2226" stroke="#7d8694" stroke-width="2" points="64.91,-8 64.91,-1328.12 1210.91,-1328.12 1210.91,-8 64.91,-8"/>
+<text text-anchor="start" x="543.41" y="-36.8" font-family="Arial" font-size="24.00" fill="#aab2bf">Agent KYCReady</text>
+<text text-anchor="start" x="560.91" y="-16.8" font-family="Arial" font-size="19.00" fill="#aab2bf">[Software System]</text>
+</g>
+
+<g id="1" class="node">
+<title>1</title>
+<polygon fill="#32433b" stroke="#6fa588" points="461.41,-1594.12 116.41,-1594.12 116.41,-1401.12 461.41,-1401.12 461.41,-1594.12"/>
+<text text-anchor="start" x="240.41" y="-1544.33" font-family="Arial" font-size="36.00" fill="#ffffff">Driver</text>
+<text text-anchor="start" x="248.91" y="-1520.33" font-family="Arial" font-size="21.00" fill="#ffffff">[Person]</text>
+<text text-anchor="start" x="150.41" y="-1481.33" font-family="Arial" font-size="26.00" fill="#ffffff">An owner&#45;driver, a hired</text>
+<text text-anchor="start" x="159.41" y="-1455.33" font-family="Arial" font-size="26.00" fill="#ffffff">driver or a fleet owner,</text>
+<text text-anchor="start" x="145.41" y="-1429.33" font-family="Arial" font-size="26.00" fill="#ffffff">signing up to book loads.</text>
+</g>
+
+<g id="4" class="node">
+<title>4</title>
+<polygon fill="#5f64af" stroke="#b9bdf5" points="735.91,-1290.12 357.91,-1290.12 357.91,-1071.12 735.91,-1071.12 735.91,-1290.12"/>
+<text text-anchor="start" x="462.91" y="-1240.33" font-family="Arial" font-size="36.00" fill="#ffffff">Driver app</text>
+<text text-anchor="start" x="386.91" y="-1216.33" font-family="Arial" font-size="21.00" fill="#ffffff">[Container: React and TypeScript]</text>
+<text text-anchor="start" x="413.91" y="-1177.33" font-family="Arial" font-size="26.00" fill="#ffffff">KYC as a chat: photos,</text>
+<text text-anchor="start" x="389.41" y="-1151.33" font-family="Arial" font-size="26.00" fill="#ffffff">DigiLocker, the Rs 1 check,</text>
+<text text-anchor="start" x="394.91" y="-1125.33" font-family="Arial" font-size="26.00" fill="#ffffff">a selfie. The inbox and the</text>
+<text text-anchor="start" x="511.91" y="-1099.33" font-family="Arial" font-size="26.00" fill="#ffffff">loads.</text>
+</g>
+
+<g id="25" class="edge">
+<title>1&#45;&gt;4</title>
+<path fill="none" stroke="#d7dbe3" d="M436.98,-1401.1C449.31,-1389.85 460.88,-1377.82 470.91,-1365.12 486.29,-1345.66 499.03,-1322.64 509.4,-1299.61"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="512.61,-1301.01 513.4,-1290.44 506.19,-1298.2 512.61,-1301.01"/>
+<text text-anchor="start" x="485.91" y="-1345.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">Does KYC with</text>
+</g>
+
+<g id="26" class="edge">
+<title>1&#45;&gt;4</title>
+<path fill="none" stroke="#d7dbe3" d="M257.73,-1401.05C255.99,-1379.13 259.13,-1357.03 271.91,-1339.12 280.64,-1326.88 290.28,-1334.49 303.91,-1328.12 325.09,-1318.23 346.77,-1306.98 368.04,-1295.2"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="369.78,-1298.23 376.81,-1290.3 366.37,-1292.12 369.78,-1298.23"/>
+<text text-anchor="start" x="271.91" y="-1345.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">Books loads with</text>
+</g>
+
+<g id="2" class="node">
+<title>2</title>
+<polygon fill="#32433b" stroke="#6fa588" points="1169.41,-1581.12 824.41,-1581.12 824.41,-1414.12 1169.41,-1414.12 1169.41,-1581.12"/>
+<text text-anchor="start" x="889.91" y="-1531.33" font-family="Arial" font-size="36.00" fill="#ffffff">Ops reviewer</text>
+<text text-anchor="start" x="956.91" y="-1507.33" font-family="Arial" font-size="21.00" fill="#ffffff">[Person]</text>
+<text text-anchor="start" x="869.41" y="-1468.33" font-family="Arial" font-size="26.00" fill="#ffffff">Decides the cases the</text>
+<text text-anchor="start" x="853.41" y="-1442.33" font-family="Arial" font-size="26.00" fill="#ffffff">policy sends to a person.</text>
+</g>
+
+<g id="5" class="node">
+<title>5</title>
+<polygon fill="#5f64af" stroke="#b9bdf5" points="1185.91,-1303.12 807.91,-1303.12 807.91,-1058.12 1185.91,-1058.12 1185.91,-1303.12"/>
+<text text-anchor="start" x="895.91" y="-1253.33" font-family="Arial" font-size="36.00" fill="#ffffff">Ops console</text>
+<text text-anchor="start" x="836.91" y="-1229.33" font-family="Arial" font-size="21.00" fill="#ffffff">[Container: React and TypeScript]</text>
+<text text-anchor="start" x="868.41" y="-1190.33" font-family="Arial" font-size="26.00" fill="#ffffff">The review queue, the</text>
+<text text-anchor="start" x="873.41" y="-1164.33" font-family="Arial" font-size="26.00" fill="#ffffff">reasons behind every</text>
+<text text-anchor="start" x="859.91" y="-1138.33" font-family="Arial" font-size="26.00" fill="#ffffff">decision, the nudge log,</text>
+<text text-anchor="start" x="865.41" y="-1112.33" font-family="Arial" font-size="26.00" fill="#ffffff">the funnel and the eval</text>
+<text text-anchor="start" x="954.41" y="-1086.33" font-family="Arial" font-size="26.00" fill="#ffffff">results.</text>
+</g>
+
+<g id="27" class="edge">
+<title>2&#45;&gt;5</title>
+<path fill="none" stroke="#d7dbe3" d="M996.91,-1413.86C996.91,-1383.09 996.91,-1347.36 996.91,-1313.28"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="1000.41,-1313.25 996.91,-1303.25 993.41,-1313.25 1000.41,-1313.25"/>
+<text text-anchor="start" x="996.91" y="-1345.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">Decides review cases with</text>
+</g>
+
+<g id="21" class="node">
+<title>21</title>
+<polygon fill="#32433b" stroke="#6fa588" points="1643.41,-342.06 1272.41,-342.06 1272.41,-175.06 1643.41,-175.06 1643.41,-342.06"/>
+<text text-anchor="start" x="1358.91" y="-292.26" font-family="Arial" font-size="36.00" fill="#ffffff">OpenRouter</text>
+<text text-anchor="start" x="1371.41" y="-268.26" font-family="Arial" font-size="21.00" fill="#ffffff">[Software System]</text>
+<text text-anchor="start" x="1301.41" y="-229.26" font-family="Arial" font-size="26.00" fill="#ffffff">One API for Claude and for</text>
+<text text-anchor="start" x="1337.91" y="-203.26" font-family="Arial" font-size="26.00" fill="#ffffff">open&#45;weight models.</text>
+</g>
+
+<g id="22" class="node">
+<title>22</title>
+<polygon fill="#32433b" stroke="#6fa588" points="2119.91,-386.06 1751.91,-386.06 1751.91,-131.06 2119.91,-131.06 2119.91,-386.06"/>
+<text text-anchor="start" x="1797.91" y="-336.26" font-family="Arial" font-size="36.00" fill="#ffffff">Identity and bank</text>
+<text text-anchor="start" x="1861.91" y="-300.26" font-family="Arial" font-size="36.00" fill="#ffffff">registries</text>
+<text text-anchor="start" x="1849.41" y="-276.26" font-family="Arial" font-size="21.00" fill="#ffffff">[Software System]</text>
+<text text-anchor="start" x="1780.91" y="-237.26" font-family="Arial" font-size="26.00" fill="#ffffff">DigiLocker, the licence and</text>
+<text text-anchor="start" x="1786.91" y="-211.26" font-family="Arial" font-size="26.00" fill="#ffffff">PAN registries, the bank&#39;s</text>
+<text text-anchor="start" x="1797.41" y="-185.26" font-family="Arial" font-size="26.00" fill="#ffffff">Rs 1 check, face match.</text>
+<text text-anchor="start" x="1793.41" y="-159.26" font-family="Arial" font-size="26.00" fill="#ffffff">Simulated in this project.</text>
+</g>
+
+<g id="23" class="node">
+<title>23</title>
+<polygon fill="#32433b" stroke="#6fa588" points="2571.91,-355.06 2191.91,-355.06 2191.91,-162.06 2571.91,-162.06 2571.91,-355.06"/>
+<text text-anchor="start" x="2237.41" y="-305.26" font-family="Arial" font-size="36.00" fill="#ffffff">Load marketplace</text>
+<text text-anchor="start" x="2295.41" y="-281.26" font-family="Arial" font-size="21.00" fill="#ffffff">[Software System]</text>
+<text text-anchor="start" x="2220.91" y="-242.26" font-family="Arial" font-size="26.00" fill="#ffffff">The marketplace&#39;s own load</text>
+<text text-anchor="start" x="2233.41" y="-216.26" font-family="Arial" font-size="26.00" fill="#ffffff">booking. Simulated in this</text>
+<text text-anchor="start" x="2255.41" y="-190.26" font-family="Arial" font-size="26.00" fill="#ffffff">project: sample loads.</text>
+</g>
+
+<g id="18" class="node">
+<title>18</title>
+<path fill="#5f64af" stroke="#b9bdf5" d="M1072.91,-381.8C1072.91,-396.91 989.09,-409.19 885.91,-409.19 782.72,-409.19 698.91,-396.91 698.91,-381.8 698.91,-381.8 698.91,-135.32 698.91,-135.32 698.91,-120.21 782.72,-107.94 885.91,-107.94 989.09,-107.94 1072.91,-120.21 1072.91,-135.32 1072.91,-135.32 1072.91,-381.8 1072.91,-381.8"/>
+<path fill="none" stroke="#b9bdf5" d="M1072.91,-381.8C1072.91,-366.69 989.09,-354.41 885.91,-354.41 782.72,-354.41 698.91,-366.69 698.91,-381.8"/>
+<text text-anchor="start" x="768.91" y="-318.26" font-family="Arial" font-size="36.00" fill="#ffffff">KYC database</text>
+<text text-anchor="start" x="794.91" y="-294.26" font-family="Arial" font-size="21.00" fill="#ffffff">[Container: SQLite]</text>
+<text text-anchor="start" x="748.91" y="-255.26" font-family="Arial" font-size="26.00" fill="#ffffff">Drivers, documents and</text>
+<text text-anchor="start" x="727.91" y="-229.26" font-family="Arial" font-size="26.00" fill="#ffffff">chat, plus append&#45;only logs</text>
+<text text-anchor="start" x="778.91" y="-203.26" font-family="Arial" font-size="26.00" fill="#ffffff">of every event and</text>
+<text text-anchor="start" x="834.41" y="-177.26" font-family="Arial" font-size="26.00" fill="#ffffff">decision.</text>
+</g>
+
+<g id="19" class="node">
+<title>19</title>
+<path fill="#5f64af" stroke="#b9bdf5" d="M544.91,-381.8C544.91,-396.91 461.54,-409.19 358.91,-409.19 256.28,-409.19 172.91,-396.91 172.91,-381.8 172.91,-381.8 172.91,-135.32 172.91,-135.32 172.91,-120.21 256.28,-107.94 358.91,-107.94 461.54,-107.94 544.91,-120.21 544.91,-135.32 544.91,-135.32 544.91,-381.8 544.91,-381.8"/>
+<path fill="none" stroke="#b9bdf5" d="M544.91,-381.8C544.91,-366.69 461.54,-354.41 358.91,-354.41 256.28,-354.41 172.91,-366.69 172.91,-381.8"/>
+<text text-anchor="start" x="266.91" y="-318.26" font-family="Arial" font-size="36.00" fill="#ffffff">Trust graph</text>
+<text text-anchor="start" x="247.91" y="-294.26" font-family="Arial" font-size="21.00" fill="#ffffff">[Container: Neo4j Aura]</text>
+<text text-anchor="start" x="201.91" y="-255.26" font-family="Arial" font-size="26.00" fill="#ffffff">Drivers, bank accounts and</text>
+<text text-anchor="start" x="238.41" y="-229.26" font-family="Arial" font-size="26.00" fill="#ffffff">fleet owners, to tell a</text>
+<text text-anchor="start" x="236.91" y="-203.26" font-family="Arial" font-size="26.00" fill="#ffffff">fraud ring from a real</text>
+<text text-anchor="start" x="329.91" y="-177.26" font-family="Arial" font-size="26.00" fill="#ffffff">fleet.</text>
+</g>
+
+<g id="20" class="node">
+<title>20</title>
+<polygon fill="#5f64af" stroke="#b9bdf5" points="530.41,-895.12 135.41,-895.12 135.41,-572.12 530.41,-572.12 530.41,-895.12"/>
+<text text-anchor="start" x="227.91" y="-845.33" font-family="Arial" font-size="36.00" fill="#ffffff">Eval harness</text>
+<text text-anchor="start" x="164.41" y="-821.33" font-family="Arial" font-size="21.00" fill="#ffffff">[Container: Node.js and TypeScript]</text>
+<text text-anchor="start" x="193.91" y="-782.33" font-family="Arial" font-size="26.00" fill="#ffffff">47 made&#45;up drivers with</text>
+<text text-anchor="start" x="172.41" y="-756.33" font-family="Arial" font-size="26.00" fill="#ffffff">SPECIMEN documents, the</text>
+<text text-anchor="start" x="168.91" y="-730.33" font-family="Arial" font-size="26.00" fill="#ffffff">gate, the model comparison,</text>
+<text text-anchor="start" x="188.41" y="-704.33" font-family="Arial" font-size="26.00" fill="#ffffff">real phone photos, IDNet</text>
+<text text-anchor="start" x="198.41" y="-678.33" font-family="Arial" font-size="26.00" fill="#ffffff">forgeries and the graph</text>
+<text text-anchor="start" x="168.91" y="-652.33" font-family="Arial" font-size="26.00" fill="#ffffff">parity check. Runs the same</text>
+<text text-anchor="start" x="180.91" y="-626.33" font-family="Arial" font-size="26.00" fill="#ffffff">compiled policy as the API</text>
+<text text-anchor="start" x="293.41" y="-600.33" font-family="Arial" font-size="26.00" fill="#ffffff">server.</text>
+</g>
+
+<g id="41" class="edge">
+<title>20&#45;&gt;21</title>
+<path fill="none" stroke="#d7dbe3" d="M530.8,-607.98C560.45,-593.71 591.34,-581.09 621.91,-572.12 742.63,-536.72 1078.33,-599.68 1186.91,-536.12 1228.51,-511.77 1214.36,-481.57 1245.91,-445.12 1275.18,-411.32 1310.57,-377.99 1344,-349.11"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="1346.68,-351.42 1351.99,-342.26 1342.12,-346.11 1346.68,-351.42"/>
+<text text-anchor="start" x="1246.41" y="-517.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">Runs every model on the</text>
+<text text-anchor="start" x="1245.91" y="-493.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">same SPECIMEN photos</text>
+<text text-anchor="start" x="1339.91" y="-469.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">through</text>
+<text text-anchor="start" x="1295.91" y="-449.92" font-family="Arial" font-size="19.00" fill="#d7dbe3">[JSON over HTTPS]</text>
+</g>
+
+<g id="42" class="edge">
+<title>20&#45;&gt;19</title>
+<path fill="none" stroke="#d7dbe3" d="M163.29,-571.95C139.89,-531.8 129.61,-487.94 148.91,-445.12 155.1,-431.39 162.87,-418.26 171.74,-405.8"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="174.59,-407.82 177.72,-397.7 168.96,-403.66 174.59,-407.82"/>
+<text text-anchor="start" x="170.41" y="-505.93" font-family="Arial" font-size="24.00" fill="#d7dbe3">Checks every decision</text>
+<text text-anchor="start" x="164.91" y="-481.93" font-family="Arial" font-size="24.00" fill="#d7dbe3">comes out the same on</text>
+<text text-anchor="start" x="148.91" y="-461.93" font-family="Arial" font-size="19.00" fill="#d7dbe3">[Cypher over HTTPS (Query API)]</text>
+</g>
+
+<g id="6" class="node">
+<title>6</title>
+<polygon fill="#5f64af" stroke="#b9bdf5" points="1140.41,-817.12 657.41,-817.12 657.41,-650.12 1140.41,-650.12 1140.41,-817.12"/>
+<text text-anchor="start" x="814.41" y="-767.33" font-family="Arial" font-size="36.00" fill="#ffffff">API server</text>
+<text text-anchor="start" x="686.41" y="-743.33" font-family="Arial" font-size="21.00" fill="#ffffff">[Container: Node.js, Express and TypeScript]</text>
+<text text-anchor="start" x="758.41" y="-704.33" font-family="Arial" font-size="26.00" fill="#ffffff">The only place a driver&#39;s</text>
+<text text-anchor="start" x="808.41" y="-678.33" font-family="Arial" font-size="26.00" fill="#ffffff">status changes.</text>
+</g>
+
+<g id="29" class="edge">
+<title>4&#45;&gt;6</title>
+<path fill="none" stroke="#d7dbe3" d="M574.61,-1070.95C589.82,-1024.88 612.01,-972.41 642.91,-931.12 673.51,-890.23 714.79,-853.54 755.25,-823.24"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="757.37,-826.03 763.33,-817.27 753.21,-820.4 757.37,-826.03"/>
+<text text-anchor="start" x="655.41" y="-1003.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">Sends photos, answers,</text>
+<text text-anchor="start" x="642.91" y="-979.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">submissions and bookings</text>
+<text text-anchor="start" x="774.41" y="-955.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">to</text>
+<text text-anchor="start" x="699.41" y="-935.92" font-family="Arial" font-size="19.00" fill="#d7dbe3">[JSON over HTTPS]</text>
+</g>
+
+<g id="32" class="edge">
+<title>5&#45;&gt;6</title>
+<path fill="none" stroke="#d7dbe3" d="M970.13,-1058.03C954.12,-985.33 934.09,-894.4 919.36,-827.49"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="922.7,-826.39 917.13,-817.38 915.87,-827.9 922.7,-826.39"/>
+<text text-anchor="start" x="958.91" y="-991.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">Reads cases and records</text>
+<text text-anchor="start" x="1001.41" y="-967.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">decisions through</text>
+<text text-anchor="start" x="1010.91" y="-947.92" font-family="Arial" font-size="19.00" fill="#d7dbe3">[JSON over HTTPS]</text>
+</g>
+
+<g id="30" class="edge">
+<title>6&#45;&gt;1</title>
+<path fill="none" stroke="#d7dbe3" stroke-dasharray="5,2" d="M740.17,-817.19C685.97,-843.81 624.49,-872.3 566.91,-895.12 342.14,-984.2 190.98,-863.23 47.91,-1058.12 -23.1,-1154.86 -7.54,-1221.7 47.91,-1328.12 62.44,-1356.01 83.92,-1380.23 108.18,-1400.93"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="106.21,-1403.85 116.14,-1407.53 110.67,-1398.46 106.21,-1403.85"/>
+<text text-anchor="start" x="47.91" y="-1195.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">Sends nudges and status</text>
+<text text-anchor="start" x="127.91" y="-1171.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">updates to</text>
+<text text-anchor="start" x="59.91" y="-1151.92" font-family="Arial" font-size="19.00" fill="#d7dbe3">[Push notification (simulated)]</text>
+</g>
+
+<g id="35" class="edge">
+<title>6&#45;&gt;21</title>
+<path fill="none" stroke="#d7dbe3" d="M1140.62,-688.71C1299.52,-654.36 1486.67,-601.52 1534.91,-536.12 1574.58,-482.35 1551.57,-409.04 1520.66,-351.41"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="1523.53,-349.37 1515.64,-342.3 1517.4,-352.75 1523.53,-349.37"/>
+<text text-anchor="start" x="1555.91" y="-505.93" font-family="Arial" font-size="24.00" fill="#d7dbe3">Asks a model to read a</text>
+<text text-anchor="start" x="1592.41" y="-481.93" font-family="Arial" font-size="24.00" fill="#d7dbe3">document photo</text>
+<text text-anchor="start" x="1594.41" y="-461.93" font-family="Arial" font-size="19.00" fill="#d7dbe3">[JSON over HTTPS]</text>
+</g>
+
+<g id="37" class="edge">
+<title>6&#45;&gt;22</title>
+<path fill="none" stroke="#d7dbe3" d="M1140.45,-706.86C1378.22,-677.08 1720.08,-620.99 1821.91,-536.12 1864.45,-500.67 1891.33,-446.77 1908.21,-395.94"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="1911.63,-396.75 1911.35,-386.16 1904.96,-394.61 1911.63,-396.75"/>
+<text text-anchor="start" x="1887.91" y="-517.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">Checks the licence, PAN,</text>
+<text text-anchor="start" x="1895.91" y="-493.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">bank account and selfie</text>
+<text text-anchor="start" x="2001.91" y="-469.92" font-family="Arial" font-size="24.00" fill="#d7dbe3">with</text>
+<text text-anchor="start" x="1937.91" y="-449.92" font-family="Arial" font-size="19.00" fill="#d7dbe3">[JSON over HTTPS]</text>
+</g>
+
+<g id="39" class="edge">
+<title>6&#45;&gt;23</title>
+<path fill="none" stroke="#d7dbe3" d="M1140.65,-717.33C1461.36,-693.35 2006.85,-638.7 2176.91,-536.12 2243.98,-495.67 2296.1,-424.16 2331.01,-363.98"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="2334.11,-365.61 2336.03,-355.19 2328.03,-362.14 2334.11,-365.61"/>
+<text text-anchor="start" x="2272.91" y="-505.93" font-family="Arial" font-size="24.00" fill="#d7dbe3">Books loads for approved</text>
+<text text-anchor="start" x="2360.91" y="-481.93" font-family="Arial" font-size="24.00" fill="#d7dbe3">drivers in</text>
+<text text-anchor="start" x="2324.91" y="-461.93" font-family="Arial" font-size="19.00" fill="#d7dbe3">[JSON over HTTPS]</text>
+</g>
+
+<g id="33" class="edge">
+<title>6&#45;&gt;18</title>
+<path fill="none" stroke="#d7dbe3" d="M885.47,-649.68C880.45,-614.73 875.37,-573.55 872.91,-536.12 870.25,-495.77 871.49,-485.54 872.91,-445.12 873.2,-436.72 873.57,-428.1 874,-419.4"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="877.51,-419.32 874.52,-409.15 870.51,-418.96 877.51,-419.32"/>
+<text text-anchor="start" x="872.91" y="-493.93" font-family="Arial" font-size="24.00" fill="#d7dbe3">Reads from and appends to</text>
+<text text-anchor="start" x="998.41" y="-473.93" font-family="Arial" font-size="19.00" fill="#d7dbe3">[SQL]</text>
+</g>
+
+<g id="34" class="edge">
+<title>6&#45;&gt;19</title>
+<path fill="none" stroke="#d7dbe3" d="M731.65,-650.12C676.37,-618.61 616.6,-579.67 567.91,-536.12 529.22,-501.52 492.87,-458.84 461.69,-417.46"/>
+<polygon fill="#d7dbe3" stroke="#d7dbe3" points="464.31,-415.12 455.52,-409.2 458.7,-419.3 464.31,-415.12"/>
+<text text-anchor="start" x="579.41" y="-505.93" font-family="Arial" font-size="24.00" fill="#d7dbe3">Asks who shares a bank</text>
+<text text-anchor="start" x="667.91" y="-481.93" font-family="Arial" font-size="24.00" fill="#d7dbe3">account</text>
+<text text-anchor="start" x="567.91" y="-461.93" font-family="Arial" font-size="19.00" fill="#d7dbe3">[Cypher over HTTPS (Query API)]</text>
+</g>
+</g>
+</svg>

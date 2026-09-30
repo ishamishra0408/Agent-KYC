@@ -13,7 +13,7 @@ evals/specimens/print/
 evals/specimens/phone-photos/*
 !evals/specimens/phone-photos/README.md
 !evals/specimens/phone-photos/manifest.json
-architecture.svg
+/architecture.svg
 .DS_Store
 tools/
 # drawing-office's viewer and palette: no upstream license, so npm run c4 copies them in from tools/

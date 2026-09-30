@@ -23,6 +23,12 @@
 3. **Decide** — a policy in Rego approves, asks for a fix, or sends the case to a person, always with a reason.
 4. **Unlock** — approved drivers can book; a lapsed licence locks them again.
 
+## Architecture
+
+![C4 container diagram. The driver app and the ops console call the API server, the only place a driver's status changes. It stores everything in SQLite, asks the Neo4j trust graph who shares a bank account, asks OpenRouter to read document photos, and calls the identity registries and the load marketplace. The eval harness runs the same policy and checks the graph.](docs/architecture.svg)
+
+Violet is this system; green is people and outside systems (the registries, the marketplace and push notifications are simulated). Every status change goes through the API server; the AI reader and the trust graph only supply evidence. Drawn from the [C4 model](architecture/agent-kycready/workspace.dsl), which also has the API server's components and six traced flows.
+
 ## Does it work?
 
 | On 47 made-up test cases | Bad cases approved | Good cases approved |
@@ -31,6 +37,24 @@
 | **Agent KYCReady** | **0 of 31** | **16 of 16** |
 
 Five AI models were compared on the same cases. The open-weight Gemma got every decision right, as Claude Opus did, at $0.10 per 1,000 photos against $13.74. The weak spot is forged documents: on public IDNet forgeries, the reader rarely spotted the edits. [How the tests work](evals/README.md) · [the model comparison](evals/results/BAKEOFF.md)
+
+## Key trade-offs
+
+| Decision | Chose | Over | Cost we accepted |
+|---|---|---|---|
+| Who approves | The model reads and flags; a policy decides ([D-001](DECISIONS.md#d-001--ai-proposes-code-and-people-decide)) | The model approving above a confidence threshold | Rules need upkeep, and what they can't settle goes to a person, not to the model |
+| When to approve | Only with positive evidence from every check ([D-013](DECISIONS.md#d-013--approval-needs-positive-evidence)) | "No problems found" | More cases reach a person, for example whenever the trust graph can't answer |
+| Making "AI can't approve" hold | Only decisions the policy minted can be applied; the logs refuse edits ([D-014](DECISIONS.md#d-014--only-the-rules-engines-own-decisions-can-be-applied)) | A label or a convention | A contract layer between the policy and the database |
+| Where the rules live | Rego on Open Policy Agent, compiled to WebAssembly and run in-process ([D-030](DECISIONS.md#d-030--the-decision-rules-are-policy-as-code-on-open-policy-agent)) | Rules in TypeScript, or a policy server | A second language and a build step. Switched only after it reproduced 137 recorded decisions exactly |
+| Which model reads | Gemma 4 31B; Claude Sonnet after 15 s or on failure ([D-038](DECISIONS.md#d-038--the-app-reads-photos-with-gemma-4-31b-and-claude-sonnet-when-gemma-is-slow-or-fails)) | Claude Opus for every photo | About 9 s a photo instead of 3 s, for $0.10 instead of $13.74 per 1,000 photos, with the same decisions |
+| How models are reached | OpenRouter for every call ([D-033](DECISIONS.md#d-033--openrouter-only)) | Each vendor's own SDK | One vendor between us and every model, kept behind an interface |
+| When AI ships | Only after passing a gate on 47 cases, holdout included ([D-035](DECISIONS.md#d-035--the-ai-document-reader-is-measured-before-it-reads-for-a-driver-phase-3)) | Tuning prompts inside the app | A slower start, paid back when the gate caught a client timeout bug ([F-024](FAILURES.md)) |
+| Fraud rings | A trust graph on Neo4j; no answer sends the case to a person ([D-039](DECISIONS.md#d-039--the-trust-graph-runs-on-neo4j-and-no-answer-sends-the-case-to-a-person-policy-v5)) | The in-memory graph it replaced ([D-011](DECISIONS.md#d-011--graph-checks-in-memory-first)) | A network hop (about 0.15 s a check) and a free tier that pauses. Same decisions as in memory, 94 of 94 |
+| Name matching | Transliterations match (Laxmi and Lakshmi) ([D-008](DECISIONS.md#d-008--name-matching-understands-transliteration)) | Exact matches only | "R Kumar" matches "Ramesh Kumar": registries catch impostors, and rejecting honest spellings is unfair |
+| What drivers see | Fix reasons in full; review reasons never ([D-021](DECISIONS.md#d-021--drivers-never-see-why-they-were-sent-to-review)) | Every reason shown | Less transparency for a flagged driver: saying what was noticed teaches them to hide it |
+| Test data | Made-up SPECIMEN documents only ([D-005](DECISIONS.md#d-005--fake-specimen-documents-only)) | Real IDs | Less realism; a phone-photo kit and public IDNet forgeries fill some of the gap |
+
+Every decision, with its options and what it cost: [DECISIONS.md](DECISIONS.md), 41 in all. What went wrong and what changed: [FAILURES.md](FAILURES.md).
 
 ## Try it
 

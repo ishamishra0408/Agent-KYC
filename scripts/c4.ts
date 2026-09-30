@@ -227,7 +227,29 @@ async function page() {
         .replace('graph [fontname="Arial", ', 'graph [fontname="Arial", bgcolor="transparent", pad="0.4", ');
       writeFileSync(file, dot);
     }
+    // The README's container diagram: the same view top to bottom, on the palette's own dark plate
+    // (its light lines vanish on GitHub's white), without the page's hover hint or the delivery-state
+    // strokes a static image can't explain.
+    const containerStroke = String((theme.elements as Json[]).find((e) => e.tag === "Container")?.stroke ?? "#b9bdf5");
+    const containers = path.join(work, "structurizr-Containers.dot");
+    if (existsSync(containers)) {
+      let dot = readFileSync(containers, "utf8")
+        .replace('bgcolor="transparent"', `bgcolor="${String(theme.canvas)}"`)
+        .replace("rankdir=LR", "rankdir=TB")
+        .replace(/ modified(?:<br \/>| )—(?:<br \/>| )hover(?:<br \/>| )for(?:<br \/>| )details/g, "");
+      for (const c of stateStrokes) dot = dot.replaceAll(new RegExp(`color="${c}"`, "gi"), `color="${containerStroke}"`);
+      writeFileSync(path.join(work, "readme-Containers.dot"), dot);
+    }
     docker(["-c", 'for f in *.dot; do dot -Tsvg "$f" -o "${f%.dot}.svg"; done'], { entrypoint: "sh", workdir: work });
+    const readme = path.join(work, "readme-Containers.svg");
+    if (existsSync(readme)) {
+      const svg = readFileSync(readme, "utf8")
+        .replace(/<!--[\s\S]*?-->/g, "")
+        .replaceAll('stroke="#444444"', 'stroke="#7d8694" stroke-width="2"')
+        .replaceAll('fill="#444444"', 'fill="#aab2bf"');
+      writeFileSync(path.join(ROOT, "docs", "architecture.svg"), svg);
+      console.log(`docs/architecture.svg: the container view for the README, ${Math.round(svg.length / 1024)} KB`);
+    }
 
     const drawings = model.views.map((v) => {
       const svg = readFileSync(path.join(work, `structurizr-${v.key}.svg`), "utf8");
