@@ -6,8 +6,38 @@ import { t } from "../i18n";
 import { ErrorNote, Push, Sim, Skeleton, Truck } from "../ui";
 import { confetti, play } from "../whimsy";
 
-// Behind the bookings lock: the API answers 403 until the rules (or a reviewer) approve.
-// Loads are cargo tickets; booking one stamps it.
+// The vehicle step (D-049): once verified, the driver's vehicle, checked with the registry (SIMULATED)
+// and decided by the vehicle policy. The demo fills in the persona's own vehicle.
+function VehicleForm({ view }: { view: DriverView }) {
+  const id = view.driver.id;
+  const lang = view.driver.language;
+  const { run, busy, error } = useAction();
+  const [number, setNumber] = useState(view.vehicle.hint ?? "");
+  return (
+    <form
+      className="vehicle-form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        run(() => api.vehicle(id, number)).then((r) => r && play(r.outcome === "APPROVE" ? "pop" : "bonk"));
+      }}
+    >
+      <Truck size={44} />
+      <strong>{t(lang, "vehicleTitle")}</strong>
+      {view.vehicle.fixes.length > 0 && <p className="vehicle-fix small">{view.vehicle.fixes.join(" ")}</p>}
+      <label>
+        <span className="small muted">{t(lang, "vehicleNumber")}</span>
+        <input autoComplete="off" autoCapitalize="characters" maxLength={13} value={number} onChange={(e) => setNumber(e.target.value)} />
+      </label>
+      <Push block type="submit" disabled={busy}>
+        {t(lang, "checkVehicle")} <Sim />
+      </Push>
+      <ErrorNote message={error} />
+    </form>
+  );
+}
+
+// Behind the bookings lock: the API answers 403 until the rules (or a reviewer) approve, and until a
+// vehicle is verified. Loads are cargo tickets; booking one stamps it.
 export function Loads({ view, phone, onGoKyc }: { view: DriverView; phone: RefObject<HTMLDivElement | null>; onGoKyc: () => void }) {
   const id = view.driver.id;
   const lang = view.driver.language;
@@ -15,6 +45,7 @@ export function Loads({ view, phone, onGoKyc }: { view: DriverView; phone: RefOb
   const { run, busy, error } = useAction();
   const [note, setNote] = useState<string | null>(null);
 
+  if (view.vehicle.needed) return <VehicleForm key={view.vehicle.hint ?? "none"} view={view} />;
   if (!view.canBook) {
     return (
       <div className="locked">

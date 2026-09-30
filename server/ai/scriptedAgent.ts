@@ -1,4 +1,5 @@
 import { REASONS, WAITING } from "../domain/reasons";
+import { VEHICLE_REASONS, type VehicleReasonCode } from "../domain/vehicle";
 import type { DocType, Outcome, ReasonCode } from "../domain/types";
 
 // The onboarding assistant's lines, scripted until Phase 3 swaps in the AI agent.
@@ -20,8 +21,8 @@ const STEP_PROMPT: Record<Exclude<KycStep, "CONSENT">, Text> = {
     hi: "अब अपना PAN कार्ड। फोटो लें या DigiLocker इस्तेमाल करें।",
   },
   BANK: {
-    en: "Next, your bank account. Pay Rs 1 from your UPI app and we'll confirm the account. No typing needed.",
-    hi: "अब बैंक खाता। अपने UPI ऐप से ₹1 भेजें, हम खाता पक्का कर लेंगे। कुछ टाइप नहीं करना।",
+    en: "Next, your bank account. Enter its number and IFSC, and we'll send Rs 1 to check it's open.",
+    hi: "अब बैंक खाता। उसका नंबर और IFSC डालें, हम ₹1 भेजकर देखेंगे कि खाता चालू है।",
   },
   SELFIE: {
     en: "Last step: a quick selfie, so we can match it to your licence.",
@@ -44,15 +45,34 @@ const LINES = {
     hi: "यह फोटो साफ़ पढ़ी नहीं जा सकी। अच्छी रोशनी में दूसरी फोटो लें।",
   },
   digilocker: { en: "Fetched from DigiLocker. No photo needed.", hi: "DigiLocker से मिल गया। फोटो की ज़रूरत नहीं।" },
-  bank: { en: "Rs 1 received and refunded. Your account is confirmed.", hi: "₹1 मिला और वापस भेज दिया। आपका खाता पक्का हो गया।" },
+  bank: {
+    en: (last4: string) => `Rs 1 sent to the account ending ${last4}. We'll match the name on it when you submit.`,
+    hi: (last4: string) => `₹1 उस खाते में भेजा जिसके आख़िरी अंक ${last4} हैं। सबमिट करने पर हम उस पर लिखा नाम मिलाएँगे।`,
+  },
+  bankNotFound: {
+    en: (left: number) => `No account found for that number and IFSC. Check them and try again (${left} ${left === 1 ? "try" : "tries"} left).`,
+    hi: (left: number) => `इस नंबर और IFSC से कोई खाता नहीं मिला। जाँचकर फिर कोशिश करें (${left} बार और)।`,
+  },
+  vehicleOk: {
+    en: (n: string) => `Vehicle ${n} is verified. You can book loads now.`,
+    hi: (n: string) => `गाड़ी ${n} वेरिफ़ाई हो गई। अब आप लोड बुक कर सकते हैं।`,
+  },
+  bankLocked: {
+    en: "That's three tries in 24 hours. Try again later, or ask for help.",
+    hi: "24 घंटे में तीन बार कोशिश हो चुकी है। बाद में फिर कोशिश करें, या मदद माँगें।",
+  },
   selfie: { en: "Selfie taken.", hi: "सेल्फ़ी हो गई।" },
   approved: {
     en: "You're verified! Bookings are open, and there are loads near you.",
     hi: "आपका वेरिफ़िकेशन हो गया! अब आप लोड बुक कर सकते हैं।",
   },
+  approvedAddVehicle: {
+    en: "You're verified! Add your vehicle in Loads, and you can start booking.",
+    hi: "आपका वेरिफ़िकेशन हो गया! Loads में अपनी गाड़ी जोड़ें, फिर आप बुकिंग शुरू कर सकते हैं।",
+  },
   fixIntro: { en: "One thing to fix:", hi: "एक चीज़ ठीक करनी है:" },
   fixIntroMany: { en: "A few things to fix:", hi: "कुछ चीज़ें ठीक करनी हैं:" },
-} satisfies Record<string, Text | Record<Lang, (n: string) => string>>;
+} satisfies Record<string, Text | Record<Lang, (n: string) => string> | Record<Lang, (n: number) => string>>;
 
 export const FAQ: Record<FaqId, { q: Text; a: Text }> = {
   why_bank: {
@@ -90,9 +110,13 @@ export type AgentEvent =
   | { type: "prompt"; step: KycStep }
   | { type: "photo"; slot: DocType; issue: ReasonCode | null }
   | { type: "digilocker" }
-  | { type: "bank_checked" }
+  | { type: "bank_checked"; last4: string }
+  | { type: "bank_not_found"; triesLeft: number }
+  | { type: "bank_locked" }
+  | { type: "vehicle_ok"; number: string }
+  | { type: "vehicle_fix"; fixes: VehicleReasonCode[] }
   | { type: "selfie_taken" }
-  | { type: "decision"; outcome: Outcome; fixes: ReasonCode[] }
+  | { type: "decision"; outcome: Outcome; fixes: ReasonCode[]; needsVehicle?: boolean }
   | { type: "faq"; id: FaqId };
 
 // Turns one event into the assistant's lines, in the driver's language.
@@ -111,11 +135,19 @@ export function agentSay(event: AgentEvent, lang: Lang): string[] {
     case "digilocker":
       return [LINES.digilocker[lang]];
     case "bank_checked":
-      return [LINES.bank[lang]];
+      return [LINES.bank[lang](event.last4)];
+    case "bank_not_found":
+      return [LINES.bankNotFound[lang](event.triesLeft)];
+    case "bank_locked":
+      return [LINES.bankLocked[lang]];
+    case "vehicle_ok":
+      return [LINES.vehicleOk[lang](event.number)];
+    case "vehicle_fix":
+      return [[...new Set(event.fixes.map((f) => VEHICLE_REASONS[f].driver[lang]))].join("\n")];
     case "selfie_taken":
       return [LINES.selfie[lang]];
     case "decision":
-      if (event.outcome === "APPROVE") return [LINES.approved[lang]];
+      if (event.outcome === "APPROVE") return [(event.needsVehicle ? LINES.approvedAddVehicle : LINES.approved)[lang]];
       if (event.outcome === "REVIEW") return [WAITING[lang]];
       // One message: the intro, then each fix on its own line, said once.
       return [[(event.fixes.length > 1 ? LINES.fixIntroMany : LINES.fixIntro)[lang], ...new Set(event.fixes.map((f) => REASONS[f].driver[lang]))].join("\n")];

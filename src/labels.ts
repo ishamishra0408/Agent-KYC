@@ -41,8 +41,26 @@ export const NOTICE_LABEL: Record<string, string> = {
 export const FIX_STEP_LABEL: Record<FixStep, string> = {
   DL: "Licence photo",
   PAN: "PAN photo",
-  BANK: "Bank check (Rs 1)",
+  BANK: "Bank account (Rs 1 check)",
   SELFIE: "Selfie",
+};
+
+// The vehicle decision (D-049).
+export const VEHICLE_OUTCOME_LABEL: Record<string, string> = { APPROVE: "Verified", NEEDS_FIX: "Asked to fix" };
+export const VEHICLE_REASON_LABEL: Record<string, string> = {
+  VEHICLE_NOT_FOUND: "No such registration",
+  VEHICLE_NOT_GOODS: "Not a goods vehicle",
+  VEHICLE_REGISTRATION_EXPIRED: "Registration expired",
+  VEHICLE_OWNER_MISMATCH: "Someone else's vehicle",
+  VEHICLE_OWNER_NOT_VERIFIED: "Fleet owner isn't verified",
+  VEHICLE_OWNER_LINK_UNVERIFIED: "Fleet owner hasn't confirmed them",
+  VEHICLE_NOT_VERIFIED: "Couldn't verify",
+};
+export const VEHICLE_CHECK_LABEL: Record<string, string> = {
+  VEHICLE_FOUND: "Registration found",
+  VEHICLE_OWNER: "Owner matches",
+  VEHICLE_GOODS: "Goods vehicle",
+  VEHICLE_VALID: "Registration valid",
 };
 
 export const CHECK_LABEL: Record<string, string> = {

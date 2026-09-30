@@ -65,6 +65,14 @@ export interface PanRecord {
   dob: string;
 }
 
+// A vehicle registration, as a Vahan-style registry returns it (SIMULATED, D-049).
+export interface VehicleRecord {
+  number: string;
+  ownerName: string;
+  vehicleClass: string; // LGV, MGV, HGV carry goods; LMV is a car
+  registeredTill: string; // YYYY-MM-DD, the registration's last valid day
+}
+
 export interface BankRecord {
   accountId: string;
   holderName: string;

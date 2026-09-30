@@ -21,7 +21,7 @@
 1. **Nudge** — one message about the driver's blocker, at most every two days, never at night.
 2. **Read** — an AI model (Gemma 4 31B, with Claude Sonnet as backup) turns each photo into fields and flags.
 3. **Decide** — a policy in Rego approves, asks for a fix, or sends the case to a person, always with a reason.
-4. **Unlock** — approved drivers can book; a lapsed licence locks them again.
+4. **Unlock** — approved drivers add their vehicle and can book once the vehicle policy approves it; a lapsed licence locks them again.
 
 ## Architecture
 
@@ -35,6 +35,8 @@ Violet is this system; green is people and outside systems (the registries, the 
 |---|---|---|
 | No document reading (the old way) | 12 of 31 | 16 of 16 |
 | **Agent KYCReady** | **0 of 31** | **16 of 16** |
+
+The 47 are a main set of 31 and a holdout of 16 written by someone who never saw the code; across both, 31 must be stopped and 16 are honest drivers.
 
 Five AI models were compared on the same cases. The open-weight Gemma got every decision right, as Claude Opus did, at $0.10 per 1,000 photos against $13.74. The weak spot is forged documents: on public IDNet forgeries, the reader rarely spotted the edits. [How the tests work](evals/README.md) · [the model comparison](evals/results/BAKEOFF.md)
 
@@ -52,13 +54,15 @@ Five AI models were compared on the same cases. The open-weight Gemma got every 
 | Fraud rings | A trust graph on Neo4j; no answer sends the case to a person ([D-039](DECISIONS.md#d-039--the-trust-graph-runs-on-neo4j-and-no-answer-sends-the-case-to-a-person-policy-v5)) | The in-memory graph it replaced ([D-011](DECISIONS.md#d-011--graph-checks-in-memory-first)) | A network hop (about 0.15 s a check) and a free tier that pauses. Same decisions as in memory, 94 of 94 |
 | Name matching | Transliterations match (Laxmi and Lakshmi) ([D-008](DECISIONS.md#d-008--name-matching-understands-transliteration)) | Exact matches only | "R Kumar" matches "Ramesh Kumar": registries catch impostors, and rejecting honest spellings is unfair |
 | What drivers see | Fix reasons in full; review reasons never ([D-021](DECISIONS.md#d-021--drivers-never-see-why-they-were-sent-to-review)) | Every reason shown | Less transparency for a flagged driver: saying what was noticed teaches them to hide it |
+| Where the vehicle check lives | A decision of its own that gates bookings ([D-049](DECISIONS.md#d-049--closer-to-a-real-marketplace-a-vehicle-check-a-penny-drop-and-a-second-look-for-hidden-instructions)) | A sixth KYC check | Two decisions per driver instead of one; the 47 KYC cases, holdout included, stay untouched |
 | Test data | Made-up SPECIMEN documents only ([D-005](DECISIONS.md#d-005--fake-specimen-documents-only)) | Real IDs | Less realism; a phone-photo kit and public IDNet forgeries fill some of the gap |
 
-Every decision, with its options and what it cost: [DECISIONS.md](DECISIONS.md), 46 in all. What went wrong and what changed: [FAILURES.md](FAILURES.md).
+Every decision, with its options and what it cost: [DECISIONS.md](DECISIONS.md), 49 in all. What went wrong and what changed: [FAILURES.md](FAILURES.md).
 
 ## Try it
 
-- **Ramesh** has just signed up: take a blurry licence photo, then finish, submit and book a load.
+- **Ramesh** has just signed up: take a blurry licence photo, then finish, submit, add his vehicle and book a load.
+- **Vinod**'s bank account is in his spouse's name: enter his own and submit again.
 - **Meena** and **Rahul** wait in the review queue: decide their cases.
 - **Priya**'s licence runs out in 19 days: move the clock three weeks and her bookings lock.
 - **Kavitha**'s phone is in Hindi.
@@ -78,9 +82,9 @@ No keys needed. For the real AI reader and the Neo4j graph, copy `.env.example` 
 <summary>More commands</summary>
 
 ```bash
-npm test                                    # 191 tests, no keys
+npm test                                    # 211 tests, no keys
 npm run evals:gate                          # the policy against the answer key
-npm run policy:test                         # 29 Rego tests
+npm run policy:test                         # 41 Rego tests
 npm run evals -- --reader=app               # the AI reader on the test cases (needs OPENROUTER_API_KEY)
 npm run evals:bakeoff                       # the five-model comparison
 npm run graph:parity                        # the same decisions on Neo4j and in memory
@@ -92,7 +96,7 @@ npm run c4 && npm run c4:check              # the architecture diagrams (needs D
 
 ## Learn more
 
-[PRD](PRD.md) · [46 decisions](DECISIONS.md) · [27 failures and fixes](FAILURES.md) · [architecture](architecture/agent-kycready/workspace.dsl) · [evals](evals/README.md)
+[PRD](PRD.md) · [49 decisions](DECISIONS.md) · [27 failures and fixes](FAILURES.md) · [architecture](architecture/agent-kycready/workspace.dsl) · [evals](evals/README.md)
 
 Stack: React · Express · SQLite · Open Policy Agent (Rego compiled to WebAssembly) · OpenRouter · Neo4j Aura.
 

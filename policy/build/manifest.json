@@ -6,10 +6,13 @@
     "kyc/photo_check",
     "kyc/renewal",
     "kyc/severities",
-    "kyc/version"
+    "kyc/version",
+    "vehicle/decision",
+    "vehicle/version"
   ],
   "sources": {
-    "kyc.rego": "ea90b48922be8154634b4cb00fd1f09d60dae03efef0cadde3e0e74e796abeac"
+    "kyc.rego": "b3a51f1b8de55da3b7b1038579841aa9ac7ff061c3e88365a41b6203c244c378",
+    "vehicle.rego": "341da116ccce29cf4d3f1a779b819f303ea816f4a26f36b68f9b17c853f6f950"
   },
-  "wasm": "5a551d9f7ed9029262c80deffbb494922cc636f0da497311b7f99f1e174d643f"
+  "wasm": "a7f5f6cec7d63a25f24644787d4416003cecb2fbff10a8b6fc738ce47c7355c1"
 }

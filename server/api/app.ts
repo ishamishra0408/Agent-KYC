@@ -6,10 +6,14 @@ import { SHOT_VARIANTS, type ShotVariant } from "../demo/shots";
 import { ManualClock } from "../domain/clock";
 import { TransitionError } from "../domain/statusMachine";
 import { mockNudgeWriter } from "../ai/mockNudgeWriter";
+import { DRAFT_WRITER } from "../ai/reviewDraft";
 import { runNudgeCycle } from "../services/nudges";
 import {
+  addVehicle,
   ask,
   bankCheck,
+  BankDetailsError,
+  BankTriesError,
   book,
   consent,
   driverView,
@@ -20,10 +24,11 @@ import {
   takePhoto,
   takeSelfie,
   useDigilocker,
+  VehicleNumberError,
   type KycContext,
 } from "../services/kyc";
 import { DecisionRefusedError, MissingReasonError } from "../services/onboarding";
-import { caseView, driversSummary, evalSummaries, funnel, nudgeLog, reviewQueue } from "../services/ops";
+import { caseView, driversSummary, evalSummaries, funnel, nudgeLog, reviewDraftFor, reviewQueue } from "../services/ops";
 
 export interface AppDeps {
   ctx: KycContext; // mutable: reset swaps the store and clock
@@ -40,8 +45,16 @@ const AskBody = z.object({ faq: z.enum(["why_bank", "data_safe", "no_pan", "pers
 const LangBody = z.object({ language: z.enum(["en", "hi"]) });
 const OptOutBody = z.object({ optedOut: z.boolean() });
 const DecisionBody = z
-  .object({ choice: z.enum(["APPROVE", "NEEDS_FIX", "REJECT"]), note: z.string().max(500), step: z.enum(["DL", "PAN", "BANK", "SELFIE"]).optional() })
+  .object({
+    choice: z.enum(["APPROVE", "NEEDS_FIX", "REJECT"]),
+    note: z.string().max(500),
+    step: z.enum(["DL", "PAN", "BANK", "SELFIE"]).optional(),
+    draft: z.enum([DRAFT_WRITER]).optional(), // who wrote the note's first draft, if the copilot did (D-048)
+  })
   .refine((b) => b.choice !== "NEEDS_FIX" || b.step !== undefined, { message: "Pick the step the driver should redo." });
+const DraftQuery = z.object({ choice: z.enum(["APPROVE", "NEEDS_FIX", "REJECT"]), step: z.enum(["DL", "PAN", "BANK", "SELFIE"]).optional() });
+const BankBody = z.object({ accountNumber: z.string().min(1).max(30), ifsc: z.string().min(1).max(20) });
+const VehicleBody = z.object({ number: z.string().min(1).max(20) });
 const AdvanceBody = z.object({ hours: z.number().int().min(1).max(24 * 7) });
 
 export function shotUrl(shotId: string | null): string | null {
@@ -117,9 +130,10 @@ export function createApp(deps: AppDeps): express.Express {
     res.json({ ok: true });
   });
 
-  app.post("/api/drivers/:id/bank-check", (req, res) => {
-    bankCheck(ctx, id(req));
-    res.json({ ok: true });
+  // The penny drop (D-049): the driver's account number and IFSC, checked with the (simulated) bank.
+  app.post("/api/drivers/:id/bank-check", async (req, res) => {
+    const { accountNumber, ifsc } = BankBody.parse(req.body);
+    res.json(await bankCheck(ctx, id(req), accountNumber, ifsc));
   });
 
   app.post("/api/drivers/:id/selfie", (req, res) => {
@@ -151,10 +165,17 @@ export function createApp(deps: AppDeps): express.Express {
   app.get("/api/drivers/:id/loads", (req, res) => {
     const view = driverView(ctx, id(req));
     if (!view.canBook) {
-      res.status(403).json({ error: "Finish verification to book loads.", nextStep: view.nextStep });
+      const vehicle = view.vehicle.needed;
+      res.status(403).json({ error: vehicle ? "Add a verified vehicle to book loads." : "Finish verification to book loads.", nextStep: vehicle ? "VEHICLE" : view.nextStep });
       return;
     }
     res.json({ loads: LOADS, bookings: view.bookings });
+  });
+
+  // The vehicle step (D-049): a registration number, checked with the (simulated) registry and decided by the vehicle policy.
+  app.post("/api/drivers/:id/vehicle", async (req, res) => {
+    const { number } = VehicleBody.parse(req.body);
+    res.json(await addVehicle(ctx, id(req), number));
   });
 
   app.post("/api/drivers/:id/loads/:loadId/book", (req, res) => {
@@ -181,9 +202,15 @@ export function createApp(deps: AppDeps): express.Express {
     });
   });
 
+  // The reviewer's copilot: a first draft of the note, which the reviewer edits (D-048).
+  app.get("/api/ops/drivers/:id/draft", (req, res) => {
+    const { choice, step } = DraftQuery.parse(req.query);
+    res.json(reviewDraftFor(ctx, id(req), choice, step));
+  });
+
   app.post("/api/ops/drivers/:id/decision", (req, res) => {
-    const { choice, note, step } = DecisionBody.parse(req.body);
-    const d = reviewerDecision(ctx, id(req), choice, note, step);
+    const { choice, note, step, draft } = DecisionBody.parse(req.body);
+    const d = reviewerDecision(ctx, id(req), choice, note, step, draft);
     res.json({ status: d.status });
   });
 
@@ -214,8 +241,10 @@ export function createApp(deps: AppDeps): express.Express {
       res.status(400).json({ error: "Invalid request.", issues: err.issues.map((i) => i.message) });
     } else if (err instanceof KycError) {
       res.status(err.httpStatus).json({ error: err.message });
-    } else if (err instanceof MissingReasonError) {
+    } else if (err instanceof MissingReasonError || err instanceof BankDetailsError || err instanceof VehicleNumberError) {
       res.status(400).json({ error: err.message });
+    } else if (err instanceof BankTriesError) {
+      res.status(429).json({ error: err.message });
     } else if (err instanceof DecisionRefusedError) {
       res.status(409).json({ error: err.message });
     } else if (err instanceof TransitionError || err instanceof OwnerLinkError) {

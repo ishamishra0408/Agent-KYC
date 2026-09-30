@@ -1,3 +1,4 @@
+import { instructionsIn } from "./instructionScan";
 import { namesMatch } from "./names";
 import { daysBetween, istDate } from "./time";
 import type {
@@ -25,6 +26,7 @@ export interface PolicyReading {
   isScreenPhoto: boolean;
   suspiciousText: string | null;
   tamperSigns: string | null;
+  fieldInstructions: string | null; // a field that reads like an instruction to the system, found by the scan (D-049)
   confidence: number | null; // NaN and other non-numbers become null
   fields: DocReading["fields"];
 }
@@ -69,6 +71,7 @@ export function policyReading(r: DocReading): PolicyReading {
     isScreenPhoto: Boolean(r.isScreenPhoto),
     suspiciousText: typeof hidden === "string" ? hidden : hidden === null || hidden === undefined || hidden === false ? null : String(hidden),
     tamperSigns: typeof edited === "string" ? edited : edited === null || edited === undefined || edited === false ? null : String(edited),
+    fieldInstructions: instructionsIn(r.fields),
     confidence: typeof r.confidence === "number" && Number.isFinite(r.confidence) ? r.confidence : null,
     fields: r.fields ?? {},
   };

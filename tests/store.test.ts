@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { OwnerLinkError, Store } from "../server/db/store";
 import { TransitionError } from "../server/domain/statusMachine";
 import { decide } from "../server/policy";
-import { DecisionRefusedError, ForgedDecisionError, applyRulesDecision, humanDecision, MissingReasonError, tryBook } from "../server/services/onboarding";
+import { vehicleRules } from "../server/policy";
+import { DecisionRefusedError, ForgedDecisionError, applyRulesDecision, applyVehicleDecision, humanDecision, MissingReasonError, tryBook } from "../server/services/onboarding";
 import { nextStep } from "../server/services/kyc";
 import { cleanEvidence, decisions, NOW } from "./helpers";
 
@@ -46,7 +47,7 @@ describe("Store and onboarding", () => {
     expect(applyRulesDecision(store, "d1", decisions.approve(), NOW).status).toBe("APPROVED");
     const d = store.latestDecision("d1");
     expect(d?.actor).toBe("rules");
-    expect(d?.rulesVersion).toBe("v6");
+    expect(d?.rulesVersion).toBe("v7");
     expect(d?.passed.map((p) => p.check)).toContain("DL_VALID");
   });
 
@@ -66,6 +67,25 @@ describe("Store and onboarding", () => {
     expect(() => humanDecision(store, "d1", "APPROVE", "  ", NOW)).toThrow(MissingReasonError);
     expect(humanDecision(store, "d1", "APPROVE", "Checked registry by phone", NOW).status).toBe("APPROVED");
     expect(store.latestDecision("d1")?.note).toBe("Checked registry by phone");
+  });
+
+  it("freezes what a reviewer's decision was based on (D-048)", () => {
+    const store = new Store();
+    submittedDriver(store);
+    applyRulesDecision(store, "d1", decisions.review(), NOW);
+    const rules = store.latestDecision("d1");
+    humanDecision(store, "d1", "APPROVE", "Checked registry by phone", NOW, { draft: "template" });
+    const human = store.latestDecision("d1");
+    expect(human?.actor).toBe("human");
+    const basedOn = human?.evidence.basedOn as { at: string; rulesVersion: string; outcome: string; reasons: { code: string }[] };
+    expect(basedOn.at).toBe(rules?.at);
+    expect(basedOn.rulesVersion).toBe(rules?.rulesVersion);
+    expect(basedOn.outcome).toBe("REVIEW");
+    expect(basedOn.reasons.map((r) => r.code)).toEqual(rules?.reasons.map((r) => r.code));
+    expect(human?.evidence.draft).toBe("template");
+    expect(typeof human?.evidence.documents).toBe("object");
+    // A rules decision carries no snapshot of its own: its reasons and checks are the record.
+    expect(rules?.evidence).toEqual({});
   });
 
   it("won't let a reviewer approve a licence the registry says has expired", () => {
@@ -110,6 +130,9 @@ describe("Store and onboarding", () => {
     applyRulesDecision(store, "d1", decisions.review(), NOW);
     expect(tryBook(store, "d1").ok).toBe(false);
     humanDecision(store, "d1", "APPROVE", "Looks fine", NOW);
+    expect(tryBook(store, "d1")).toEqual({ ok: false, httpStatus: 403, message: "Add a verified vehicle to book loads." }); // D-049
+    const facts = { number: "KA05MN4821", record: { number: "KA05MN4821", ownerName: "RAMESH KUMAR", vehicleClass: "LGV", registeredTill: "2034-06-30" }, driver: { identity: "RAMESH KUMAR", partnerType: "owner_driver" as const, ownerLinkVerified: false }, fleetOwnerIdentity: null, ownerVerified: false, today: "2026-09-29", registrySimulated: true };
+    applyVehicleDecision(store, "d1", facts.number, facts.record, vehicleRules.decide(facts), NOW);
     expect(tryBook(store, "d1")).toEqual({ ok: true });
     expect(tryBook(store, "nobody")).toMatchObject({ ok: false, httpStatus: 404 });
   });

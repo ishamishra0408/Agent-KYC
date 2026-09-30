@@ -4,6 +4,8 @@ import type { Server } from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { CASES } from "../evals/cases";
+import { demoAccountNumber } from "../server/adapters/registry";
 import { createApp } from "../server/api/app";
 import { Store } from "../server/db/store";
 import { seedDemo } from "../server/demo/seed";
@@ -72,13 +74,23 @@ describe("demo API", () => {
 
     await call("POST", "/api/drivers/c01/photo", { slot: "DL", variant: "clean" });
     await call("POST", "/api/drivers/c01/photo", { slot: "PAN", variant: "clean" });
-    await call("POST", "/api/drivers/c01/bank-check");
+    const hint = (await call("GET", "/api/drivers/c01")).body.bank.hint;
+    expect((await call("POST", "/api/drivers/c01/bank-check", hint)).body).toEqual({ found: true, triesLeft: 3 });
     await call("POST", "/api/drivers/c01/selfie");
     expect((await call("GET", "/api/drivers/c01")).body.nextStep).toBe("SUBMIT");
 
     expect((await call("GET", "/api/drivers/c01/loads")).status).toBe(403); // locked before approval
 
     expect((await call("POST", "/api/drivers/c01/submit")).body.outcome).toBe("APPROVE");
+    // Verified, but bookings wait for a verified vehicle (D-049).
+    const noVehicle = await call("GET", "/api/drivers/c01/loads");
+    expect(noVehicle.status).toBe(403);
+    expect(noVehicle.body.nextStep).toBe("VEHICLE");
+    expect((await call("POST", "/api/drivers/c01/vehicle", { number: "KA 03 CM 7777" })).body.outcome).toBe("NEEDS_FIX"); // someone else's
+    expect((await call("POST", "/api/drivers/c01/vehicle", { number: "KA51TX0001" })).body.outcome).toBe("NEEDS_FIX"); // a car
+    expect((await call("POST", "/api/drivers/c01/vehicle", { number: "not a number" })).status).toBe(400);
+    const vehicle = (await call("GET", "/api/drivers/c01")).body.vehicle.hint;
+    expect((await call("POST", "/api/drivers/c01/vehicle", { number: vehicle })).body).toEqual({ outcome: "APPROVE", fixes: [] });
     const loads = await call("GET", "/api/drivers/c01/loads");
     expect(loads.status).toBe(200);
     expect(loads.body.loads.length).toBeGreaterThan(0);
@@ -112,10 +124,48 @@ describe("demo API", () => {
     }
   });
 
-  it("lets a driver submit again after fixing something outside the app, then hands a third try to a person", async () => {
-    expect((await call("GET", "/api/drivers/c21")).body.nextStep).toBe("SUBMIT");
+  it("sends a driver whose account is in someone else's name back to the bank step, and a third ask to a person", async () => {
+    const spouse = CASES.find((c) => c.id === "C21")?.registry.bank;
+    if (!spouse) throw new Error("C21 has a bank account");
+    const same = { accountNumber: demoAccountNumber(spouse), ifsc: spouse.ifsc };
+    expect((await call("GET", "/api/drivers/c21")).body.nextStep).toBe("BANK");
+    expect((await call("POST", "/api/drivers/c21/bank-check", same)).body.found).toBe(true);
     expect((await call("POST", "/api/drivers/c21/submit")).body.outcome).toBe("NEEDS_FIX"); // same fix, asked twice now
+    await call("POST", "/api/drivers/c21/bank-check", same);
     expect((await call("POST", "/api/drivers/c21/submit")).body.outcome).toBe("REVIEW"); // a third ask goes to a person
+  });
+
+  it("approves that driver once they enter an account in their own name (D-049)", async () => {
+    await call("POST", "/api/demo/reset");
+    const view = (await call("GET", "/api/drivers/c21")).body;
+    expect(view.bank.hint.accountNumber).not.toBe(demoAccountNumber(CASES.find((c) => c.id === "C21")?.registry.bank ?? { accountId: "", holderName: "", accountLast4: "", ifsc: "" }));
+    expect((await call("POST", "/api/drivers/c21/bank-check", view.bank.hint)).body.found).toBe(true);
+    expect((await call("POST", "/api/drivers/c21/submit")).body.outcome).toBe("APPROVE");
+  });
+
+  it("keeps each penny drop, finds no account for a wrong number, and stops after three misses a day", async () => {
+    const wrong = { accountNumber: "123456789012", ifsc: "SPEC0000999" };
+    expect((await call("POST", "/api/drivers/c10/bank-check", wrong)).body).toEqual({ found: false, triesLeft: 2 });
+    expect((await call("POST", "/api/drivers/c10/bank-check", wrong)).body).toEqual({ found: false, triesLeft: 1 });
+    expect((await call("POST", "/api/drivers/c10/bank-check", wrong)).body).toEqual({ found: false, triesLeft: 0 });
+    expect((await call("POST", "/api/drivers/c10/bank-check", wrong)).status).toBe(429);
+    expect((await call("GET", "/api/drivers/c10")).body.bank.triesLeft).toBe(0);
+    expect((await call("POST", "/api/drivers/c10/bank-check", { accountNumber: "12", ifsc: "X" })).status).toBe(400);
+    await call("POST", "/api/demo/advance", { hours: 25 });
+    expect((await call("GET", "/api/drivers/c10")).body.bank.triesLeft).toBe(3);
+  });
+
+  it("asks for the vehicle again when its registration runs out, while the licence is still good (D-049)", async () => {
+    await call("POST", "/api/demo/reset");
+    expect((await call("GET", "/api/drivers/c08")).body.canBook).toBe(true); // Anand drives Raju's KA04RN9902, valid till 2033-11-02
+    for (let week = 0; week < 372; week++) await call("POST", "/api/demo/advance", { hours: 168 }); // into 2033-11; his licence runs to 2039
+    const view = (await call("GET", "/api/drivers/c08")).body;
+    expect(view.driver.status).toBe("APPROVED");
+    expect(view.canBook).toBe(false);
+    expect(view.vehicle.needed).toBe(true);
+    expect(view.vehicle.fixes.join(" ")).toMatch(/registration has run out/);
+    expect((await call("POST", "/api/drivers/c08/loads/L1/book")).status).toBe(403);
+    await call("POST", "/api/demo/reset"); // the tests after this one start from the seeded demo
   });
 
   it("approves a hired driver once the fleet owner confirms them", async () => {

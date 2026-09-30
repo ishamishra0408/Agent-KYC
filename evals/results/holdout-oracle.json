@@ -2,8 +2,8 @@
   "suite": "holdout",
   "reader": "oracle",
   "readerKind": "reference",
-  "ranAt": "2026-09-30T00:01:15.980Z",
-  "rulesVersion": "v6",
+  "ranAt": "2026-09-30T08:39:38.892Z",
+  "rulesVersion": "v7",
   "total": 16,
   "good": 6,
   "bad": 10,
@@ -24,7 +24,7 @@
       "mustInclude": [],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 1
+      "ms": 3
     },
     {
       "id": "H02",
@@ -48,7 +48,7 @@
       "mustInclude": [],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "H04",
@@ -116,7 +116,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "H09",
@@ -165,7 +165,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "H12",
@@ -213,7 +213,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "H15",
@@ -247,7 +247,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 1
+      "ms": 0
     }
   ]
 }

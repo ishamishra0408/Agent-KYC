@@ -15,7 +15,7 @@
 # v3 settled the eight open policy questions (D-031) and v4 the ninth (D-032); each rule says which.
 package kyc
 
-version := "v6"
+version := "v7"
 
 config := {
 	"min_reader_confidence": 0.8,
@@ -139,6 +139,23 @@ base_reasons contains r if {
 	is_string(text)
 	text != ""
 	r := reason("SUSPICIOUS_TEXT", 100 + (10 * doc_index[doc]), doc, {"text": text})
+}
+
+#    The same, for text the reader copied into a field without flagging it (D-049, policy v7): the app's
+#    scan of the fields found it, and a person looks.
+base_reasons contains r if {
+	some doc in docs
+	reading := input.readings[doc]
+	not flagged_text(reading)
+	text := reading.fieldInstructions
+	is_string(text)
+	text != ""
+	r := reason("SUSPICIOUS_TEXT", 100 + (10 * doc_index[doc]), doc, {"text": text, "caughtBy": "scan"})
+}
+
+flagged_text(reading) if {
+	is_string(reading.suspiciousText)
+	reading.suspiciousText != ""
 }
 
 #    Signs of editing (D-040, policy v6): a field in another font, a pasted portrait. A person looks,

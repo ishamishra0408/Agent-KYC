@@ -6,6 +6,8 @@ import { OpsConsole } from "./ops/OpsConsole";
 import { AmbientMotes } from "./AmbientMotes";
 import { BackgroundPaths } from "./BackgroundPaths";
 import { Hero } from "./Hero";
+import { Metrics, Pipeline } from "./Results";
+import { SiteFooter } from "./SiteFooter";
 import { Story } from "./Story";
 import { LiquidGlassFilter, Truck } from "./ui";
 import { reducedMotion, useTheme } from "./whimsy";
@@ -62,6 +64,9 @@ function DemoPage({ theme, onTheme }: { theme: ReturnType<typeof useTheme>[0]; o
         </div>
       </div>
       <Story />
+      <Pipeline />
+      <Metrics />
+      <SiteFooter />
       <div className="road-strip" aria-hidden="true">
         <Truck size={46} className="driving" />
       </div>

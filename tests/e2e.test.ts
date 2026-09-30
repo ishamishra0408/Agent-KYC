@@ -5,7 +5,8 @@ import { oracleReader } from "../evals/readers";
 import { Store } from "../server/db/store";
 import { fixedClock } from "../server/domain/clock";
 import type { DocType, Submission } from "../server/domain/types";
-import { applyRulesDecision, tryBook } from "../server/services/onboarding";
+import { vehicleRules } from "../server/policy";
+import { applyRulesDecision, applyVehicleDecision, tryBook } from "../server/services/onboarding";
 import { verifySubmission } from "../server/verify";
 
 // Whole path, no shortcuts: photo reading -> registries and graph -> rules -> status -> bookings lock.
@@ -28,9 +29,12 @@ async function submit(caseId: string) {
 }
 
 describe("end to end", () => {
-  it("a clean driver is approved and can book", async () => {
+  it("a clean driver is approved, and can book once a vehicle is verified (D-049)", async () => {
     const { store, id } = await submit("C01");
     expect(store.mustGet(id).status).toBe("APPROVED");
+    expect(tryBook(store, id)).toMatchObject({ ok: false, httpStatus: 403 });
+    const facts = { number: "KA05MN4821", record: { number: "KA05MN4821", ownerName: "RAMESH KUMAR", vehicleClass: "LGV", registeredTill: "2034-06-30" }, driver: { identity: "RAMESH KUMAR", partnerType: "owner_driver" as const, ownerLinkVerified: false }, fleetOwnerIdentity: null, ownerVerified: false, today: "2026-09-29", registrySimulated: true };
+    applyVehicleDecision(store, id, facts.number, facts.record, vehicleRules.decide(facts), EVAL_NOW);
     expect(tryBook(store, id)).toEqual({ ok: true });
   });
 

@@ -105,10 +105,10 @@ export const REASONS: Record<ReasonCode, ReasonInfo> = {
   BANK_NOT_VERIFIED: {
     severity: "fix",
     driver: {
-      en: "We couldn't verify your bank account. Try the Rs 1 check again.",
-      hi: "हम आपका बैंक खाता नहीं जाँच पाए। ₹1 वाली जाँच फिर से करें।",
+      en: "We couldn't verify your bank account. Enter its number and IFSC again.",
+      hi: "हम आपका बैंक खाता नहीं जाँच पाए। उसका नंबर और IFSC फिर से डालें।",
     },
-    ops: "Rs 1 reverse penny-drop check failed.",
+    ops: "The penny drop found no account.",
   },
   DOB_MISMATCH: {
     severity: "review",

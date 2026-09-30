@@ -2,8 +2,8 @@
   "suite": "main",
   "reader": "oracle",
   "readerKind": "reference",
-  "ranAt": "2026-09-30T00:01:15.828Z",
-  "rulesVersion": "v6",
+  "ranAt": "2026-09-30T08:39:38.622Z",
+  "rulesVersion": "v7",
   "total": 31,
   "good": 10,
   "bad": 21,
@@ -24,7 +24,7 @@
       "mustInclude": [],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 1
+      "ms": 2
     },
     {
       "id": "C02",
@@ -60,7 +60,7 @@
       "mustInclude": [],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "C05",
@@ -84,7 +84,7 @@
       "mustInclude": [],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "C07",
@@ -96,7 +96,7 @@
       "mustInclude": [],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 1
+      "ms": 0
     },
     {
       "id": "C08",
@@ -108,7 +108,7 @@
       "mustInclude": [],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "C09",
@@ -148,7 +148,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "C12",
@@ -164,7 +164,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 1
+      "ms": 0
     },
     {
       "id": "C13",
@@ -212,7 +212,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "C16",
@@ -292,7 +292,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "C21",
@@ -308,7 +308,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 1
+      "ms": 0
     },
     {
       "id": "C22",
@@ -356,7 +356,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "C25",
@@ -423,7 +423,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 0
+      "ms": 1
     },
     {
       "id": "C29",
@@ -471,7 +471,7 @@
       ],
       "outcomeOk": true,
       "reasonsOk": true,
-      "ms": 1
+      "ms": 0
     }
   ]
 }

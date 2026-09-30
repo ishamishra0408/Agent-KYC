@@ -30,9 +30,11 @@ describe("module boundaries", () => {
     }
   });
 
-  it("creates the app's rules engine in one place only", () => {
+  it("creates the app's rules engines in one place only", () => {
     const creators = filesUnder(SERVER).filter((f) => /\bmakeRules\(/.test(readFileSync(f, "utf8")));
     expect(creators.map((f) => path.relative(SERVER, f)).sort()).toEqual(["domain/rules.ts", "policy/index.ts"]);
+    const vehicle = filesUnder(SERVER).filter((f) => /\bmakeVehicleRules\(/.test(readFileSync(f, "utf8")));
+    expect(vehicle.map((f) => path.relative(SERVER, f)).sort()).toEqual(["domain/vehicle.ts", "policy/index.ts"]);
   });
 
   it("keeps the domain pure: no database, services, adapters or AI", () => {

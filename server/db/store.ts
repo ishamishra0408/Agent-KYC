@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 import { assertTransition } from "../domain/statusMachine";
-import type { Actor, DocReading, DocType, Driver, Notice, PartnerType, PassedCheck, Reason, ReasonCode, Status } from "../domain/types";
+import type { VehicleDecision } from "../domain/vehicle";
+import type { Actor, BankRecord, DocReading, DocType, Driver, Notice, PartnerType, PassedCheck, Reason, ReasonCode, Status, VehicleRecord } from "../domain/types";
 
 import type { Language } from "../domain/types";
 export type { Language } from "../domain/types";
@@ -34,6 +35,19 @@ export interface DecisionRow {
   notices: Notice[];
   rulesVersion: string | null;
   note: string | null;
+  // What a person's decision was based on, frozen when they made it: the rules' decision they were
+  // shown, the documents as read, and whether the note began as a copilot draft (D-048). Empty for rules.
+  evidence: Record<string, unknown>;
+}
+
+export interface VehicleRow {
+  at: string;
+  number: string;
+  record: VehicleRecord | null;
+  outcome: VehicleDecision["outcome"];
+  reasons: VehicleDecision["reasons"];
+  passed: VehicleDecision["passed"];
+  rulesVersion: string;
 }
 
 export type NudgeAction = "send" | "status_update" | "hold";
@@ -122,7 +136,27 @@ CREATE TABLE IF NOT EXISTS decisions (
   passed TEXT NOT NULL DEFAULT '[]',
   notices TEXT NOT NULL DEFAULT '[]',
   rules_version TEXT,
-  note TEXT
+  note TEXT,
+  evidence TEXT NOT NULL DEFAULT '{}'
+);
+CREATE TABLE IF NOT EXISTS bank_attempts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  driver_id TEXT NOT NULL,
+  at TEXT NOT NULL,
+  account_last4 TEXT NOT NULL,
+  ifsc TEXT NOT NULL,
+  record TEXT
+);
+CREATE TABLE IF NOT EXISTS vehicles (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  driver_id TEXT NOT NULL,
+  at TEXT NOT NULL,
+  number TEXT NOT NULL,
+  record TEXT,
+  outcome TEXT NOT NULL,
+  reasons TEXT NOT NULL,
+  passed TEXT NOT NULL,
+  rules_version TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS nudges (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -179,6 +213,14 @@ CREATE TRIGGER IF NOT EXISTS events_no_update BEFORE UPDATE ON events
   BEGIN SELECT RAISE(ABORT, 'events are append-only'); END;
 CREATE TRIGGER IF NOT EXISTS events_no_delete BEFORE DELETE ON events
   BEGIN SELECT RAISE(ABORT, 'events are append-only'); END;
+CREATE TRIGGER IF NOT EXISTS bank_attempts_no_update BEFORE UPDATE ON bank_attempts
+  BEGIN SELECT RAISE(ABORT, 'bank_attempts is append-only'); END;
+CREATE TRIGGER IF NOT EXISTS bank_attempts_no_delete BEFORE DELETE ON bank_attempts
+  BEGIN SELECT RAISE(ABORT, 'bank_attempts is append-only'); END;
+CREATE TRIGGER IF NOT EXISTS vehicles_no_update BEFORE UPDATE ON vehicles
+  BEGIN SELECT RAISE(ABORT, 'vehicles is append-only'); END;
+CREATE TRIGGER IF NOT EXISTS vehicles_no_delete BEFORE DELETE ON vehicles
+  BEGIN SELECT RAISE(ABORT, 'vehicles is append-only'); END;
 CREATE TRIGGER IF NOT EXISTS decisions_no_update BEFORE UPDATE ON decisions
   BEGIN SELECT RAISE(ABORT, 'decisions are append-only'); END;
 CREATE TRIGGER IF NOT EXISTS decisions_no_delete BEFORE DELETE ON decisions
@@ -220,6 +262,7 @@ interface RawDecision {
   notices: string;
   rules_version: string | null;
   note: string | null;
+  evidence: string;
 }
 
 interface RawNudge {
@@ -276,6 +319,7 @@ function toDecision(r: RawDecision): DecisionRow {
     notices: JSON.parse(r.notices) as Notice[],
     rulesVersion: r.rules_version,
     note: r.note,
+    evidence: JSON.parse(r.evidence || "{}") as Record<string, unknown>,
   };
 }
 
@@ -388,12 +432,71 @@ export class Store {
     now: Date,
     note: string | null = null,
     notices: readonly Notice[] = [],
+    evidence: Record<string, unknown> = {},
   ): void {
     this.db
       .prepare(
-        "INSERT INTO decisions (driver_id, at, actor, outcome, reasons, passed, notices, rules_version, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO decisions (driver_id, at, actor, outcome, reasons, passed, notices, rules_version, note, evidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       )
-      .run(driverId, now.toISOString(), actor, outcome, JSON.stringify(reasons), JSON.stringify(passed), JSON.stringify(notices), rulesVersion, note);
+      .run(
+        driverId,
+        now.toISOString(),
+        actor,
+        outcome,
+        JSON.stringify(reasons),
+        JSON.stringify(passed),
+        JSON.stringify(notices),
+        rulesVersion,
+        note,
+        JSON.stringify(evidence),
+      );
+  }
+
+  // A vehicle decision (D-049), with the registry's answer it was made on.
+  recordVehicleDecision(driverId: string, now: Date, number: string, record: VehicleRecord | null, d: VehicleDecision): void {
+    this.db
+      .prepare("INSERT INTO vehicles (driver_id, at, number, record, outcome, reasons, passed, rules_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+      .run(driverId, now.toISOString(), number, record ? JSON.stringify(record) : null, d.outcome, JSON.stringify(d.reasons), JSON.stringify(d.passed), d.rulesVersion);
+  }
+
+  latestVehicle(driverId: string): VehicleRow | undefined {
+    const r = this.db.prepare("SELECT * FROM vehicles WHERE driver_id = ? ORDER BY id DESC LIMIT 1").get(driverId) as
+      | { at: string; number: string; record: string | null; outcome: string; reasons: string; passed: string; rules_version: string }
+      | undefined;
+    return r
+      ? {
+          at: r.at,
+          number: r.number,
+          record: r.record ? (JSON.parse(r.record) as VehicleRecord) : null,
+          outcome: r.outcome as VehicleDecision["outcome"],
+          reasons: JSON.parse(r.reasons) as VehicleDecision["reasons"],
+          passed: JSON.parse(r.passed) as VehicleDecision["passed"],
+          rulesVersion: r.rules_version,
+        }
+      : undefined;
+  }
+
+  // A penny drop, found or not (D-049). The record is the bank's answer; null means no such account.
+  recordBankAttempt(driverId: string, now: Date, attempt: { last4: string; ifsc: string; record: BankRecord | null }): void {
+    this.db
+      .prepare("INSERT INTO bank_attempts (driver_id, at, account_last4, ifsc, record) VALUES (?, ?, ?, ?, ?)")
+      .run(driverId, now.toISOString(), attempt.last4, attempt.ifsc, attempt.record ? JSON.stringify(attempt.record) : null);
+  }
+
+  bankAttempts(driverId: string): { at: string; last4: string; ifsc: string; record: BankRecord | null }[] {
+    return (
+      this.db.prepare("SELECT at, account_last4, ifsc, record FROM bank_attempts WHERE driver_id = ? ORDER BY id").all(driverId) as {
+        at: string;
+        account_last4: string;
+        ifsc: string;
+        record: string | null;
+      }[]
+    ).map((r) => ({ at: r.at, last4: r.account_last4, ifsc: r.ifsc, record: r.record ? (JSON.parse(r.record) as BankRecord) : null }));
+  }
+
+  // The account linked by the latest penny drop that found one.
+  linkedBank(driverId: string): BankRecord | null {
+    return this.bankAttempts(driverId).filter((a) => a.record !== null).at(-1)?.record ?? null;
   }
 
   latestDecision(driverId: string): DecisionRow | undefined {

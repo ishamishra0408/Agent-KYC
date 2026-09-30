@@ -15,7 +15,7 @@ describe("decide", () => {
     expect(d.reasons).toEqual([]);
     expect(d.passed.map((p) => p.check)).toEqual(["PHOTOS_OK", "DL_VALID", "PAN_FOUND", "SAME_PERSON", "BANK_VERIFIED", "FACE_MATCH"]);
     expect(d.passed.find((p) => p.check === "DL_VALID")?.simulated).toBe(true);
-    expect(d.rulesVersion).toBe("v6");
+    expect(d.rulesVersion).toBe("v7");
     expect(d.notices).toEqual([]);
   });
 

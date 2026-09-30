@@ -12,7 +12,7 @@ import { opaBinary } from "./opa";
 
 const POLICY_DIR = fileURLToPath(new URL("../policy", import.meta.url));
 const OUT_DIR = path.join(POLICY_DIR, "build");
-export const ENTRYPOINTS = ["kyc/decision", "kyc/photo_check", "kyc/renewal", "kyc/severities", "kyc/version"];
+export const ENTRYPOINTS = ["kyc/decision", "kyc/photo_check", "kyc/renewal", "kyc/severities", "kyc/version", "vehicle/decision", "vehicle/version"];
 
 export const sha256 = (file: string) => createHash("sha256").update(readFileSync(file)).digest("hex");
 

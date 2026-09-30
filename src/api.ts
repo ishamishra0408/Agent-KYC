@@ -59,6 +59,8 @@ export interface DriverView {
   driver: { id: string; name: string; partnerType: string; status: Status; language: Lang; optedOut: boolean };
   nextStep: Step | null;
   steps: { bank: boolean; selfie: boolean };
+  bank: { hint: { accountNumber: string; ifsc: string } | null; triesLeft: number };
+  vehicle: { needed: boolean; number: string | null; outcome: string | null; fixes: string[]; hint: string | null };
   documents: Partial<Record<Slot, DocSummary>>;
   decision: { outcome: string; by: string; at: string; fixes: { code: string; message: string }[] } | null;
   chat: ChatMessage[];
@@ -109,6 +111,8 @@ export interface CaseView {
     reasons: Reason[];
     passed: PassedCheck[];
     note: string | null;
+    basedOn: { at: string; rulesVersion: string | null } | null;
+    draft: string | null;
   } | null;
   notices: { code: string; opsMessage: string; evidence: Record<string, unknown> }[];
   summary: string | null;
@@ -133,6 +137,16 @@ export interface CaseView {
   graphSource: string | null;
   events: { at: string; actor: string; type: string; from: string | null; to: string | null }[];
   registrySimulated: boolean;
+  vehicle: {
+    number: string;
+    record: { number: string; ownerName: string; vehicleClass: string; registeredTill: string } | null;
+    outcome: string;
+    reasons: { code: string; opsMessage: string; evidence: Record<string, unknown> }[];
+    passed: string[];
+    at: string;
+    rulesVersion: string;
+  } | null;
+  bankAttempts: { at: string; last4: string; ifsc: string; found: boolean }[];
 }
 
 export interface ReviewItem {
@@ -222,18 +236,25 @@ export const api = {
   consent: (id: string) => request("POST", `${d(id)}/consent`),
   photo: (id: string, slot: Slot, variant: Variant) => request<{ issue: string | null }>("POST", `${d(id)}/photo`, { slot, variant }),
   digilocker: (id: string, slot: "DL" | "PAN") => request("POST", `${d(id)}/digilocker`, { slot }),
-  bankCheck: (id: string) => request("POST", `${d(id)}/bank-check`),
+  bankCheck: (id: string, accountNumber: string, ifsc: string) =>
+    request<{ found: boolean; triesLeft: number }>("POST", `${d(id)}/bank-check`, { accountNumber, ifsc }),
   selfie: (id: string) => request("POST", `${d(id)}/selfie`),
   submit: (id: string) => request<{ outcome: string }>("POST", `${d(id)}/submit`),
   ask: (id: string, faq: Faq) => request("POST", `${d(id)}/ask`, { faq }),
   language: (id: string, language: Lang) => request("POST", `${d(id)}/language`, { language }),
   optOut: (id: string, optedOut: boolean) => request("POST", `${d(id)}/opt-out`, { optedOut }),
+  vehicle: (id: string, number: string) => request<{ outcome: string; fixes: string[] }>("POST", `${d(id)}/vehicle`, { number }),
   loads: (id: string) => request<{ loads: Load[]; bookings: { loadId: string; at: string }[] }>("GET", `${d(id)}/loads`),
   book: (id: string, loadId: string) => request<{ ok: true; firstTrip?: boolean }>("POST", `${d(id)}/loads/${loadId}/book`),
   review: () => request<ReviewItem[]>("GET", "/api/ops/review"),
   caseView: (id: string) => request<CaseView>("GET", `/api/ops/drivers/${encodeURIComponent(id)}/case`),
-  decide: (id: string, choice: Choice, note: string, step?: FixStep) =>
-    request<{ status: Status }>("POST", `/api/ops/drivers/${encodeURIComponent(id)}/decision`, { choice, note, step }),
+  decide: (id: string, choice: Choice, note: string, step?: FixStep, draft?: string) =>
+    request<{ status: Status }>("POST", `/api/ops/drivers/${encodeURIComponent(id)}/decision`, { choice, note, step, draft }),
+  draft: (id: string, choice: Choice, step?: FixStep) =>
+    request<{ text: string; writer: string }>(
+      "GET",
+      `/api/ops/drivers/${encodeURIComponent(id)}/draft?choice=${choice}${step ? `&step=${step}` : ""}`,
+    ),
   confirmOwner: (id: string) =>
     request<{ ownerLinkVerified: boolean }>("POST", `/api/ops/drivers/${encodeURIComponent(id)}/confirm-owner`),
   nudges: () => request<NudgeLogItem[]>("GET", "/api/ops/nudges"),

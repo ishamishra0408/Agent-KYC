@@ -30,8 +30,8 @@ describe("compiled policy", () => {
     expect(fromPolicy).toEqual(fromCatalogue);
   });
 
-  it("is version v6: v3 settled the eight open questions, v4 the ninth, v5 a trust graph that can't answer, v6 an edited document", () => {
-    expect(rules.version).toBe("v6");
+  it("is version v7: v3 settled the eight open questions, v4 the ninth, v5 a trust graph that can't answer, v6 an edited document, v7 instructions in a field", () => {
+    expect(rules.version).toBe("v7");
   });
 
   it("applies the licence window from the policy: renewal inside 30 days, lapsed the day after the last", () => {

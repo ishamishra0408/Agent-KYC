@@ -1,6 +1,6 @@
 # Eval report: oracle reader, main set
 
-Run 2026-09-30T00:01:15.828Z · rules v6 · 31 cases (10 good, 21 bad) · registry checks SIMULATED · SPECIMEN documents only
+Run 2026-09-30T08:39:38.622Z · rules v7 · 31 cases (10 good, 21 bad) · registry checks SIMULATED · SPECIMEN documents only
 
 Reference reader: built from the answer key, so it brackets real readers rather than competing with them.
 

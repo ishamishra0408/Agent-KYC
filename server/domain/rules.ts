@@ -13,7 +13,7 @@ import type { CheckCode, Decision, DocReading, DocType, Evidence, Notice, Notice
 //     instructions on a document, is not let through: it goes to a person instead.
 // It also checks the policy once at startup, so a stale or mismatched build fails there (F-020).
 
-export type PolicyEntrypoint = "kyc/decision" | "kyc/photo_check" | "kyc/renewal" | "kyc/severities" | "kyc/version";
+export type PolicyEntrypoint = "kyc/decision" | "kyc/photo_check" | "kyc/renewal" | "kyc/severities" | "kyc/version" | "vehicle/decision" | "vehicle/version";
 
 export interface PolicyEngine {
   evaluate(entrypoint: PolicyEntrypoint, input: unknown): unknown;
@@ -116,7 +116,7 @@ function approvalBlocker(e: Evidence, passed: readonly PassedCheck[]): string | 
   if (missing.length > 0) return `approval without passed checks: ${missing.join(", ")}`;
   if (e.dlRecord.validTill < istDate(e.now)) return "approval with an expired licence";
   if (e.graph.status !== "ok") return "approval without an answer from the trust graph";
-  if (Object.values(e.readings).some((r) => r && (policyReading(r).suspiciousText ?? "") !== "")) {
+  if (Object.values(e.readings).some((r) => r && ((policyReading(r).suspiciousText ?? "") !== "" || policyReading(r).fieldInstructions !== null))) {
     return "approval with hidden instructions on a document";
   }
   if (Object.values(e.readings).some((r) => r && (policyReading(r).tamperSigns ?? "") !== "")) return "approval of a document that looks edited";

@@ -1,9 +1,22 @@
-import { Check, FolderDown, Smartphone } from "lucide-react";
-import { useState } from "react";
+import { Check, FolderDown, Smartphone, Sparkles } from "lucide-react";
+import { useId, useRef, useState } from "react";
 import { api, type CaseView, type Choice, type FixStep, type Sharer, type Slot } from "../api";
 import { useAction, useData } from "../data";
 import { istTime, PARTNER_LABEL, STATUS_LABEL } from "../i18n";
-import { CHECK_LABEL, FIELD_LABEL, FIX_STEP_LABEL, MODEL_LABEL, NOTICE_LABEL, OUTCOME_DONE, OUTCOME_LABEL, REASON_LABEL, SLOT_LABEL } from "../labels";
+import {
+  CHECK_LABEL,
+  FIELD_LABEL,
+  FIX_STEP_LABEL,
+  MODEL_LABEL,
+  NOTICE_LABEL,
+  OUTCOME_DONE,
+  OUTCOME_LABEL,
+  REASON_LABEL,
+  SLOT_LABEL,
+  VEHICLE_CHECK_LABEL,
+  VEHICLE_OUTCOME_LABEL,
+  VEHICLE_REASON_LABEL,
+} from "../labels";
 import { ErrorNote, Push, Sim, Skeleton, Source, StatusPill, StreamingText } from "../ui";
 import { play } from "../whimsy";
 
@@ -119,18 +132,38 @@ function DecisionForm({ id }: { id: string }) {
   const [choice, setChoice] = useState<Choice | null>(null);
   const [step, setStep] = useState<FixStep | "">("");
   const [note, setNote] = useState("");
+  const [drafted, setDrafted] = useState<string | null>(null); // who wrote the draft, once one is used
   const [invalid, setInvalid] = useState<string | null>(null);
   const { run, busy, error } = useAction();
+  const noteId = useId();
+  // What the form holds now, so a draft that comes back after the choice or step changed is dropped.
+  const current = useRef({ choice, step });
+  current.current = { choice, step };
+
+  // The copilot (D-048): a first draft from the case's own evidence, which the reviewer edits.
+  const draft = async () => {
+    if (!choice) return setInvalid("Choose a decision first.");
+    if (choice === "NEEDS_FIX" && !step) return setInvalid("Pick the step the driver should redo.");
+    setInvalid(null);
+    const asked = { choice, step };
+    const d = await run(() => api.draft(id, choice, choice === "NEEDS_FIX" && step ? step : undefined));
+    if (current.current.choice !== asked.choice || current.current.step !== asked.step) return; // written for another choice
+    if (d && d.text) {
+      setNote(d.text);
+      setDrafted(d.writer);
+    }
+  };
 
   const record = async () => {
     if (!choice) return setInvalid("Choose a decision first.");
     if (choice === "NEEDS_FIX" && !step) return setInvalid("Pick the step the driver should redo.");
     if (!note.trim()) return setInvalid("A reason is required for every decision.");
     setInvalid(null);
-    const ok = await run(() => api.decide(id, choice, note.trim(), choice === "NEEDS_FIX" && step ? step : undefined));
+    const ok = await run(() => api.decide(id, choice, note.trim(), choice === "NEEDS_FIX" && step ? step : undefined, drafted ?? undefined));
     if (ok) {
       play("stamp");
       setNote("");
+      setDrafted(null);
       setChoice(null);
       setStep("");
     }
@@ -145,7 +178,14 @@ function DecisionForm({ id }: { id: string }) {
             key={c}
             className={`btn small ${c === "APPROVE" ? "approve" : c === "NEEDS_FIX" ? "fix" : "reject"} ${choice === c ? "selected" : ""}`}
             aria-pressed={choice === c}
+            disabled={busy}
             onClick={() => {
+              // A draft was written for one choice: an internal reason must never become a note to the
+              // driver (D-021), so a new choice starts the note again.
+              if (drafted && c !== choice) {
+                setNote("");
+                setDrafted(null);
+              }
               setChoice(c);
               setInvalid(null);
             }}
@@ -159,7 +199,13 @@ function DecisionForm({ id }: { id: string }) {
           <span className="small muted">Step to redo</span>
           <select
             value={step}
+            disabled={busy}
             onChange={(e) => {
+              // A driver's note drafted for one step names that step: a new step starts it again.
+              if (drafted) {
+                setNote("");
+                setDrafted(null);
+              }
               setStep(e.target.value as FixStep | "");
               setInvalid(null);
             }}
@@ -173,11 +219,17 @@ function DecisionForm({ id }: { id: string }) {
           </select>
         </label>
       )}
-      <label className="stack" style={{ gap: 4 }}>
-        <span className="small muted">
-          {choice === "NEEDS_FIX" ? "Note to the driver" : "Reason"}
-        </span>
+      <div className="stack" style={{ gap: 4 }}>
+        <div className="spread">
+          <label htmlFor={noteId} className="small muted">
+            {choice === "NEEDS_FIX" ? "Note to the driver" : "Reason"}
+          </label>
+          <button type="button" className="btn small ghost" disabled={busy} onClick={draft}>
+            <Sparkles size={13} aria-hidden="true" /> Draft
+          </button>
+        </div>
         <textarea
+          id={noteId}
           value={note}
           maxLength={500}
           onChange={(e) => {
@@ -185,7 +237,12 @@ function DecisionForm({ id }: { id: string }) {
             setInvalid(null);
           }}
         />
-      </label>
+        {drafted && (
+          <span>
+            <Source kind="ai">AI draft · {drafted}</Source>
+          </span>
+        )}
+      </div>
       <ErrorNote message={invalid ?? error} />
       <div>
         <Push tone="accent" disabled={busy} onClick={record}>
@@ -281,7 +338,16 @@ export function CaseDetail({ id, canDecide = false, onOpenDriver }: { id: string
               <strong>{OUTCOME_DONE[d.outcome] ?? d.outcome}</strong> · {istTime(d.at, true)}
               {d.note && ` · “${d.note}”`}
             </span>
-            {c.registrySimulated && <Sim label="Simulated checks" />}
+            {d.basedOn && (
+              <span className="muted">
+                Based on Rules {d.basedOn.rulesVersion} · {istTime(d.basedOn.at, true)}
+              </span>
+            )}
+            {d.draft && <Source kind="ai">AI draft · {d.draft}</Source>}
+            {/* The checks are simulated when a registry is, and the photo check when the stand-in read the photos. */}
+            {(c.registrySimulated || Object.values(c.documents).some((doc) => doc?.readBy === "simulated")) && (
+              <Sim label={c.registrySimulated ? "Simulated checks" : "Simulated reader"} />
+            )}
           </div>
           {/* The summary already says why; a reason's own message and evidence are on hover. */}
           {d.reasons.map((r, i) => (
@@ -328,6 +394,49 @@ export function CaseDetail({ id, canDecide = false, onOpenDriver }: { id: string
               return doc ? <DocumentCard key={s} slot={s} doc={doc} /> : null;
             })}
           </div>
+          {c.bankAttempts.length > 0 && (
+            <p className="small muted">
+              Penny drop{c.bankAttempts.length > 1 ? "s" : ""}:{" "}
+              {c.bankAttempts.map((a) => `account ending ${a.last4} ${a.found ? "found" : "not found"}`).join(" · ")}
+            </p>
+          )}
+        </Section>
+      )}
+
+      {c.vehicle && (
+        <Section title="Vehicle">
+          <div className="small muted row" style={{ flexWrap: "wrap" }}>
+            <Source kind="rules">Vehicle rules {c.vehicle.rulesVersion}</Source>
+            <span>
+              <strong>{c.vehicle.number}</strong> · {VEHICLE_OUTCOME_LABEL[c.vehicle.outcome] ?? c.vehicle.outcome} · {istTime(c.vehicle.at, true)}
+            </span>
+            {c.registrySimulated && <Sim label="Simulated registry" />}
+          </div>
+          {c.vehicle.reasons.map((r, i) => (
+            <div key={`${r.code}-${i}`} className="reason fix" title={[r.opsMessage, evidenceText(r.evidence)].filter(Boolean).join(" · ")}>
+              <strong className="small">{VEHICLE_REASON_LABEL[r.code] ?? r.code}</strong>
+            </div>
+          ))}
+          {c.vehicle.record && (
+            <dl className="kv">
+              <dt>Owner</dt>
+              <dd>{c.vehicle.record.ownerName}</dd>
+              <dt>Class</dt>
+              <dd>{c.vehicle.record.vehicleClass}</dd>
+              <dt>Registered till</dt>
+              <dd>{c.vehicle.record.registeredTill}</dd>
+            </dl>
+          )}
+          {c.vehicle.passed.length > 0 && (
+            <ul className="checks" aria-label="Vehicle checks passed">
+              {c.vehicle.passed.map((p) => (
+                <li key={p}>
+                  <Check size={13} strokeWidth={3} aria-hidden="true" />
+                  {VEHICLE_CHECK_LABEL[p] ?? p}
+                </li>
+              ))}
+            </ul>
+          )}
         </Section>
       )}
 

@@ -1,9 +1,10 @@
-import type { BankRecord, DlRecord, FaceResult, PanRecord } from "../domain/types";
+import type { BankRecord, DlRecord, FaceResult, PanRecord, VehicleRecord } from "../domain/types";
 import type { RegistryPort } from "./registry";
 
 export interface CompletedSteps {
   bankChecked(driverId: string): boolean;
   selfieTaken(driverId: string): boolean;
+  linkedBank?(driverId: string): BankRecord | null; // the account the driver's penny drop found (D-049)
 }
 
 // Registry answers gated on what the driver has actually done: no Rs 1 check yet means no
@@ -34,8 +35,18 @@ export class StepGatedRegistry implements RegistryPort {
     return this.inner.digilockerPan(driverId);
   }
 
+  // The account the driver's own penny drop found, when there's one on record.
   async verifyBank(driverId: string): Promise<BankRecord | null> {
-    return this.done.bankChecked(driverId) ? this.inner.verifyBank(driverId) : null;
+    if (!this.done.bankChecked(driverId)) return null;
+    return this.done.linkedBank ? this.done.linkedBank(driverId) : this.inner.verifyBank(driverId);
+  }
+
+  pennyDrop(accountNumber: string, ifsc: string): Promise<BankRecord | null> {
+    return this.inner.pennyDrop(accountNumber, ifsc);
+  }
+
+  lookupVehicle(number: string): Promise<VehicleRecord | null> {
+    return this.inner.lookupVehicle(number);
   }
 
   async faceMatch(driverId: string): Promise<FaceResult> {

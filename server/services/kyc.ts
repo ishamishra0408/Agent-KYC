@@ -1,5 +1,6 @@
 import { agentSay, FAQ, type AgentEvent, type FaqId, type KycStep, type Lang } from "../ai/scriptedAgent";
 import type { GraphFactory } from "../adapters/graph";
+import type { RegistryPort } from "../adapters/registry";
 import { type PhotoReader, simulatedPhotoReader } from "../adapters/photoReader";
 import type { DriverRow, Language, Store } from "../db/store";
 import { LOADS } from "../demo/loads";
@@ -9,11 +10,13 @@ import { canBook } from "../domain/bookings";
 import type { Clock } from "../domain/clock";
 import { REASONS } from "../domain/reasons";
 import type { Decision, DocType, Driver, Reason, ReasonCode, Status, Submission } from "../domain/types";
-import { photoIssue } from "../policy";
+import { istDate } from "../domain/time";
+import { VEHICLE_REASONS } from "../domain/vehicle";
+import { photoIssue, vehicleRules } from "../policy";
 import { verifySubmission } from "../verify";
 import { lapseIfExpired } from "./licences";
 import { greetingName } from "./nudges";
-import { applyRulesDecision, humanDecision, tryBook, type BookingResult, type FixStep, type HumanChoice } from "./onboarding";
+import { applyRulesDecision, applyVehicleDecision, humanDecision, tryBook, type BookingResult, type FixStep, type HumanChoice } from "./onboarding";
 
 // What a driver does in the app, wired to the real rules, status machine and store.
 // Simulated here: the camera (SPECIMEN photos), the registries, and the assistant's words.
@@ -51,7 +54,8 @@ const DRIVER_LINES = {
   agree: { en: "I agree", hi: "मैं सहमत हूँ" },
   photo: { en: (s: string) => `Sent a photo of my ${s}`, hi: (s: string) => `${s} की फोटो भेजी` },
   digilocker: { en: "Fetched it from DigiLocker", hi: "DigiLocker से लाया" },
-  bank: { en: "Paid Rs 1 from my UPI app", hi: "UPI से ₹1 भेजा" },
+  bank: { en: (last4: string) => `Account ending ${last4}`, hi: (last4: string) => `खाता, आख़िरी अंक ${last4}` },
+  vehicle: { en: (n: string) => `My vehicle is ${n}`, hi: (n: string) => `मेरी गाड़ी ${n} है` },
   selfie: { en: "Took a selfie", hi: "सेल्फ़ी ली" },
   submit: { en: "Submitted", hi: "सबमिट किया" },
 };
@@ -79,7 +83,9 @@ function stepForFix(r: Reason): KycStep | null {
   }
   if (r.code === "SELFIE_MISSING") return "SELFIE";
   if (r.code === "BANK_NOT_VERIFIED") return "BANK";
-  if (r.code === "BANK_NAME_MISMATCH" || r.code === "OWNER_LINK_UNVERIFIED" || r.code === "OWNER_NOT_VERIFIED") return null;
+  // An account in someone else's name: back to the bank step, to enter one in the driver's own (D-049).
+  if (r.code === "BANK_NAME_MISMATCH") return "BANK";
+  if (r.code === "OWNER_LINK_UNVERIFIED" || r.code === "OWNER_NOT_VERIFIED") return null;
   if (r.doc === "DL" || r.doc === "PAN") return r.doc;
   return null;
 }
@@ -187,15 +193,89 @@ export function useDigilocker(ctx: KycContext, id: string, slot: "DL" | "PAN"): 
   promptNext(ctx, id);
 }
 
-export function bankCheck(ctx: KycContext, id: string): void {
+export class BankDetailsError extends Error {}
+export class BankTriesError extends Error {}
+export const BANK_TRIES_PER_DAY = 3;
+
+// Misses in the last 24 hours of the demo clock count against the day's tries.
+function bankTriesLeft(store: Store, id: string, at: Date): number {
+  const since = at.getTime() - 24 * 60 * 60 * 1000;
+  const missed = store.bankAttempts(id).filter((a) => a.record === null && new Date(a.at).getTime() > since).length;
+  return Math.max(0, BANK_TRIES_PER_DAY - missed);
+}
+
+// The bank step (D-049): the driver types an account number and IFSC, and a penny drop (SIMULATED) asks
+// the bank whether that account exists. The account it finds is the one the rules check at submit: its
+// holder's name against the driver's identity, and who else is paid into it. The driver never sees the
+// holder's name, so the step can't be used to look names up. Three misses in 24 hours lock the step until
+// the oldest of them is 24 hours old.
+export async function bankCheck(ctx: KycContext, id: string, accountNumber: string, ifsc: string): Promise<{ found: boolean; triesLeft: number }> {
   const d = collecting(ctx, id);
+  const number = accountNumber.replace(/\s/g, "");
+  const code = ifsc.trim().toUpperCase();
+  if (!/^\d{9,18}$/.test(number) || !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(code)) {
+    throw new BankDetailsError("Check the account number (9 to 18 digits) and the IFSC (11 characters).");
+  }
+  const at = now(ctx);
+  if (bankTriesLeft(ctx.store, id, at) === 0) throw new BankTriesError("That's three tries in 24 hours. Try again later.");
+  const record = await ctx.world.verifyDeps(ctx.store, ctx.clock).registry.pennyDrop(number, code);
+  const last4 = number.slice(-4);
+  driverSays(ctx, id, DRIVER_LINES.bank[d.language](last4));
+  if (!record) {
+    ctx.store.recordBankAttempt(id, at, { last4, ifsc: code, record: null });
+    const left = bankTriesLeft(ctx.store, id, at);
+    say(ctx, id, left > 0 ? { type: "bank_not_found", triesLeft: left } : { type: "bank_locked" });
+    return { found: false, triesLeft: left };
+  }
   ctx.store.transaction(() => {
     reopenIfFixing(ctx, d);
-    ctx.store.markStep(id, "bank_check", now(ctx));
+    ctx.store.recordBankAttempt(id, at, { last4, ifsc: code, record });
+    ctx.store.markStep(id, "bank_check", at);
   });
-  driverSays(ctx, id, DRIVER_LINES.bank[d.language]);
-  say(ctx, id, { type: "bank_checked" });
+  say(ctx, id, { type: "bank_checked", last4 });
   promptNext(ctx, id);
+  return { found: true, triesLeft: bankTriesLeft(ctx.store, id, at) };
+}
+
+export class VehicleNumberError extends Error {}
+
+// The name of record, as KYC uses it (policyInput): the licence registry's name for the driver's licence,
+// else the PAN registry's, and only failing both the name typed at sign-up.
+async function identityOfRecord(ctx: KycContext, registry: RegistryPort, id: string, typed: string): Promise<string> {
+  const docs = ctx.store.currentDocuments(id);
+  const dlNumber = docs.DL?.reading?.fields.number;
+  const dl = docs.DL?.source === "digilocker" ? await registry.digilockerDl(id) : dlNumber ? await registry.lookupDl(dlNumber) : null;
+  if (dl?.name) return dl.name;
+  const panNumber = docs.PAN?.reading?.fields.number;
+  const pan = docs.PAN?.source === "digilocker" ? await registry.digilockerPan(id) : panNumber ? await registry.lookupPan(panNumber) : null;
+  return pan?.name ?? typed;
+}
+
+// The vehicle step (D-049): once the driver is verified, they type their vehicle's registration number;
+// the registry (SIMULATED, Vahan-style) answers and the vehicle policy decides. Bookings open on its
+// approval. A hired driver may add their fleet owner's vehicle once the owner has confirmed them.
+export async function addVehicle(ctx: KycContext, id: string, typed: string): Promise<{ outcome: string; fixes: string[] }> {
+  const d = ctx.store.mustGet(id);
+  if (!canBook(d.status)) throw new KycError("Finish KYC before adding a vehicle.");
+  const number = typed.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (!/^[A-Z]{2}\d{1,2}[A-Z]{0,3}\d{4}$/.test(number)) throw new VehicleNumberError("Enter the registration number as it's printed, like KA05MN4821.");
+  const deps = ctx.world.verifyDeps(ctx.store, ctx.clock);
+  const record = await deps.registry.lookupVehicle(number);
+  const owner = d.fleetOwnerId ? ctx.store.getDriver(d.fleetOwnerId) : undefined;
+  const at = now(ctx);
+  const decision = vehicleRules.decide({
+    number,
+    record,
+    driver: { identity: await identityOfRecord(ctx, deps.registry, d.id, d.name), partnerType: d.partnerType, ownerLinkVerified: Boolean(d.ownerLinkVerified) },
+    fleetOwnerIdentity: owner ? await identityOfRecord(ctx, deps.registry, owner.id, owner.name) : null,
+    ownerVerified: owner ? ctx.store.isVerified(owner.id) : false,
+    today: istDate(at),
+    registrySimulated: deps.registry.simulated,
+  });
+  applyVehicleDecision(ctx.store, id, number, record, decision, at);
+  driverSays(ctx, id, DRIVER_LINES.vehicle[d.language](number));
+  say(ctx, id, decision.outcome === "APPROVE" ? { type: "vehicle_ok", number } : { type: "vehicle_fix", fixes: decision.reasons.map((r) => r.code) });
+  return { outcome: decision.outcome, fixes: decision.reasons.map((r) => VEHICLE_REASONS[r.code].driver[d.language]) };
 }
 
 export function takeSelfie(ctx: KycContext, id: string): void {
@@ -237,7 +317,8 @@ export async function submit(ctx: KycContext, id: string): Promise<Decision> {
   driverSays(ctx, id, DRIVER_LINES.submit[d.language]);
 
   const fixes = decision.reasons.filter((r) => r.severity === "fix").map((r) => r.code);
-  for (const line of agentSay({ type: "decision", outcome: decision.outcome, fixes }, d.language)) {
+  const needsVehicle = ctx.store.latestVehicle(id)?.outcome !== "APPROVE";
+  for (const line of agentSay({ type: "decision", outcome: decision.outcome, fixes, needsVehicle }, d.language)) {
     ctx.store.addChat(id, "system", "rules", line, now(ctx));
   }
   return decision;
@@ -249,12 +330,12 @@ export function ask(ctx: KycContext, id: string, faq: FaqId): void {
   say(ctx, id, { type: "faq", id: faq });
 }
 
-export function reviewerDecision(ctx: KycContext, id: string, choice: HumanChoice, note: string, step?: FixStep): DriverRow {
-  const d = humanDecision(ctx.store, id, choice, note, now(ctx), { step });
+export function reviewerDecision(ctx: KycContext, id: string, choice: HumanChoice, note: string, step?: FixStep, draft?: string): DriverRow {
+  const d = humanDecision(ctx.store, id, choice, note, now(ctx), { step, draft });
   const lang = d.language;
   const text =
     choice === "APPROVE"
-      ? agentSay({ type: "decision", outcome: "APPROVE", fixes: [] }, lang)[0]
+      ? agentSay({ type: "decision", outcome: "APPROVE", fixes: [], needsVehicle: ctx.store.latestVehicle(id)?.outcome !== "APPROVE" }, lang)[0]
       : choice === "NEEDS_FIX"
         ? lang === "hi"
           ? `समीक्षक ने यह ठीक करने को कहा है: ${note}`
@@ -282,7 +363,7 @@ export function ownerConfirms(ctx: KycContext, id: string): DriverRow {
 export function book(ctx: KycContext, id: string, loadId: string): BookingResult & { firstTrip?: boolean } {
   const d = ctx.store.getDriver(id);
   if (d) lapseIfExpired(ctx.store, d, now(ctx)); // the lock applies from the day after the last valid day
-  const r = tryBook(ctx.store, id);
+  const r = tryBook(ctx.store, id, istDate(now(ctx)));
   if (!r.ok) return r;
   if (!LOADS.some((l) => l.id === loadId)) return { ok: false, httpStatus: 404, message: "Load not found." };
   const firstTrip = ctx.store.bookings(id).length === 0;
@@ -295,6 +376,9 @@ export interface DriverView {
   driver: { id: string; name: string; partnerType: string; status: Status; language: Language; optedOut: boolean };
   nextStep: KycStep | null;
   steps: { bank: boolean; selfie: boolean };
+  bank: { hint: { accountNumber: string; ifsc: string } | null; triesLeft: number }; // the penny-drop form (D-049)
+  // The vehicle step (D-049): needed once verified, until a vehicle is approved.
+  vehicle: { needed: boolean; number: string | null; outcome: string | null; fixes: string[]; hint: string | null };
   documents: Partial<Record<DocType, { source: string; shotId: string | null; issue: ReasonCode | null }>>;
   // Review reasons are never shown to the driver: only that a person is checking.
   decision: { outcome: string; by: string; at: string; fixes: { code: ReasonCode; message: string }[] } | null;
@@ -309,10 +393,15 @@ export function driverView(ctx: KycContext, id: string): DriverView {
   const d = store.mustGet(id);
   const docs = store.currentDocuments(id);
   const latest = store.latestDecision(id);
+  const vehicle = store.latestVehicle(id);
+  // A registration that ran out after it was verified locks bookings (tryBook); the phone asks for the vehicle again.
+  const lapsed = Boolean(vehicle?.record && vehicle.record.registeredTill < istDate(now(ctx)));
+  const vehicleOk = vehicle?.outcome === "APPROVE" && !lapsed;
   return {
     driver: { id: d.id, name: d.name, partnerType: d.partnerType, status: d.status, language: d.language, optedOut: d.optedOut },
     nextStep: nextStep(store, d),
     steps: { bank: store.hasStep(id, "bank_check"), selfie: store.hasStep(id, "selfie") },
+    bank: { hint: ctx.world.bankHint(id), triesLeft: bankTriesLeft(store, id, now(ctx)) },
     documents: Object.fromEntries(
       SLOTS.filter((s) => docs[s]).map((s) => {
         const doc = docs[s];
@@ -339,7 +428,16 @@ export function driverView(ctx: KycContext, id: string): DriverView {
       .filter((n) => n.action !== "hold")
       .reverse()
       .map((n) => ({ at: n.at, kind: n.action, text: n.text, deepLink: n.deepLink, writer: n.writer })),
-    canBook: canBook(d.status),
+    canBook: canBook(d.status) && vehicleOk,
+    vehicle: {
+      needed: canBook(d.status) && !vehicleOk,
+      number: vehicle?.number ?? null,
+      outcome: vehicle?.outcome ?? null,
+      fixes: lapsed
+        ? [VEHICLE_REASONS.VEHICLE_REGISTRATION_EXPIRED.driver[d.language]]
+        : (vehicle?.reasons.map((r) => VEHICLE_REASONS[r.code].driver[d.language]) ?? []),
+      hint: ctx.world.vehicleHint(id),
+    },
     bookings: store.bookings(id).map((b) => ({ loadId: b.loadId, at: b.at })),
   };
 }

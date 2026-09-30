@@ -182,6 +182,47 @@ function CameraSheet({ id, slot, lang, onPick, onClose }: { id: string; slot: Sl
   );
 }
 
+// The bank step as a penny drop (D-049): the driver's account number and IFSC, checked with the bank
+// (SIMULATED). The demo fills in the persona's SPECIMEN account.
+function BankForm({
+  id,
+  lang,
+  bank,
+  busy,
+  run,
+}: {
+  id: string;
+  lang: Lang;
+  bank: DriverView["bank"];
+  busy: boolean;
+  run: <T>(fn: () => Promise<T>) => Promise<T | undefined>;
+}) {
+  const [number, setNumber] = useState(bank.hint?.accountNumber ?? "");
+  const [ifsc, setIfsc] = useState(bank.hint?.ifsc ?? "");
+  const locked = bank.triesLeft === 0;
+  return (
+    <form
+      className="bank-form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        run(() => api.bankCheck(id, number, ifsc)).then((r) => r && play(r.found ? "pop" : "bonk"));
+      }}
+    >
+      <label>
+        <span className="small muted">{t(lang, "accountNumber")}</span>
+        <input inputMode="numeric" autoComplete="off" maxLength={18} value={number} onChange={(e) => setNumber(e.target.value)} />
+      </label>
+      <label>
+        <span className="small muted">{t(lang, "ifsc")}</span>
+        <input autoComplete="off" autoCapitalize="characters" maxLength={11} value={ifsc} onChange={(e) => setIfsc(e.target.value)} />
+      </label>
+      <Push block type="submit" disabled={busy || locked}>
+        <IndianRupee size={17} aria-hidden="true" /> {t(lang, "verifyAccount")} <Sim />
+      </Push>
+    </form>
+  );
+}
+
 // The KYC conversation: the road so far, status, documents, the assistant, and the one next action.
 export function Kyc({ view, focus }: { view: DriverView; focus: string | null }) {
   const id = view.driver.id;
@@ -272,11 +313,7 @@ export function Kyc({ view, focus }: { view: DriverView; focus: string | null })
               </div>
             </>
           )}
-          {step === "BANK" && (
-            <Push block disabled={busy} onClick={() => run(() => api.bankCheck(id)).then((r) => r && play("pop"))}>
-              <IndianRupee size={17} aria-hidden="true" /> {t(lang, "payRs1")} <Sim />
-            </Push>
-          )}
+          {step === "BANK" && <BankForm key={view.bank.hint?.accountNumber ?? "none"} id={id} lang={lang} bank={view.bank} busy={busy} run={run} />}
           {step === "SELFIE" && (
             <Push block disabled={busy} onClick={() => run(() => api.selfie(id)).then((r) => r && play("pop"))}>
               <UserRound size={17} aria-hidden="true" /> {t(lang, "takeSelfie")} <Sim />

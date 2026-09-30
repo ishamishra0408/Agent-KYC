@@ -317,6 +317,51 @@ select {
   font-size: var(--fs-base);
 }
 
+/* The penny-drop form on the phone (D-049): two fields and the keycap. */
+.bank-form {
+  display: grid;
+  gap: 8px;
+}
+.bank-form label {
+  display: grid;
+  gap: 2px;
+}
+.vehicle-form {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  padding: var(--space-4);
+  text-align: center;
+}
+.vehicle-form label,
+.vehicle-form .push {
+  justify-self: stretch;
+}
+.vehicle-form label {
+  text-align: left;
+}
+.vehicle-form label {
+  display: grid;
+  gap: 2px;
+}
+.vehicle-fix {
+  margin: 0;
+  color: var(--fix);
+}
+.bank-form input,
+.vehicle-form input {
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1.5px solid var(--control-border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs-base);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
 :focus-visible {
   outline: 2.5px solid var(--focus);
   outline-offset: 2px;
@@ -1950,7 +1995,8 @@ table.table tbody th[scope="row"] {
   letter-spacing: -0.01em;
 }
 .decide textarea {
-  min-height: 64px;
+  /* Room for a copilot draft (D-048) without scrolling. */
+  min-height: 96px;
   resize: vertical;
   border-radius: var(--radius);
   border: 1.5px solid var(--control-border);
@@ -2528,7 +2574,7 @@ table.table td {
       animation-range: contain 50% contain 80%;
     }
     .story-nav .s4 {
-      /* The page ends where the section does, so the last step's range runs past it. */
+      /* Marked until the section has scrolled away. */
       animation-range: contain 80% cover 100%;
     }
     /* The marked step is solid, so its glass layers step aside for the same stretch of scroll. */
@@ -2631,6 +2677,195 @@ table.table td {
     color: var(--on-primary);
     /* Solid, so a tight shadow: the glass one would blur its edge. */
     box-shadow: 0 1px 2px var(--press-shadow);
+  }
+}
+
+/* Who decides and Does it work (D-047): two bands below the story, then the footer. */
+.pipeline,
+.metrics {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+}
+.band-title {
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  text-align: center;
+}
+.pipeline-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 64px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pipeline-step {
+  position: relative;
+}
+.pipeline-node {
+  display: grid;
+  gap: 4px;
+  height: 100%;
+  padding: var(--space-4);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.pipeline-node strong {
+  font-family: var(--font-display);
+  font-size: var(--fs-md);
+}
+.pipeline-node.ai {
+  border-top: 3px solid var(--ai);
+}
+.pipeline-node.rules {
+  border-top: 3px solid var(--rules);
+}
+.pipeline-node.human {
+  border-top: 3px solid var(--human);
+}
+.pipeline-node.ai .pipeline-icon {
+  color: var(--ai);
+}
+.pipeline-node.rules .pipeline-icon {
+  color: var(--rules);
+}
+.pipeline-node.human .pipeline-icon {
+  color: var(--human);
+}
+/* The wire between two parts, fading from one colour to the next, with a pulse running along it. */
+.pipeline-step .beam {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: 64px;
+  height: 10px;
+  translate: 0 -50%;
+  overflow: visible;
+}
+.beam-stop.ai {
+  stop-color: var(--ai);
+}
+.beam-stop.rules {
+  stop-color: var(--rules);
+}
+.beam-stop.human {
+  stop-color: var(--human);
+}
+.beam-wire {
+  stroke-width: 2;
+  opacity: 0.45;
+  vector-effect: non-scaling-stroke;
+}
+.beam-pulse {
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 14 86;
+  vector-effect: non-scaling-stroke;
+  animation: beam-pulse 2.4s linear infinite;
+}
+.pipeline-step:nth-child(3) .beam-pulse {
+  animation-delay: 1.2s;
+}
+@keyframes beam-pulse {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+}
+.metrics-row > div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+  padding: var(--space-4);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  text-align: center;
+}
+.metrics-row dt {
+  color: var(--text-2);
+  font-size: var(--fs-sm);
+}
+.metrics-row dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.metrics-row .of {
+  font-size: 0.45em;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.site-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--space-6);
+  /* Clear of the road along the bottom of the window. */
+  padding: var(--space-5) var(--space-4) 56px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.site-footer-inner {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 1080px;
+  margin: 0 auto;
+}
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.site-footer-links a {
+  color: var(--link);
+  font-weight: 600;
+  text-decoration: none;
+}
+.site-footer-links a:hover {
+  text-decoration: underline;
+}
+@media (max-width: 760px) {
+  .pipeline-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+  .pipeline-step .beam {
+    top: auto;
+    right: auto;
+    bottom: calc(100% + 15px);
+    left: 50%;
+    width: 40px;
+    translate: -50% 0;
+    rotate: 90deg;
+  }
+  .metrics-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .beam-pulse {
+    display: none;
   }
 }
 

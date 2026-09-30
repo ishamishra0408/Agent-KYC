@@ -3,6 +3,10 @@ import path from "node:path";
 import { caseSummary, caseSummaryParts } from "../ai/caseSummary";
 import type { DocType, GraphSignals, Notice, PassedCheck, Reason } from "../domain/types";
 import { type KycContext, nextStep } from "./kyc";
+import { DRAFT_WRITER, type DraftChoice, type DraftStep, reviewDraft } from "../ai/reviewDraft";
+import type { VehicleRow } from "../db/store";
+import type { VehicleRecord } from "../domain/types";
+import { VEHICLE_REASONS } from "../domain/vehicle";
 
 // Read-only views for the ops console.
 
@@ -36,7 +40,17 @@ export function reviewQueue(ctx: KycContext) {
 
 export interface CaseView {
   driver: { id: string; name: string; phone: string; partnerType: string; status: string; fleetOwnerId?: string; ownerLinkVerified?: boolean };
-  decision: { outcome: string; actor: string; at: string; rulesVersion: string | null; reasons: Reason[]; passed: PassedCheck[]; note: string | null } | null;
+  decision: {
+    outcome: string;
+    actor: string;
+    at: string;
+    rulesVersion: string | null;
+    reasons: Reason[];
+    passed: PassedCheck[];
+    note: string | null;
+    basedOn: { at: string; rulesVersion: string | null } | null; // a person's decision: the rules' decision they were shown
+    draft: string | null; // a person's note that began as a copilot draft: who drafted it
+  } | null;
   notices: Notice[]; // from the latest rules decision: worth knowing, not blocking
   summary: string | null;
   summaryParts: { text: string; sources: number[] }[] | null; // the same, sentence by sentence, citing its reasons (1-based)
@@ -50,6 +64,44 @@ export interface CaseView {
   graphSource: string | null; // "Neo4j" when the live graph answered; null for the in-memory one
   events: { at: string; actor: string; type: string; from: string | null; to: string | null }[];
   registrySimulated: boolean;
+  // The vehicle decision (D-049), with the registry's record it was made on.
+  vehicle: {
+    number: string;
+    record: VehicleRecord | null;
+    outcome: string;
+    reasons: { code: string; opsMessage: string; evidence: Record<string, unknown> }[];
+    passed: string[];
+    at: string;
+    rulesVersion: string;
+  } | null;
+  // The penny drops (D-049): each account tried, and whether the bank found it.
+  bankAttempts: { at: string; last4: string; ifsc: string; found: boolean }[];
+}
+
+function vehicleView(v: VehicleRow | undefined): CaseView["vehicle"] {
+  if (!v) return null;
+  return {
+    number: v.number,
+    record: v.record,
+    outcome: v.outcome,
+    reasons: v.reasons.map((r) => ({ code: r.code, opsMessage: VEHICLE_REASONS[r.code].ops, evidence: r.evidence })),
+    passed: v.passed.map((p) => p.check),
+    at: v.at,
+    rulesVersion: v.rulesVersion,
+  };
+}
+
+// A person's decision keeps the rules' decision it was made on (D-048): when, and under which rules.
+function basedOn(evidence: Record<string, unknown>): { at: string; rulesVersion: string | null } | null {
+  const b = evidence.basedOn as { at?: unknown; rulesVersion?: unknown } | null | undefined;
+  return b && typeof b.at === "string" ? { at: b.at, rulesVersion: typeof b.rulesVersion === "string" ? b.rulesVersion : null } : null;
+}
+
+// The copilot's first draft of a reviewer's note (D-048), from the rules' latest decision on the case.
+export function reviewDraftFor(ctx: KycContext, id: string, choice: DraftChoice, step?: DraftStep): { text: string; writer: string } {
+  ctx.store.mustGet(id);
+  const checked = ctx.store.decisions(id).filter((x) => x.actor === "rules").at(-1);
+  return { text: checked ? reviewDraft(checked, choice, step) : "", writer: DRAFT_WRITER };
 }
 
 export async function caseView(ctx: KycContext, id: string): Promise<CaseView> {
@@ -78,6 +130,8 @@ export async function caseView(ctx: KycContext, id: string): Promise<CaseView> {
           reasons: decision.reasons,
           passed: decision.passed,
           note: decision.note,
+          basedOn: basedOn(decision.evidence),
+          draft: typeof decision.evidence.draft === "string" ? decision.evidence.draft : null,
         }
       : null,
     notices: store.decisions(id).filter((x) => x.actor === "rules").at(-1)?.notices ?? [],
@@ -105,6 +159,8 @@ export async function caseView(ctx: KycContext, id: string): Promise<CaseView> {
     graphSource: ctx.graph ? (ctx.graphName ?? null) : null,
     events: store.events(id).map((e) => ({ at: e.at, actor: e.actor, type: e.type, from: e.fromStatus, to: e.toStatus })),
     registrySimulated: deps.registry.simulated,
+    vehicle: vehicleView(store.latestVehicle(id)),
+    bankAttempts: store.bankAttempts(id).map((a) => ({ at: a.at, last4: a.last4, ifsc: a.ifsc, found: a.record !== null })),
   };
 }
 

@@ -1,6 +1,6 @@
 # Eval report: oracle reader, holdout set
 
-Run 2026-09-30T00:01:15.980Z · rules v6 · 16 cases (6 good, 10 bad) · registry checks SIMULATED · SPECIMEN documents only
+Run 2026-09-30T08:39:38.892Z · rules v7 · 16 cases (6 good, 10 bad) · registry checks SIMULATED · SPECIMEN documents only
 
 Reference reader: built from the answer key, so it brackets real readers rather than competing with them.
 
