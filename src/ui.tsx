@@ -208,7 +208,7 @@ export function Push({
   className = "",
   onClick,
   ...rest
-}: ButtonHTMLAttributes<HTMLButtonElement> & { tone?: "primary" | "gold" | "plain"; size?: "sm" | "md"; block?: boolean }) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & { tone?: "primary" | "accent" | "plain"; size?: "sm" | "md"; block?: boolean }) {
   return (
     <button
       {...rest}
@@ -222,6 +222,25 @@ export function Push({
       <span className="push-edge" aria-hidden="true" />
       <span className="push-front">{children}</span>
     </button>
+  );
+}
+
+// The mark (D-044): an octahedron in flat tones lit from the top-left (lit, light, main and deep
+// orange), over a soft slate shadow. The favicon in index.html is the same drawing.
+export function BrandMark({ size = 32 }: { size?: number }) {
+  return (
+    <svg className="brand-mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="brand-mark-shadow" x="-50%" y="-300%" width="200%" height="700%">
+          <feGaussianBlur stdDeviation="0.9" />
+        </filter>
+      </defs>
+      <ellipse cx="16.4" cy="29.2" rx="7.6" ry="1.5" fill="#23282d" opacity="0.28" filter="url(#brand-mark-shadow)" />
+      <polygon points="16,3.2 5.4,13.6 14.8,16.6" fill="#f2805f" />
+      <polygon points="16,3.2 14.8,16.6 26.6,13.6" fill="#e8654b" />
+      <polygon points="5.4,13.6 16,26.2 14.8,16.6" fill="#e04e39" />
+      <polygon points="14.8,16.6 16,26.2 26.6,13.6" fill="#a93219" />
+    </svg>
   );
 }
 

@@ -102,7 +102,7 @@ export function play(name: SoundName): void {
 // ---------- Confetti: parcels, cones and route pins, in brand colours only ----------
 // (never the provenance colours, which always mean who decided something)
 const PIECES = ["parcel", "cone", "pin", "dot"] as const;
-const COLORS = ["var(--primary)", "var(--gold)", "var(--kraft)", "var(--caramel)", "var(--primary-edge)"];
+const COLORS = ["var(--primary)", "var(--accent)", "var(--kraft)", "var(--caramel)", "var(--primary-edge)"];
 
 export function confetti(container: HTMLElement | null, count = 34): void {
   if (!container || reducedMotion()) return;

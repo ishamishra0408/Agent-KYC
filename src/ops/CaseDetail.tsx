@@ -188,7 +188,7 @@ function DecisionForm({ id }: { id: string }) {
       </label>
       <ErrorNote message={invalid ?? error} />
       <div>
-        <Push tone="gold" disabled={busy} onClick={record}>
+        <Push tone="accent" disabled={busy} onClick={record}>
           Record decision
         </Push>
       </div>

@@ -49,6 +49,7 @@ Each entry: what was decided, what else was on the table, and why. Newest at the
 | 041 | [Provenance as small markers, not coloured bands; each message said once](#d-041--provenance-as-small-markers-not-coloured-bands-each-message-said-once) | Colour says less; icons and labels say who produced what |
 | 042 | [A preserve-mode polish, run through an outside design audit (tasteskill)](#d-042--a-preserve-mode-polish-run-through-an-outside-design-audit-tasteskill) | Every keycap is now a pill, and the seven-step type scale moved some text by a pixel |
 | 043 | [Outside components from 21st.dev, reused or rewritten according to their licences](#d-043--outside-components-from-21stdev-reused-or-rewritten-according-to-their-licences) | Screenshots that go stale when the UI changes, a summary that takes about a second to appear the first time, and more motion than D-041 left |
+| 044 | [The red-and-black look goes live](#d-044--the-red-and-black-look-goes-live) | The brown-and-gold identity, and an accent closer to the reject red, so a rejection leans on its label as well as its colour |
 
 ## D-001 · AI proposes; code and people decide
 
@@ -204,6 +205,7 @@ Each entry: what was decided, what else was on the table, and why. Newest at the
 - **Rule that came with it:** warm colours are the brand; cool colours say who decided. "A person" moved from orange to UPS's link blue, because orange would have blended into brown and gold. AI stays purple, the rules stay green, simulated stays dashed grey. Confetti and progress use brand colours, never provenance colours. Blue and purple are hard to tell apart for some colour-blind people, so each provenance chip also carries an icon.
 - **Guarded by:** `tests/theme.test.ts`. The two copies of the dark tokens must stay identical, every colour token the UI uses must be defined, and every colour pair the UI draws must meet WCAG AA in both themes: 4.5:1 for text, 3:1 for focus rings, borders and indicator lines. That includes hover and selected states and the translucent BOOKED stamp.
 - **Why:** match UPS's look without blurring what the colours mean (D-026).
+- **Superseded (29 Sep):** the palette, by D-044. Its rule on meaning stays: purple, green and blue say who produced what, and the brand never uses them.
 
 ## D-030 · The decision rules are policy as code, on Open Policy Agent
 
@@ -347,6 +349,15 @@ I went with the recommendations. Each answer is a named test in `policy/kyc_test
 - **Motion:** D-027 holds: everything that moves is decoration, and reduced motion stops all of it. There's more of it than D-041 left, most of it in the story section, where it's the point.
 - **Pictures:** `public/story/` holds four screenshots of the seeded demo, taken with headless Chrome (156 KB in all). They need re-taking when the screens they show change.
 - **Checked:** 191 tests (two new: the summary's citations and the glass buttons' contrast), the contrast checks, typecheck and build; the story in both themes, with and without reduced motion, at desktop and phone widths; a citation opening its source; a streamed reply keeping its size and its single screen-reader copy; no em-dash in the source.
+
+## D-044 · The red-and-black look goes live
+
+- **Asked for:** Isha, on 29 Sep: put the look she'd been using on her own machine on the live demo. It lived in a git-ignored folder, so the live site and the README showed D-029's brown and gold, and the difference looked like two versions running.
+- **Decision:** that look is now the app's own, in `src/styles.css`: near-black text and buttons, one orange-red accent, a pale blue-grey ground with a faint dot grid, Barlow (Mukta for Devanagari), capitals on buttons, and an octahedron mark in flat orange tones, which is also the favicon. The provenance colours (purple AI, green rules, blue person, dashed grey simulated) and D-041's small-marker rule don't change.
+- **Tested, not just moved:** the palette went into the stylesheet's own token blocks, not an override layer, so `tests/theme.test.ts` checks the colours that ship: every pair passes WCAG AA in both themes. The glass buttons' dark tint moves to the new glass colour, the one token the local look never set. The accent token is renamed from `--gold` to `--accent`, with the button tone, since it no longer holds gold.
+- **Re-taken:** the four story cards, the README screenshot and the link preview card.
+- **What it cost:** the brown-and-gold identity and its rounded display face. The orange-red accent (Book, Submit, the KYC block) sits closer to the reject red than gold did, so a rejection leans on its label as well as its colour.
+- **The folder stays:** `src/localOverrides.ts` still loads any CSS or TypeScript file in the git-ignored `src/local/`, now empty, for trying a look on one machine.
 
 ## Policy questions (settled in v3 and v4)
 

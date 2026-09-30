@@ -4,16 +4,16 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
 // The link preview card (1200 x 630) for the live demo, and the picture at the top of the README: the
-// wordmark with its gold KYC block, one line of value, and the demo screenshot (docs/demo.jpg).
+// wordmark with its KYC block in the accent, one line of value, and the demo screenshot (docs/demo.jpg).
 // Public skin only. Usage: npm run og (after re-shooting docs/demo.jpg)
 const root = fileURLToPath(new URL("..", import.meta.url));
 const W = 1200;
 const H = 630;
-// The light theme's tokens (src/styles.css): --bg, --text, --text-2, --gold, --on-gold.
-const BG = "#fcfaf7";
-const TEXT = "#331b14";
-const TEXT_2 = "#5f5753";
-const GOLD = "#ffc400";
+// The light theme's tokens (src/styles.css): --bg, --text (also --on-accent), --text-2, --accent.
+const BG = "#e9ebf2";
+const TEXT = "#0e0a0f";
+const TEXT_2 = "#48464e";
+const ACCENT = "#e04f38";
 
 const text = (markup: string, font: string, width?: number) =>
   sharp({ text: { text: markup, font, dpi: 72, rgba: true, ...(width ? { width, wrap: "word" as const } : {}) } })
@@ -33,17 +33,17 @@ const line = await text(
 );
 const url = await text(`<span foreground="${TEXT_2}">agent-kycready.onrender.com</span>`, "Helvetica Neue Medium 20");
 
-// The wordmark: "Agent", a space, then KYC on a gold block, then "Ready" right after it.
+// The wordmark: "Agent", a space, then KYC on an accent block, then "Ready" right after it.
 const x0 = 64;
 const titleY = 176;
 const pad = 7;
 const kycX = x0 + agent.info.width + 14;
 const readyX = kycX + kyc.info.width + pad * 2 + 2;
 const block = Buffer.from(
-  `<svg xmlns="http://www.w3.org/2000/svg" width="${kyc.info.width + pad * 2}" height="${kyc.info.height + 4}"><rect width="100%" height="100%" rx="7" fill="${GOLD}"/></svg>`,
+  `<svg xmlns="http://www.w3.org/2000/svg" width="${kyc.info.width + pad * 2}" height="${kyc.info.height + 4}"><rect width="100%" height="100%" rx="7" fill="${ACCENT}"/></svg>`,
 );
 
-// The screenshot, rounded, over a soft shadow tinted to the page.
+// The screenshot, rounded, over a soft slate shadow.
 const shotW = 600;
 const shotH = Math.round((shotW * 533) / 800);
 const shotX = W - shotW - 52;
@@ -55,7 +55,7 @@ const shot = await sharp(readFileSync(path.join(root, "docs", "demo.jpg")))
   .png()
   .toBuffer();
 const shadow = await sharp(
-  Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${shotW + 60}" height="${shotH + 60}"><rect x="30" y="38" width="${shotW}" height="${shotH}" rx="14" fill="rgba(51,27,20,0.22)"/></svg>`),
+  Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${shotW + 60}" height="${shotH + 60}"><rect x="30" y="38" width="${shotW}" height="${shotH}" rx="14" fill="rgba(24,30,45,0.2)"/></svg>`),
 )
   .blur(14)
   .png()

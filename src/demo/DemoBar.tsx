@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { api } from "../api";
 import { useAction, useData } from "../data";
 import { istTime, PARTNER_LABEL, STATUS_LABEL } from "../i18n";
-import { Push, Truck } from "../ui";
+import { BrandMark, Push } from "../ui";
 import { isDarkNow, play, useSoundToggle } from "../whimsy";
 
 // Demo controls: whose phone you're holding, the demo clock, theme, sound, and a reset.
@@ -45,9 +45,7 @@ export function DemoBar({
   return (
     <header className="demo-bar">
       <h1 className="brand boop">
-        <span className="brand-mark">
-          <Truck size={38} />
-        </span>
+        <BrandMark />
         <span>
           Agent <span className="accent">KYC</span>Ready
         </span>

@@ -51,7 +51,7 @@ const TEXT: [string, string, number?][] = [
   ["text", "bg"], ["text", "surface"], ["text", "surface-2"],
   ["text-2", "surface"], ["text-2", "surface-2"],
   ["text-3", "bg"], ["text-3", "surface"], ["text-3", "surface-2"],
-  ["on-primary", "primary"], ["on-gold", "gold"],
+  ["on-primary", "primary"], ["on-accent", "accent"],
   ["link", "bg"], ["link", "surface"],
   ["sim", "bg"], ["sim", "surface"], ["sim", "surface-2"],
   ["ai", "ai-bg"], ["rules", "rules-bg"], ["human", "human-bg"], ["fix", "fix-bg"], ["danger", "danger-bg"],
@@ -89,7 +89,7 @@ function onGlass(tokens: Tokens, theme: string, fg: string, well = false): numbe
 
 const NON_TEXT: [string, string][] = [
   ["focus", "bg"], ["focus", "surface"], ["focus", "surface-2"],
-  ["gold-line", "surface"], // selected ops tab
+  ["accent-line", "surface"], // selected ops tab
   // provenance icons, and the accent lines on reasons and banners (D-041)
   ["ai", "surface"], ["rules", "surface"], ["human", "surface"], ["fix", "surface"], ["danger", "surface"],
   ["control-border", "surface"], ["control-border", "surface-2"],

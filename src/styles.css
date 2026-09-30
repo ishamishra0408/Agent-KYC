@@ -1,39 +1,38 @@
-/* Agent KYCReady: logistics with whimsy, in UPS colours.
+/* Agent KYCReady: logistics with whimsy, in a corporate logistics look (D-044): near-black text and
+   buttons, one orange-red accent, a pale blue-grey ground with a faint dot grid, Barlow, pill buttons.
    Two themes: "Morning depot" (light) and "Night highway" (dark).
-   Palette follows UPS's own web tokens: brown #351c15, brown gradient #7e5844 to #69422d,
-   gold #ffc400, caramel #c67d30, warm greys. Palette only: no UPS name, logo or shield.
-   Warm colours are the brand. Cool colours carry provenance, as small markers only (an icon, a
-   label, a thin accent line), never as filled bands (D-041):
+   The neutrals and the accent are the brand. Purple, green and blue carry provenance, as small markers
+   only (an icon, a label, a thin accent line), never as filled bands (D-041):
      purple        = an AI slot wrote it
      green         = the rules decided
-     blue          = a person decided (UPS's link blue)
+     blue          = a person decided
      dashed grey   = SIMULATED
    Amber (fix) and red (reject) keep their usual meaning. */
 
 :root {
-  --bg: hsl(30deg 50% 98%);
-  --bg-accent: hsl(46deg 100% 50% / 0.1);
-  --bg-accent-2: hsl(21deg 30% 38% / 0.06);
+  --bg: hsl(222deg 26% 93%);
+  --bg-accent: hsl(8deg 73% 55% / 0.07);
+  --bg-accent-2: hsl(222deg 30% 40% / 0.06);
   --surface: hsl(0deg 0% 100%);
-  --surface-2: hsl(40deg 9% 94%);
-  --surface-3: hsl(36deg 10% 89%);
-  --text: hsl(13deg 43% 14%);
-  --text-2: hsl(20deg 7% 35%);
-  --text-3: hsl(22deg 7% 41%);
-  --border: hsl(35deg 14% 87%);
-  --border-2: hsl(33deg 10% 72%);
-  --control-border: hsl(25deg 8% 52%);
-  --primary: hsl(21deg 40% 29%);
-  --primary-edge: hsl(13deg 43% 14%);
-  --on-primary: hsl(40deg 100% 97%);
-  --gold: hsl(46deg 100% 50%);
-  --gold-edge: hsl(40deg 100% 36%);
-  --on-gold: hsl(13deg 43% 14%);
-  --gold-line: hsl(40deg 100% 36%);
-  --kraft: hsl(33deg 45% 72%);
-  --caramel: hsl(31deg 61% 48%);
-  --link: var(--primary);
-  --focus: var(--primary);
+  --surface-2: hsl(222deg 22% 96%);
+  --surface-3: hsl(222deg 16% 90%);
+  --text: hsl(280deg 18% 5%);
+  --text-2: hsl(260deg 6% 29%);
+  --text-3: hsl(0deg 0% 38%);
+  --border: hsl(222deg 16% 88%);
+  --border-2: hsl(222deg 10% 72%);
+  --control-border: hsl(222deg 8% 50%);
+  --primary: hsl(270deg 8% 10%);
+  --primary-edge: hsl(270deg 12% 3%);
+  --on-primary: hsl(0deg 0% 100%);
+  --accent: hsl(8deg 73% 55%);
+  --accent-edge: hsl(8deg 72% 36%);
+  --on-accent: hsl(280deg 18% 5%);
+  --accent-line: hsl(8deg 73% 50%);
+  --kraft: hsl(24deg 80% 84%);
+  --caramel: hsl(18deg 78% 55%);
+  --link: hsl(8deg 72% 40%);
+  --focus: hsl(8deg 72% 40%);
   --ai: hsl(270deg 70% 48%);
   --ai-bg: hsl(270deg 100% 97%);
   --ai-border: hsl(270deg 70% 87%);
@@ -49,30 +48,30 @@
   --danger: hsl(1deg 70% 44%);
   --danger-bg: hsl(0deg 100% 97%);
   --sim: hsl(20deg 7% 40%);
-  --road: hsl(20deg 8% 24%);
-  --road-line: var(--gold);
-  --phone-frame: hsl(15deg 20% 9%);
-  --truck-cargo: var(--primary);
-  --truck-cab: var(--primary-edge);
-  --truck-stripe: var(--gold);
-  --truck-window: hsl(200deg 60% 86%);
-  --truck-wheel: hsl(15deg 20% 10%);
-  --truck-hub: hsl(30deg 10% 72%);
+  --road: hsl(213deg 8% 30%);
+  --road-line: hsl(24deg 85% 80%);
+  --phone-frame: hsl(280deg 18% 6%);
+  --truck-cargo: hsl(8deg 73% 55%);
+  --truck-cab: hsl(8deg 70% 38%);
+  --truck-stripe: hsl(24deg 85% 86%);
+  --truck-window: hsl(210deg 40% 88%);
+  --truck-wheel: hsl(280deg 18% 6%);
+  --truck-hub: hsl(0deg 0% 74%);
   --scrim: hsl(15deg 40% 6% / 0.5);
-  --shadow-sm: 0 1px 1px hsl(20deg 30% 25% / 0.08), 0 2px 3px hsl(20deg 30% 25% / 0.08);
-  --shadow-md: 0 1px 1px hsl(20deg 30% 25% / 0.07), 0 3px 6px hsl(20deg 30% 25% / 0.08), 0 8px 18px hsl(20deg 30% 25% / 0.08);
-  --shadow-lg: 0 2px 2px hsl(20deg 30% 20% / 0.06), 0 8px 16px hsl(20deg 30% 20% / 0.08), 0 24px 48px hsl(20deg 30% 20% / 0.12);
+  --shadow-sm: 0 1px 1px hsl(222deg 30% 20% / 0.08), 0 2px 3px hsl(222deg 30% 20% / 0.08);
+  --shadow-md: 0 1px 1px hsl(222deg 30% 20% / 0.07), 0 3px 6px hsl(222deg 30% 20% / 0.08), 0 8px 18px hsl(222deg 30% 20% / 0.08);
+  --shadow-lg: 0 2px 2px hsl(222deg 30% 15% / 0.06), 0 8px 16px hsl(222deg 30% 15% / 0.08), 0 24px 48px hsl(222deg 30% 15% / 0.12);
   /* Liquid glass (D-037): the navigation layer floats over the content as tinted, frosted glass.
      The 85% tint keeps text on it at WCAG AA over any backdrop, black included (tests/theme.test.ts). */
-  --glass: hsl(30deg 40% 99% / 0.85);
+  --glass: hsl(222deg 30% 98% / 0.85);
   --glass-gloss: linear-gradient(180deg, hsl(0deg 0% 100% / 0.5), hsl(0deg 0% 100% / 0) 45%);
   --glass-edge: hsl(0deg 0% 100% / 0.8);
-  --glass-rim: hsl(20deg 30% 20% / 0.14);
+  --glass-rim: hsl(222deg 25% 20% / 0.14);
   --glass-sheen: hsl(0deg 0% 100% / 0.95);
   --glass-pill: hsl(0deg 0% 100%);
-  --glass-well: hsl(20deg 25% 20% / 0.07);
+  --glass-well: hsl(222deg 25% 20% / 0.07);
   --glass-accent: var(--primary);
-  --glass-shadow: 0 1px 1px hsl(20deg 30% 20% / 0.06), 0 10px 30px hsl(20deg 40% 15% / 0.16);
+  --glass-shadow: 0 1px 1px hsl(222deg 30% 15% / 0.06), 0 10px 30px hsl(222deg 35% 12% / 0.16);
   --glass-blur: blur(20px) saturate(180%);
   --shot-filter: none;
   --glass-btn: hsl(0deg 0% 100% / 0.6);
@@ -110,40 +109,40 @@
   --dur-med: 300ms;
   --dur-slow: 700ms;
   /* A keycap's shadow, tinted to the page (never pure black on a light ground). */
-  --press-shadow: hsl(20deg 30% 20% / 0.22);
+  --press-shadow: hsl(222deg 30% 15% / 0.22);
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --font-body: "Mukta", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Baloo 2", "Mukta", system-ui, sans-serif;
+  --font-body: "Barlow", "Mukta", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Barlow", "Mukta", system-ui, sans-serif;
   color-scheme: light;
 }
 
 /* Two copies of the dark tokens: one follows the system, one follows the theme button. Keep them identical. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --press-shadow: hsl(15deg 50% 2% / 0.5);
-    --bg: hsl(15deg 30% 6%);
-    --bg-accent: hsl(46deg 100% 50% / 0.06);
-    --bg-accent-2: hsl(21deg 40% 35% / 0.16);
-    --surface: hsl(15deg 25% 10%);
-    --surface-2: hsl(16deg 20% 14%);
-    --surface-3: hsl(18deg 18% 19%);
-    --text: hsl(36deg 30% 92%);
-    --text-2: hsl(30deg 12% 74%);
-    --text-3: hsl(28deg 8% 58%);
-    --border: hsl(16deg 16% 19%);
-    --border-2: hsl(18deg 14% 28%);
-    --control-border: hsl(25deg 8% 46%);
-    --primary: hsl(31deg 61% 48%);
-    --primary-edge: hsl(26deg 55% 28%);
-    --on-primary: hsl(15deg 40% 8%);
-    --gold: hsl(46deg 100% 50%);
-    --gold-edge: hsl(38deg 90% 30%);
-    --on-gold: hsl(13deg 43% 14%);
-    --gold-line: hsl(46deg 100% 50%);
-    --kraft: hsl(33deg 35% 60%);
-    --caramel: hsl(31deg 61% 55%);
-    --link: var(--gold);
-    --focus: var(--gold);
+    --press-shadow: hsl(280deg 40% 2% / 0.5);
+    --bg: hsl(280deg 16% 5%);
+    --bg-accent: hsl(8deg 73% 55% / 0.07);
+    --bg-accent-2: hsl(222deg 30% 50% / 0.08);
+    --surface: hsl(270deg 10% 9%);
+    --surface-2: hsl(270deg 8% 13%);
+    --surface-3: hsl(270deg 7% 18%);
+    --text: hsl(222deg 20% 95%);
+    --text-2: hsl(222deg 10% 76%);
+    --text-3: hsl(222deg 6% 62%);
+    --border: hsl(270deg 8% 18%);
+    --border-2: hsl(270deg 6% 28%);
+    --control-border: hsl(270deg 5% 48%);
+    --primary: hsl(222deg 20% 94%);
+    --primary-edge: hsl(222deg 10% 58%);
+    --on-primary: hsl(280deg 18% 5%);
+    --accent: hsl(8deg 82% 60%);
+    --accent-edge: hsl(8deg 70% 34%);
+    --on-accent: hsl(280deg 18% 5%);
+    --accent-line: hsl(8deg 82% 60%);
+    --kraft: hsl(24deg 55% 62%);
+    --caramel: hsl(18deg 78% 60%);
+    --link: hsl(12deg 90% 70%);
+    --focus: hsl(12deg 90% 70%);
     --ai: hsl(272deg 100% 84%);
     --ai-bg: hsl(272deg 60% 22% / 0.45);
     --ai-border: hsl(272deg 45% 40%);
@@ -159,55 +158,57 @@
     --danger: hsl(350deg 95% 69%);
     --danger-bg: hsl(350deg 60% 16% / 0.6);
     --sim: hsl(28deg 8% 62%);
-    --road: hsl(18deg 10% 16%);
-    --phone-frame: hsl(15deg 25% 3%);
-    --truck-cab: hsl(21deg 30% 38%);
+    --road: hsl(213deg 8% 20%);
+    --phone-frame: hsl(280deg 18% 3%);
+    --truck-cab: hsl(8deg 65% 36%);
     --truck-window: hsl(200deg 45% 70%);
     --truck-wheel: hsl(15deg 25% 5%);
     --scrim: hsl(15deg 40% 3% / 0.6);
     --shadow-sm: 0 1px 2px hsl(15deg 50% 2% / 0.5);
     --shadow-md: 0 1px 2px hsl(15deg 50% 2% / 0.4), 0 4px 10px hsl(15deg 50% 2% / 0.35);
     --shadow-lg: 0 2px 4px hsl(15deg 50% 2% / 0.4), 0 12px 32px hsl(15deg 50% 2% / 0.5);
-    --glass: hsl(18deg 20% 12% / 0.85);
+    --glass: hsl(270deg 12% 10% / 0.85);
     --glass-gloss: linear-gradient(180deg, hsl(0deg 0% 100% / 0.07), hsl(0deg 0% 100% / 0) 45%);
     --glass-edge: hsl(0deg 0% 100% / 0.14);
     --glass-rim: hsl(0deg 0% 0% / 0.5);
     --glass-sheen: hsl(0deg 0% 100% / 0.18);
-    --glass-pill: hsl(20deg 14% 24%);
+    --glass-pill: hsl(270deg 8% 22%);
     --glass-well: hsl(0deg 0% 0% / 0.28);
-    --glass-accent: var(--gold);
+    --glass-accent: hsl(16deg 100% 74%);
     --glass-shadow: 0 1px 2px hsl(15deg 50% 2% / 0.5), 0 12px 32px hsl(15deg 50% 2% / 0.55);
     --shot-filter: brightness(0.86);
-    --glass-btn: hsl(20deg 14% 24% / 0.82);
+    --road-line: hsl(24deg 85% 75%);
+    --truck-cargo: hsl(8deg 78% 58%);
+    --glass-btn: hsl(270deg 8% 22% / 0.82);
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
-  --press-shadow: hsl(15deg 50% 2% / 0.5);
-  --bg: hsl(15deg 30% 6%);
-  --bg-accent: hsl(46deg 100% 50% / 0.06);
-  --bg-accent-2: hsl(21deg 40% 35% / 0.16);
-  --surface: hsl(15deg 25% 10%);
-  --surface-2: hsl(16deg 20% 14%);
-  --surface-3: hsl(18deg 18% 19%);
-  --text: hsl(36deg 30% 92%);
-  --text-2: hsl(30deg 12% 74%);
-  --text-3: hsl(28deg 8% 58%);
-  --border: hsl(16deg 16% 19%);
-  --border-2: hsl(18deg 14% 28%);
-  --control-border: hsl(25deg 8% 46%);
-  --primary: hsl(31deg 61% 48%);
-  --primary-edge: hsl(26deg 55% 28%);
-  --on-primary: hsl(15deg 40% 8%);
-  --gold: hsl(46deg 100% 50%);
-  --gold-edge: hsl(38deg 90% 30%);
-  --on-gold: hsl(13deg 43% 14%);
-  --gold-line: hsl(46deg 100% 50%);
-  --kraft: hsl(33deg 35% 60%);
-  --caramel: hsl(31deg 61% 55%);
-  --link: var(--gold);
-  --focus: var(--gold);
+  --press-shadow: hsl(280deg 40% 2% / 0.5);
+  --bg: hsl(280deg 16% 5%);
+  --bg-accent: hsl(8deg 73% 55% / 0.07);
+  --bg-accent-2: hsl(222deg 30% 50% / 0.08);
+  --surface: hsl(270deg 10% 9%);
+  --surface-2: hsl(270deg 8% 13%);
+  --surface-3: hsl(270deg 7% 18%);
+  --text: hsl(222deg 20% 95%);
+  --text-2: hsl(222deg 10% 76%);
+  --text-3: hsl(222deg 6% 62%);
+  --border: hsl(270deg 8% 18%);
+  --border-2: hsl(270deg 6% 28%);
+  --control-border: hsl(270deg 5% 48%);
+  --primary: hsl(222deg 20% 94%);
+  --primary-edge: hsl(222deg 10% 58%);
+  --on-primary: hsl(280deg 18% 5%);
+  --accent: hsl(8deg 82% 60%);
+  --accent-edge: hsl(8deg 70% 34%);
+  --on-accent: hsl(280deg 18% 5%);
+  --accent-line: hsl(8deg 82% 60%);
+  --kraft: hsl(24deg 55% 62%);
+  --caramel: hsl(18deg 78% 60%);
+  --link: hsl(12deg 90% 70%);
+  --focus: hsl(12deg 90% 70%);
   --ai: hsl(272deg 100% 84%);
   --ai-bg: hsl(272deg 60% 22% / 0.45);
   --ai-border: hsl(272deg 45% 40%);
@@ -223,26 +224,28 @@
   --danger: hsl(350deg 95% 69%);
   --danger-bg: hsl(350deg 60% 16% / 0.6);
   --sim: hsl(28deg 8% 62%);
-  --road: hsl(18deg 10% 16%);
-  --phone-frame: hsl(15deg 25% 3%);
-  --truck-cab: hsl(21deg 30% 38%);
+  --road: hsl(213deg 8% 20%);
+  --phone-frame: hsl(280deg 18% 3%);
+  --truck-cab: hsl(8deg 65% 36%);
   --truck-window: hsl(200deg 45% 70%);
   --truck-wheel: hsl(15deg 25% 5%);
   --scrim: hsl(15deg 40% 3% / 0.6);
   --shadow-sm: 0 1px 2px hsl(15deg 50% 2% / 0.5);
   --shadow-md: 0 1px 2px hsl(15deg 50% 2% / 0.4), 0 4px 10px hsl(15deg 50% 2% / 0.35);
   --shadow-lg: 0 2px 4px hsl(15deg 50% 2% / 0.4), 0 12px 32px hsl(15deg 50% 2% / 0.5);
-  --glass: hsl(18deg 20% 12% / 0.85);
+  --glass: hsl(270deg 12% 10% / 0.85);
   --glass-gloss: linear-gradient(180deg, hsl(0deg 0% 100% / 0.07), hsl(0deg 0% 100% / 0) 45%);
   --glass-edge: hsl(0deg 0% 100% / 0.14);
   --glass-rim: hsl(0deg 0% 0% / 0.5);
   --glass-sheen: hsl(0deg 0% 100% / 0.18);
-  --glass-pill: hsl(20deg 14% 24%);
+  --glass-pill: hsl(270deg 8% 22%);
   --glass-well: hsl(0deg 0% 0% / 0.28);
-  --glass-accent: var(--gold);
+  --glass-accent: hsl(16deg 100% 74%);
   --glass-shadow: 0 1px 2px hsl(15deg 50% 2% / 0.5), 0 12px 32px hsl(15deg 50% 2% / 0.55);
   --shot-filter: brightness(0.86);
-  --glass-btn: hsl(20deg 14% 24% / 0.82);
+  --road-line: hsl(24deg 85% 75%);
+  --truck-cargo: hsl(8deg 78% 58%);
+  --glass-btn: hsl(270deg 8% 22% / 0.82);
   color-scheme: dark;
 }
 
@@ -265,9 +268,9 @@ body {
 }
 
 body {
+  /* A faint dot grid, as on a logistics site's hero. */
   background:
-    radial-gradient(900px 500px at 8% -10%, var(--bg-accent), transparent 70%),
-    radial-gradient(700px 420px at 100% 0%, var(--bg-accent-2), transparent 70%),
+    radial-gradient(hsl(222deg 20% 50% / 0.13) 1px, transparent 1px) 0 0 / 18px 18px,
     var(--bg);
   background-attachment: fixed;
   min-height: 100vh;
@@ -426,20 +429,23 @@ select {
   color: var(--on-primary);
   transform: translateY(-4px);
   transition: transform var(--dur-med) var(--spring);
-  font-size: var(--fs-base);
+  /* Bold, spaced capitals on buttons. */
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 .push.sm .push-front {
   min-height: 30px;
   padding: 0 12px;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   transform: translateY(-3px);
 }
-.push.gold .push-edge {
-  background: var(--gold-edge);
+.push.accent .push-edge {
+  background: var(--accent-edge);
 }
-.push.gold .push-front {
-  background: var(--gold);
-  color: var(--on-gold);
+.push.accent .push-front {
+  background: var(--accent);
+  color: var(--on-accent);
 }
 .push.plain .push-edge {
   background: var(--border-2);
@@ -722,16 +728,16 @@ select {
   align-items: center;
   gap: 8px;
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: 700;
   font-size: var(--fs-lg);
   letter-spacing: -0.01em;
 }
 .brand-mark {
-  display: inline-flex;
+  flex: none;
 }
 .brand .accent {
-  background: var(--gold);
-  color: var(--on-gold);
+  background: var(--accent);
+  color: var(--on-accent);
   padding: 0 5px;
   margin: 0 1px;
   border-radius: 6px;
@@ -990,8 +996,8 @@ select {
   height: 17px;
   padding: 0 4px;
   border-radius: var(--radius-pill);
-  background: var(--gold);
-  color: var(--on-gold);
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: var(--fs-2xs);
   font-weight: 700;
   display: grid;
@@ -1107,8 +1113,8 @@ select {
   color: var(--text);
 }
 .milestone.current .post {
-  background: var(--gold);
-  border-color: var(--gold-edge);
+  background: var(--accent);
+  border-color: var(--accent-edge);
   transform: rotate(45deg) scale(1.3);
 }
 .milestone.pulse .post {
@@ -1383,7 +1389,7 @@ select {
 .label-card {
   border-radius: var(--radius-lg);
   border: 1.5px solid var(--border);
-  border-top: 5px solid var(--gold);
+  border-top: 5px solid var(--accent);
   background: var(--surface);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -1619,7 +1625,7 @@ select {
   margin: 0;
   font-size: var(--fs-lg);
 }
-/* A segmented control: a well on the solid card, the selected section a raised pill with a gold edge. */
+/* A segmented control: a well on the solid card, the selected section a raised pill with an accent edge. */
 .ops-tabs {
   display: flex;
   gap: 2px;
@@ -1658,7 +1664,7 @@ select {
   bottom: 3px;
   height: 2.5px;
   border-radius: 2px;
-  background: var(--gold-line);
+  background: var(--accent-line);
 }
 .ops-body {
   padding: 16px;
@@ -1877,6 +1883,7 @@ table.table tbody th[scope="row"] {
 .decide strong {
   font-family: var(--font-display);
   font-size: var(--fs-md);
+  letter-spacing: -0.01em;
 }
 .decide textarea {
   min-height: 64px;
@@ -1982,7 +1989,8 @@ table.table td {
   position: absolute;
   inset: 0 auto 0 0;
   border-radius: var(--radius-pill);
-  background: var(--primary);
+  /* The accent: the dark theme's primary is white, too loud for a bar. */
+  background: var(--accent);
   transition: width var(--dur-slow) var(--spring);
 }
 
@@ -1994,7 +2002,7 @@ table.table td {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
-  opacity: 0.35;
+  opacity: 0.25;
 }
 .bg-paths svg {
   width: 100%;
@@ -2010,7 +2018,7 @@ table.table td {
   stop-color: var(--caramel);
 }
 .bg-paths-stop-c {
-  stop-color: var(--gold);
+  stop-color: var(--accent);
 }
 .bg-paths-secondary {
   opacity: 0.8;

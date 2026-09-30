@@ -283,7 +283,7 @@ export function Kyc({ view, focus }: { view: DriverView; focus: string | null })
             </Push>
           )}
           {step === "SUBMIT" && (
-            <Push block tone="gold" disabled={busy} onClick={() => run(() => api.submit(id))}>
+            <Push block tone="accent" disabled={busy} onClick={() => run(() => api.submit(id))}>
               <Send size={17} aria-hidden="true" /> {view.driver.status === "NEEDS_FIX" ? t(lang, "submitAgain") : t(lang, "submit")}
             </Push>
           )}

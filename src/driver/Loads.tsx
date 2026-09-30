@@ -71,7 +71,7 @@ export function Loads({ view, phone, onGoKyc }: { view: DriverView; phone: RefOb
             <div className="ticket-stub">
               <span className="fare">₹{l.fare.toLocaleString("en-IN")}</span>
               {!booked && (
-                <Push size="sm" tone="gold" disabled={busy} onClick={() => book(l.id)}>
+                <Push size="sm" tone="accent" disabled={busy} onClick={() => book(l.id)}>
                   {t(lang, "book")}
                 </Push>
               )}
