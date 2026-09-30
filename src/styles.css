@@ -1749,6 +1749,10 @@ select {
 .summary-text {
   flex-basis: 100%;
 }
+/* The ops console lines its numbers up: counts, costs, times and document numbers (D-045). */
+.ops {
+  font-variant-numeric: tabular-nums;
+}
 .doc-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -2320,13 +2324,38 @@ table.table td {
       animation-name: story-turn-in;
       animation-range: contain 70% contain 90%;
     }
+    /* The steps as stops on a road (D-045): the truck drives from stop to stop with the cards. */
     .story-nav {
       position: absolute;
-      bottom: 6vh;
+      bottom: 5vh;
       left: 50%;
       translate: -50% 0;
       display: flex;
-      gap: var(--space-2);
+      justify-content: space-between;
+      width: min(460px, 64vw);
+      padding-top: 30px;
+    }
+    .story-nav::before {
+      content: "";
+      position: absolute;
+      top: 21px;
+      left: 0;
+      right: 0;
+      height: 6px;
+      border-radius: var(--radius-pill);
+      background:
+        repeating-linear-gradient(90deg, var(--road-line) 0 8px, transparent 8px 16px) center / 100% 1px no-repeat,
+        var(--road);
+    }
+    .story-truck {
+      position: absolute;
+      top: 2px;
+      left: 20px;
+      translate: -50% 0;
+      line-height: 0;
+      animation: story-drive linear both;
+      animation-timeline: --story;
+      animation-range: contain 0% contain 100%;
     }
     .story-nav .glass-btn {
       justify-content: center;
@@ -2350,6 +2379,28 @@ table.table td {
       /* The page ends where the section does, so the last step's range runs past it. */
       animation-range: contain 80% cover 100%;
     }
+    /* The marked step is solid, so its glass layers step aside for the same stretch of scroll. */
+    .story-nav .glass-btn::before,
+    .story-nav .glass-btn::after {
+      animation: story-glass-off linear none;
+      animation-timeline: --story;
+    }
+    .story-nav .s1::before,
+    .story-nav .s1::after {
+      animation-range: cover 0% contain 20%;
+    }
+    .story-nav .s2::before,
+    .story-nav .s2::after {
+      animation-range: contain 20% contain 50%;
+    }
+    .story-nav .s3::before,
+    .story-nav .s3::after {
+      animation-range: contain 50% contain 80%;
+    }
+    .story-nav .s4::before,
+    .story-nav .s4::after {
+      animation-range: contain 80% cover 100%;
+    }
   }
 }
 @keyframes story-pan {
@@ -2368,6 +2419,24 @@ table.table td {
   90%,
   100% {
     translate: calc(var(--story-card) * -3.5 - var(--story-gap) * 3) -50%;
+  }
+}
+@keyframes story-drive {
+  0%,
+  10% {
+    left: 20px;
+  }
+  30%,
+  40% {
+    left: calc(20px + (100% - 40px) / 3);
+  }
+  60%,
+  70% {
+    left: calc(20px + (100% - 40px) * 2 / 3);
+  }
+  90%,
+  100% {
+    left: calc(100% - 20px);
   }
 }
 @keyframes story-turn {
@@ -2397,11 +2466,19 @@ table.table td {
     opacity: 0.55;
   }
 }
+@keyframes story-glass-off {
+  from,
+  to {
+    opacity: 0;
+  }
+}
 @keyframes story-step-on {
   from,
   to {
     background: var(--primary);
     color: var(--on-primary);
+    /* Solid, so a tight shadow: the glass one would blur its edge. */
+    box-shadow: 0 1px 2px var(--press-shadow);
   }
 }
 

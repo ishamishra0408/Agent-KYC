@@ -50,6 +50,7 @@ Each entry: what was decided, what else was on the table, and why. Newest at the
 | 042 | [A preserve-mode polish, run through an outside design audit (tasteskill)](#d-042--a-preserve-mode-polish-run-through-an-outside-design-audit-tasteskill) | Every keycap is now a pill, and the seven-step type scale moved some text by a pixel |
 | 043 | [Outside components from 21st.dev, reused or rewritten according to their licences](#d-043--outside-components-from-21stdev-reused-or-rewritten-according-to-their-licences) | Screenshots that go stale when the UI changes, a summary that takes about a second to appear the first time, and more motion than D-041 left |
 | 044 | [The red-and-black look goes live](#d-044--the-red-and-black-look-goes-live) | The brown-and-gold identity, and an accent closer to the reject red, so a rejection leans on its label as well as its colour |
+| 045 | [One driver across both panes; the steps as stops on a road](#d-045--one-driver-across-both-panes-the-steps-as-stops-on-a-road) | The ops console moves when a driver is picked, and a page load still opens on two different drivers |
 
 ## D-001 · AI proposes; code and people decide
 
@@ -358,6 +359,14 @@ I went with the recommendations. Each answer is a named test in `policy/kyc_test
 - **Re-taken:** the four story cards, the README screenshot and the link preview card.
 - **What it cost:** the brown-and-gold identity and its rounded display face. The orange-red accent (Book, Submit, the KYC block) sits closer to the reject red than gold did, so a rejection leans on its label as well as its colour.
 - **The folder stays:** `src/localOverrides.ts` still loads any CSS or TypeScript file in the git-ignored `src/local/`, now empty, for trying a look on one machine.
+
+## D-045 · One driver across both panes; the steps as stops on a road
+
+- **Why now:** an outside review of the demo Isha pasted in on 30 Sep. Its strongest point: the phone and the ops console could tell two unrelated stories at once, which undercuts "one driver, one journey". She picked three of its suggestions.
+- **One driver:** picking a driver in the demo bar opens their case in the ops console: in the review queue if they're in it and the queue is open, otherwise in All drivers, which lists everyone. The console's own "Their phone" button changes the phone without moving the console, so a reviewer working the queue stays in it. Loading the page still opens the phone's driver (Ramesh on a first visit) beside the review queue: the queue is the console's home, and a driver who has only signed up has nothing decided yet.
+- **Stops on a road:** in "How it works", the four step buttons sit under a short road, and the truck drives from stop to stop as the cards turn: the same scroll-driven CSS and the same pauses (no GSAP, which would have been a new dependency for motion the browser already scrubs). The marked step is solid, so its glass layers step aside, and the glass lens bends less (scale 5, was 16), which had smudged the buttons' edges.
+- **Aligned digits:** the ops console uses tabular numerals, so counts, costs, times and document numbers line up in their columns.
+- **Not taken:** a hero with the thesis above the demo (the lean-UI rule, D-034 and D-041: the README and the preview card carry that sentence), a particle layer (more motion on a page kept quiet), and the review's claim that the dark theme was never checked (`tests/theme.test.ts` checks its contrast on every test run).
 
 ## Policy questions (settled in v3 and v4)
 

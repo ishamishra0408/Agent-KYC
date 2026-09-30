@@ -1,5 +1,5 @@
 import { Check, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api, type DriverSummary, type EvalSummary, type Status } from "../api";
 import { useData } from "../data";
 import { istTime, PARTNER_LABEL, STATUS_LABEL, STEP_LABEL } from "../i18n";
@@ -9,9 +9,16 @@ import { CaseDetail } from "./CaseDetail";
 
 type Tab = "review" | "why" | "nudges" | "funnel" | "tests";
 
-function ReviewQueue({ onOpenDriver }: { onOpenDriver?: (id: string) => void }) {
+function ReviewQueue({
+  selected,
+  onSelect,
+  onOpenDriver,
+}: {
+  selected: string | null;
+  onSelect: (id: string) => void;
+  onOpenDriver?: (id: string) => void;
+}) {
   const { data: queue } = useData(() => api.review(), []);
-  const [selected, setSelected] = useState<string | null>(null);
   if (!queue) return <Skeleton lines={4} />;
   if (queue.length === 0) return <div className="empty">Nothing waiting for a person right now.</div>;
   const current = selected && queue.some((q) => q.id === selected) ? selected : queue[0].id;
@@ -19,7 +26,7 @@ function ReviewQueue({ onOpenDriver }: { onOpenDriver?: (id: string) => void }) 
     <div className="review-grid">
       <div className="queue" role="group" aria-label="Cases waiting for a person">
         {queue.map((q) => (
-          <button key={q.id} aria-pressed={q.id === current} onClick={() => setSelected(q.id)}>
+          <button key={q.id} aria-pressed={q.id === current} onClick={() => onSelect(q.id)}>
             <div className="spread">
               <strong>{q.name}</strong>
               <span className="faint small">{istTime(q.since)}</span>
@@ -291,10 +298,33 @@ function TestsTab() {
 }
 
 // The ops console: where people handle what the rules send them, and see why everything happened.
-export function OpsConsole({ bare = false, onOpenDriver }: { bare?: boolean; onOpenDriver?: (id: string) => void }) {
+// Beside the phone it follows the driver picked in the demo bar: their case in the review queue if
+// that's where they are and it's open, otherwise in All drivers.
+export function OpsConsole({
+  bare = false,
+  onOpenDriver,
+  follow,
+}: {
+  bare?: boolean;
+  onOpenDriver?: (id: string) => void;
+  follow?: { id: string; seq: number };
+}) {
   const [tab, setTab] = useState<Tab>("review");
+  const [reviewId, setReviewId] = useState<string | null>(null);
   const [whyId, setWhyId] = useState<string | null>(null);
   const { data: queue } = useData(() => api.review(), []);
+  const followed = useRef(0);
+  useEffect(() => {
+    if (!follow || follow.seq === followed.current) return;
+    if (tab === "review" && !queue) return; // decide once the queue has loaded
+    followed.current = follow.seq;
+    if (tab === "review" && queue?.some((q) => q.id === follow.id)) {
+      setReviewId(follow.id);
+    } else {
+      setWhyId(follow.id);
+      setTab("why");
+    }
+  }, [follow, tab, queue]);
   const tabs: { key: Tab; label: string }[] = [
     { key: "review", label: `Review queue${queue ? ` (${queue.length})` : ""}` },
     { key: "why", label: "All drivers" },
@@ -316,7 +346,7 @@ export function OpsConsole({ bare = false, onOpenDriver }: { bare?: boolean; onO
         ))}
       </nav>
       <div className="ops-body" {...aria.panel} tabIndex={-1}>
-        {tab === "review" && <ReviewQueue onOpenDriver={onOpenDriver} />}
+        {tab === "review" && <ReviewQueue selected={reviewId} onSelect={setReviewId} onOpenDriver={onOpenDriver} />}
         {tab === "why" && <AllDrivers id={whyId} onPick={setWhyId} onOpenDriver={onOpenDriver} />}
         {tab === "nudges" && (
           <NudgeLog

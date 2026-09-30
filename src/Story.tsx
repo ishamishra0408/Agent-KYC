@@ -1,10 +1,11 @@
 import { useRef } from "react";
-import { GlassButton } from "./ui";
+import { GlassButton, Truck } from "./ui";
 
 // How it works (D-043): the four steps as cards on a track. Scrolling pans the track: each card turns in
-// from the right, sits flat in the middle, then turns away to the left, and the glass buttons jump to a
-// step. Scroll-driven CSS where the browser has it; elsewhere, under reduced motion and on narrow screens,
-// the cards sit in a plain grid. The motion follows Hyperiux Vault's "Cards Rotate Slider" on 21st.dev
+// from the right, sits flat in the middle, then turns away to the left. Below, the steps are stops on a
+// road: the truck drives from stop to stop with the cards, and the glass buttons jump to a step (D-045).
+// Scroll-driven CSS where the browser has it; elsewhere, under reduced motion and on narrow screens, the
+// cards sit in a plain grid. The motion follows Hyperiux Vault's "Cards Rotate Slider" on 21st.dev
 // (MIT), but none of its code is used: that one runs on GSAP, this is CSS.
 const STEPS = [
   {
@@ -67,6 +68,9 @@ export function Story() {
           ))}
         </ol>
         <nav className="story-nav" aria-label="Steps">
+          <span className="story-truck" aria-hidden="true">
+            <Truck size={36} />
+          </span>
           {STEPS.map((s, i) => (
             <GlassButton key={s.key} className={`s${i + 1}`} aria-label={`Step ${i + 1}: ${s.step}`} onClick={() => show(i)}>
               {i + 1}

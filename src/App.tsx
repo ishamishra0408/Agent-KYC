@@ -30,22 +30,29 @@ function useRoute(): Route {
 
 function DemoPage({ theme, onTheme }: { theme: ReturnType<typeof useTheme>[0]; onTheme: () => void }) {
   const [driverId, setDriverId] = useState(() => readStored("kycready.driver") ?? "c01");
+  // The driver picked in the demo bar, for the ops console to follow. Its "Their phone" button changes
+  // the phone without moving the console.
+  const [follow, setFollow] = useState<{ id: string; seq: number } | undefined>();
   const choose = (id: string) => {
     setDriverId(id);
     writeStored("kycready.driver", id);
+  };
+  const pick = (id: string) => {
+    choose(id);
+    setFollow((f) => ({ id, seq: (f?.seq ?? 0) + 1 }));
   };
   return (
     <div className="demo-page">
       <BackgroundPaths />
       <LiquidGlassFilter />
       <div className="demo-screen">
-        <DemoBar driverId={driverId} onDriver={choose} theme={theme} onTheme={onTheme} />
+        <DemoBar driverId={driverId} onDriver={pick} theme={theme} onTheme={onTheme} />
         <div className="demo-grid">
           <div className="demo-col">
             <PhoneApp key={driverId} id={driverId} />
           </div>
           <div className="demo-col">
-            <OpsConsole onOpenDriver={choose} />
+            <OpsConsole onOpenDriver={choose} follow={follow} />
           </div>
         </div>
       </div>
