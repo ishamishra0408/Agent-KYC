@@ -731,6 +731,7 @@ select {
   font-weight: 700;
   font-size: var(--fs-lg);
   letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 .brand-mark {
   flex: none;
@@ -1746,12 +1747,71 @@ select {
   font-size: var(--fs-base);
   color: var(--text-2);
 }
-.summary-text {
+.summary .summary-text {
+  /* Its own line under the chip; the 65ch measure applies to the text inside. */
   flex-basis: 100%;
+  max-width: none;
 }
 /* The ops console lines its numbers up: counts, costs, times and document numbers (D-045). */
 .ops {
   font-variant-numeric: tabular-nums;
+}
+/* ...and it's the dense one (D-046): smaller type, tighter rows, cards and gaps, quieter headings, so a
+   working tool sits beside the playful phone. */
+.ops {
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+}
+.ops .ops-body {
+  padding: 12px 14px;
+}
+.ops .review-grid {
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: 12px;
+}
+.ops .queue {
+  gap: 6px;
+}
+.ops .queue button {
+  padding: 8px 10px;
+  gap: 4px;
+}
+.ops .queue strong {
+  font-size: var(--fs-base);
+}
+.ops .case-stack {
+  gap: var(--space-4);
+}
+.ops .case-name {
+  font-size: var(--fs-md);
+}
+.ops .section {
+  gap: 6px;
+}
+.ops .section h3 {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.ops .summary {
+  font-size: var(--fs-sm);
+}
+.ops .doc-grid {
+  gap: 8px;
+}
+.ops .doc-card {
+  padding: var(--space-2);
+  gap: 4px;
+}
+.ops table.table th,
+.ops table.table td {
+  padding: 6px var(--space-2);
+}
+.ops .metric {
+  padding: var(--space-2) var(--space-3);
+}
+.ops .metric .value {
+  font-size: var(--fs-lg);
 }
 .doc-grid {
   display: grid;
@@ -2037,6 +2097,98 @@ table.table td {
 }
 @media (forced-colors: active) {
   .bg-paths {
+    display: none;
+  }
+}
+
+/* The thesis, above the demo (D-046): the sentence in ink, each clause marked by its provenance icon and
+   a thin line in its colour, drawn in on load. The top of the demo peeks in below it. */
+.hero {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-height: 86vh;
+  min-height: 86svh;
+  padding: var(--space-6) var(--space-4) 10vh;
+}
+.hero-inner {
+  display: grid;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: 1000px;
+}
+.hero-title {
+  margin: 0;
+  font-size: clamp(34px, 5.4vw, 74px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.hero-part {
+  padding-bottom: 0.05em;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.08em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  animation:
+    hero-in var(--dur-slow) var(--ease) both,
+    hero-line 800ms var(--ease) both;
+  animation-delay: 150ms, 450ms;
+}
+.hero-part:nth-child(2) {
+  animation-delay: 400ms, 700ms;
+}
+.hero-part:nth-child(3) {
+  animation-delay: 650ms, 950ms;
+}
+.hero-part.ai {
+  background-image: linear-gradient(var(--ai), var(--ai));
+}
+.hero-part.rules {
+  background-image: linear-gradient(var(--rules), var(--rules));
+}
+.hero-part.human {
+  background-image: linear-gradient(var(--human), var(--human));
+}
+.hero-icon {
+  width: 0.56em;
+  height: 0.56em;
+  margin-right: 0.16em;
+  vertical-align: 0.06em;
+}
+.hero-part.ai .hero-icon {
+  color: var(--ai);
+}
+.hero-part.rules .hero-icon {
+  color: var(--rules);
+}
+.hero-part.human .hero-icon {
+  color: var(--human);
+}
+@keyframes hero-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes hero-line {
+  from {
+    background-size: 0% 0.08em;
+  }
+}
+
+/* Dust in the light (D-046): the motes' canvas sits with the background paths, behind everything. */
+.ambient-motes {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+@media (forced-colors: active) {
+  .ambient-motes {
     display: none;
   }
 }
@@ -2555,7 +2707,8 @@ table.table td {
     flex: 0 0 210px;
     scroll-snap-align: start;
   }
-  .review-grid {
+  .review-grid,
+  .ops .review-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -2572,5 +2725,8 @@ table.table td {
   .road-strip .truck {
     animation: none;
     left: 24px;
+  }
+  .hero-part {
+    animation: none;
   }
 }

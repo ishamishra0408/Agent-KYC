@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RefreshProvider, readStored, writeStored } from "./data";
 import { DemoBar } from "./demo/DemoBar";
 import { PhoneApp } from "./driver/PhoneApp";
 import { OpsConsole } from "./ops/OpsConsole";
+import { AmbientMotes } from "./AmbientMotes";
 import { BackgroundPaths } from "./BackgroundPaths";
+import { Hero } from "./Hero";
 import { Story } from "./Story";
 import { LiquidGlassFilter, Truck } from "./ui";
-import { useTheme } from "./whimsy";
+import { reducedMotion, useTheme } from "./whimsy";
 
 // Three ways in: the side-by-side demo (#/), the driver app alone (#/driver/<id>), the ops console alone (#/ops).
 type Route = { name: "demo" } | { name: "driver"; id: string } | { name: "ops" };
@@ -41,11 +43,14 @@ function DemoPage({ theme, onTheme }: { theme: ReturnType<typeof useTheme>[0]; o
     choose(id);
     setFollow((f) => ({ id, seq: (f?.seq ?? 0) + 1 }));
   };
+  const screen = useRef<HTMLDivElement>(null);
   return (
     <div className="demo-page">
       <BackgroundPaths />
+      <AmbientMotes />
       <LiquidGlassFilter />
-      <div className="demo-screen">
+      <Hero onStart={() => screen.current?.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth" })} />
+      <div className="demo-screen" ref={screen}>
         <DemoBar driverId={driverId} onDriver={pick} theme={theme} onTheme={onTheme} />
         <div className="demo-grid">
           <div className="demo-col">

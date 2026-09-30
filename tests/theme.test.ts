@@ -93,6 +93,8 @@ const NON_TEXT: [string, string][] = [
   // provenance icons, and the accent lines on reasons and banners (D-041)
   ["ai", "surface"], ["rules", "surface"], ["human", "surface"], ["fix", "surface"], ["danger", "surface"],
   ["control-border", "surface"], ["control-border", "surface-2"],
+  // the hero's provenance icons and lines, on the page (D-046)
+  ["ai", "bg"], ["rules", "bg"], ["human", "bg"],
 ];
 
 describe("theme", () => {

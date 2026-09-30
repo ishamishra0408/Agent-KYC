@@ -51,6 +51,7 @@ Each entry: what was decided, what else was on the table, and why. Newest at the
 | 043 | [Outside components from 21st.dev, reused or rewritten according to their licences](#d-043--outside-components-from-21stdev-reused-or-rewritten-according-to-their-licences) | Screenshots that go stale when the UI changes, a summary that takes about a second to appear the first time, and more motion than D-041 left |
 | 044 | [The red-and-black look goes live](#d-044--the-red-and-black-look-goes-live) | The brown-and-gold identity, and an accent closer to the reject red, so a rejection leans on its label as well as its colour |
 | 045 | [One driver across both panes; the steps as stops on a road](#d-045--one-driver-across-both-panes-the-steps-as-stops-on-a-road) | The ops console moves when a driver is picked, and a page load still opens on two different drivers |
+| 046 | [The rest of the review: a hero with the thesis, dust in the light, a denser ops console](#d-046--the-rest-of-the-review-a-hero-with-the-thesis-dust-in-the-light-a-denser-ops-console) | The demo is a scroll or a click below the fold, and the page moves more |
 
 ## D-001 · AI proposes; code and people decide
 
@@ -367,6 +368,18 @@ I went with the recommendations. Each answer is a named test in `policy/kyc_test
 - **Stops on a road:** in "How it works", the four step buttons sit under a short road, and the truck drives from stop to stop as the cards turn: the same scroll-driven CSS and the same pauses (no GSAP, which would have been a new dependency for motion the browser already scrubs). The marked step is solid, so its glass layers step aside, and the glass lens bends less (scale 5, was 16), which had smudged the buttons' edges.
 - **Aligned digits:** the ops console uses tabular numerals, so counts, costs, times and document numbers line up in their columns.
 - **Not taken:** a hero with the thesis above the demo (the lean-UI rule, D-034 and D-041: the README and the preview card carry that sentence), a particle layer (more motion on a page kept quiet), and the review's claim that the dark theme was never checked (`tests/theme.test.ts` checks its contrast on every test run).
+- **Reversed (30 Sep):** the hero and the particle layer, by D-046, at Isha's ask.
+
+## D-046 · The rest of the review: a hero with the thesis, dust in the light, a denser ops console
+
+- **Asked for:** Isha, on 30 Sep, after D-045: "i want all the upgrades", including the two D-045 turned down.
+- **A hero with the thesis:** the page now opens on one sentence: "A model reads the documents, a policy decides, people decide the hard cases." The words stay in ink, with no heading above them (the demo bar's wordmark shows just below); each clause is marked by its provenance icon and a thin line in its colour (purple the AI slot, green the rules, blue a person), drawn in on load, so the colours that mark provenance everywhere else are introduced by what they mean. That keeps D-041's small-marker rule; the sentence itself overrides D-034's no-tagline rule, by her choice. The thesis is now the page's one top-level heading, and the demo bar's wordmark a paragraph. "Try the demo" scrolls to the demo, whose top shows below the hero.
+- **Dust in the light:** a few dozen faint motes drift up behind the page in the theme's warm tones: a canvas redrawn about 30 times a second, never drawn under reduced motion, hidden in high contrast, and paused by the browser in a background tab.
+- **Two registers:** the ops console is now the dense one: smaller type, tighter queue cards, table rows and gaps, quieter section headings, with the aligned digits from D-045. The phone keeps its size and its play.
+- **Dark mode:** every view was checked by eye in the dark theme after these changes (the hero, the five ops tabs, the phone's chat and loads, the ops console and the driver app on their own), and none needed a fix. The hero's markers joined the contrast tests: 3:1 on the page in both themes.
+- **Re-taken:** the story cards, the README screenshot and the link preview card, captured with the demo scrolled into view, now show the denser console.
+- **Still not used:** GSAP. The story's truck and cards already follow the scroll in CSS (D-045).
+- **What it cost:** the demo no longer fills the first screen; it's a scroll or a click away. And the page moves more, all of it stopped by reduced motion.
 
 ## Policy questions (settled in v3 and v4)
 

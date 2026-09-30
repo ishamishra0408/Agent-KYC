@@ -27,7 +27,7 @@ export function StatusPill({ status, lang = "en" }: { status: Status; lang?: Lan
 
 // Where a piece of content came from. The whole UI's provenance language in one component.
 // Who produced something. The icon repeats what the colour says, so colour is never the only cue.
-const SOURCE_ICON = { ai: Sparkles, rules: ListChecks, human: UserRound } as const;
+export const SOURCE_ICON = { ai: Sparkles, rules: ListChecks, human: UserRound } as const;
 
 export function Source({ kind, children }: { kind: "ai" | "rules" | "human"; children: ReactNode }) {
   const Icon = SOURCE_ICON[kind];
@@ -39,8 +39,8 @@ export function Source({ kind, children }: { kind: "ai" | "rules" | "human"; chi
   );
 }
 
-// A liquid-glass button for the glass navigation layer: frosted, and in Chromium the backdrop also bends
-// through an SVG displacement lens (#liquid-glass, drawn once by LiquidGlassFilter). Other browsers get
+// A liquid-glass button for controls that float over the page: frosted, and in Chromium the backdrop also
+// bends through an SVG displacement lens (#liquid-glass, drawn once by LiquidGlassFilter). Other browsers get
 // the frost; high contrast and reduced transparency get a solid button (styles.css). Written for this
 // app after the 21st.dev "Liquid Glass Button", whose code ships without a licence.
 export function GlassButton({ className = "", children, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {

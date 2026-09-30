@@ -44,12 +44,12 @@ export function DemoBar({
 
   return (
     <header className="demo-bar">
-      <h1 className="brand boop">
+      <p className="brand boop">
         <BrandMark />
         <span>
           Agent <span className="accent">KYC</span>Ready
         </span>
-      </h1>
+      </p>
 
       <label className="row small">
         <select value={driverId} onChange={(e) => onDriver(e.target.value)} aria-label="Whose phone">
