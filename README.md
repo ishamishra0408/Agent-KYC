@@ -2,7 +2,7 @@
 
 ## [Open the live demo →](https://agent-kycready.onrender.com)
 
-**Drivers sign up on a logistics marketplace, get stuck at KYC, and never book a load. Agent KYCReady gets them verified: it tells each driver the one thing blocking them, reads their documents with AI, and lets a policy decide, never the model. People only see the hard cases.**
+**Drivers sign up on a logistics marketplace, get stuck at KYC, and never book a load. Agent KYCReady gets them verified: it tells each driver the one thing blocking them, reads their documents, and lets a policy decide, NEVER the model. Ops would only see the hard cases.**
 
 **Live:** [demo](https://agent-kycready.onrender.com) · [ops console](https://agent-kycready.onrender.com/#/ops) — no login, nothing to install. It runs on stand-ins for the AI reader and the graph, and the first visit can take a minute to wake up.
 
