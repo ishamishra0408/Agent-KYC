@@ -82,7 +82,7 @@ export const BLOCKER_LABEL: Record<string, string> = {
 export const SLOT_LABEL: Record<Slot, string> = {
   DL: "Driving licence",
   PAN: "PAN card",
-  BANK_PROOF: "Passbook",
+  BANK_PROOF: "Bank account",
 };
 
 export const FIELD_LABEL: Record<string, string> = {

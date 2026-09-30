@@ -162,11 +162,11 @@ function TestsTab() {
         <table className="table">
           <thead>
             <tr>
-              <th>Set</th>
+              <th>Case set</th>
               <th>Reader</th>
               <th>Bad approved</th>
               <th>Good approved</th>
-              <th>Gate</th>
+              <th>Result</th>
             </tr>
           </thead>
           <tbody>

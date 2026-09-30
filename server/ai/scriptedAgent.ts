@@ -117,8 +117,8 @@ export function agentSay(event: AgentEvent, lang: Lang): string[] {
     case "decision":
       if (event.outcome === "APPROVE") return [LINES.approved[lang]];
       if (event.outcome === "REVIEW") return [WAITING[lang]];
-      // One message, not an intro and then a line per fix: the phone's banner already repeats it.
-      return [[(event.fixes.length > 1 ? LINES.fixIntroMany : LINES.fixIntro)[lang], ...event.fixes.map((f) => REASONS[f].driver[lang])].join(" ")];
+      // One message: the intro, then each fix on its own line, said once.
+      return [[(event.fixes.length > 1 ? LINES.fixIntroMany : LINES.fixIntro)[lang], ...new Set(event.fixes.map((f) => REASONS[f].driver[lang]))].join("\n")];
     case "faq":
       return [FAQ[event.id].a[lang]];
   }

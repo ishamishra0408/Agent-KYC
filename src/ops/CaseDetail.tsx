@@ -16,6 +16,17 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
+const ACTOR_LABEL: Record<string, string> = { driver: "Driver", rules: "Rules", human: "Reviewer", reviewer: "Reviewer", system: "System", owner: "Fleet owner" };
+const sentenceCase = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// A passed check, with the fact a reviewer would otherwise have to hover for.
+function checkLabel(p: NonNullable<CaseView["decision"]>["passed"][number]): string {
+  const e = p.evidence ?? {};
+  if (p.check === "DL_VALID" && e.validTill) return `Licence valid till ${String(e.validTill)}`;
+  if (p.check === "BANK_VERIFIED" && e.ownersAccount) return "Paid into the fleet owner's account";
+  return CHECK_LABEL[p.check] ?? p.check;
+}
+
 function evidenceText(e: Record<string, unknown> | undefined): string | null {
   if (!e) return null;
   const parts = Object.entries(e)
@@ -228,7 +239,7 @@ export function CaseDetail({ id, canDecide = false, onOpenDriver }: { id: string
 
       {c.summary && (
         <p className="summary">
-          <Source kind="ai">Summary · template</Source>
+          <Source kind="ai">AI summary · template</Source>
           <span>{c.summary}</span>
         </p>
       )}
@@ -245,12 +256,15 @@ export function CaseDetail({ id, canDecide = false, onOpenDriver }: { id: string
               <strong>{OUTCOME_DONE[d.outcome] ?? d.outcome}</strong> · {istTime(d.at, true)}
               {d.note && ` · “${d.note}”`}
             </span>
-            {c.registrySimulated && <Sim label="Simulated registry" />}
+            {c.registrySimulated && <Sim label="Simulated checks" />}
           </div>
           {/* The summary already says why; a reason's own message and evidence are on hover. */}
           {d.reasons.map((r, i) => (
             <div key={`${r.code}-${i}`} className={`reason ${r.severity}`} title={[r.opsMessage, evidenceText(r.evidence)].filter(Boolean).join(" · ")}>
-              <strong className="small">{REASON_LABEL[r.code] ?? r.code}</strong>
+              <strong className="small">
+                <span className="sr-only">{r.severity === "review" ? "Needs a person: " : "Fix: "}</span>
+                {REASON_LABEL[r.code] ?? r.code}
+              </strong>
               {r.doc && <span className="faint small">{SLOT_LABEL[r.doc]}</span>}
               {!c.summary && <span className="small muted">{r.opsMessage}</span>}
             </div>
@@ -260,7 +274,7 @@ export function CaseDetail({ id, canDecide = false, onOpenDriver }: { id: string
               {d.passed.map((p) => (
                 <li key={p.check} title={evidenceText(p.evidence) ?? undefined}>
                   <Check size={13} strokeWidth={3} aria-hidden="true" />
-                  {CHECK_LABEL[p.check] ?? p.check}
+                  {checkLabel(p)}
                 </li>
               ))}
             </ul>
@@ -271,7 +285,7 @@ export function CaseDetail({ id, canDecide = false, onOpenDriver }: { id: string
       )}
 
       {c.notices.length > 0 && (
-        <Section title="Notes">
+        <Section title="Heads-up">
           {c.notices.map((n) => (
             <div key={n.code} className="reason" title={evidenceText(n.evidence) ?? undefined}>
               <strong className="small">{NOTICE_LABEL[n.code] ?? n.code}</strong>
@@ -317,8 +331,8 @@ export function CaseDetail({ id, canDecide = false, onOpenDriver }: { id: string
           {c.events.map((e, i) => (
             <li key={i}>
               <span>{istTime(e.at)}</span>
-              <span>{e.actor}</span>
-              <span>{e.type === "status_changed" ? `${STATUS_LABEL[e.from as keyof typeof STATUS_LABEL] ?? e.from} → ${STATUS_LABEL[e.to as keyof typeof STATUS_LABEL] ?? e.to}` : e.type.replace(/_/g, " ")}</span>
+              <span>{ACTOR_LABEL[e.actor] ?? e.actor}</span>
+              <span>{e.type === "status_changed" ? `${STATUS_LABEL[e.from as keyof typeof STATUS_LABEL] ?? e.from} → ${STATUS_LABEL[e.to as keyof typeof STATUS_LABEL] ?? e.to}` : sentenceCase(e.type.replace(/_/g, " "))}</span>
             </li>
           ))}
         </ul>

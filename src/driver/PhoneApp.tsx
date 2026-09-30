@@ -116,7 +116,7 @@ export function PhoneApp({ id, bare = false }: { id: string; bare?: boolean }) {
 
       <div className="phone-body" {...tabs.panel} tabIndex={-1}>
         {tab === "inbox" && <Inbox view={view} onOpen={openLink} />}
-        {tab === "kyc" && <Kyc view={view} focus={focus} onGoLoads={() => go("loads")} />}
+        {tab === "kyc" && <Kyc view={view} focus={focus} />}
         {tab === "loads" && <Loads view={view} phone={phoneRef} onGoKyc={() => go("kyc")} />}
       </div>
 

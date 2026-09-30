@@ -132,7 +132,7 @@ describe("demo API", () => {
     expect(c.body.graph.sharedBankAccount.sharers.map((s: { name: string }) => s.name)).toEqual(
       expect.arrayContaining(["Vikram S", "Arun P"]),
     );
-    expect(c.body.summary).toMatch(/no link to its holder\. On the account: .*Vikram S.*\. \d of 6 checks passed\.$/);
+    expect(c.body.summary).toBe("Bank account shared with drivers who have no link to its holder (MEENA KUMARI): Vikram S, Arun P.");
     expect(c.body.registrySimulated).toBe(true);
   });
 

@@ -1070,53 +1070,6 @@ select {
   }
 }
 
-.banner {
-  margin: 8px 14px 0;
-  padding: 9px 12px;
-  border-radius: 14px;
-  border: 1.5px solid var(--border);
-  border-left: 4px solid var(--border-2);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 14px;
-  animation: slide-in 450ms var(--spring);
-}
-@keyframes slide-in {
-  from {
-    transform: translateY(-6px);
-    opacity: 0;
-  }
-}
-.banner.approved {
-  border-left-color: var(--rules);
-}
-.banner.fix {
-  border-left-color: var(--fix);
-}
-.banner.review {
-  border-left-color: var(--human);
-}
-.banner.rejected {
-  border-left-color: var(--danger);
-}
-.banner strong {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 15.5px;
-}
-.banner.approved strong {
-  color: var(--rules);
-}
-.banner.fix strong {
-  color: var(--fix);
-}
-.banner.review strong {
-  color: var(--human);
-}
-.banner.rejected strong {
-  color: var(--danger);
-}
-
 .docs-strip {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1178,6 +1131,7 @@ select {
   overflow-y: auto;
 }
 .bubble {
+  white-space: pre-line;
   max-width: 86%;
   padding: 8px 12px;
   border-radius: 16px;

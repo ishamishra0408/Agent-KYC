@@ -93,60 +93,6 @@ function RoadStepper({ view, focus }: { view: DriverView; focus: string | null }
   );
 }
 
-function StatusBanner({ view, onGoLoads }: { view: DriverView; onGoLoads: () => void }) {
-  const lang = view.driver.language;
-  const status = view.driver.status;
-  if (status === "APPROVED" || status === "ACTIVE") {
-    return (
-      <div className="banner approved spread">
-        <div>
-          <strong>{t(lang, "approvedTitle")}</strong>
-          {t(lang, "approvedBody")}
-        </div>
-        <Push size="sm" tone="gold" onClick={onGoLoads}>
-          {t(lang, "seeLoads")}
-        </Push>
-      </div>
-    );
-  }
-  if (status === "LICENCE_EXPIRED") {
-    return (
-      <div className="banner fix">
-        <strong>{t(lang, "expiredTitle")}</strong>
-        {t(lang, "expiredBody")}
-      </div>
-    );
-  }
-  if (status === "NEEDS_FIX") {
-    const fixes = view.decision?.fixes ?? [];
-    return (
-      <div className="banner fix">
-        <strong>{t(lang, fixes.length > 1 ? "fixTitleMany" : "fixTitle")}</strong>
-        {fixes.map((f) => (
-          <div key={f.code}>{f.message}</div>
-        ))}
-        {view.nextStep === "SUBMIT" && <div className="small muted">{t(lang, "thenSubmit")}</div>}
-      </div>
-    );
-  }
-  if (status === "IN_REVIEW" || status === "SUBMITTED") {
-    return (
-      <div className="banner review">
-        <strong>{t(lang, status === "IN_REVIEW" ? "reviewTitle" : "checkingTitle")}</strong>
-        {status === "IN_REVIEW" && t(lang, "reviewBody")}
-      </div>
-    );
-  }
-  if (status === "REJECTED") {
-    return (
-      <div className="banner rejected">
-        <strong>{t(lang, "rejectedTitle")}</strong>
-      </div>
-    );
-  }
-  return null;
-}
-
 function DocTile({ label, doc, done, lang, simulatedLabel }: { label: string; doc?: DriverView["documents"][Slot]; done?: boolean; lang: Lang; simulatedLabel?: string }) {
   if (doc?.source === "digilocker") {
     return (
@@ -237,7 +183,7 @@ function CameraSheet({ id, slot, lang, onPick, onClose }: { id: string; slot: Sl
 }
 
 // The KYC conversation: the road so far, status, documents, the assistant, and the one next action.
-export function Kyc({ view, focus, onGoLoads }: { view: DriverView; focus: string | null; onGoLoads: () => void }) {
+export function Kyc({ view, focus }: { view: DriverView; focus: string | null }) {
   const id = view.driver.id;
   const lang = view.driver.language;
   const { run, busy, error } = useAction();
@@ -262,7 +208,6 @@ export function Kyc({ view, focus, onGoLoads }: { view: DriverView; focus: strin
   return (
     <div className="kyc">
       <RoadStepper view={view} focus={focus} />
-      <StatusBanner view={view} onGoLoads={onGoLoads} />
       {view.driver.status !== "SIGNED_UP" && (
         <div className="docs-strip">
           <DocTile lang={lang} label={STEP_LABEL.DL[lang]} doc={view.documents.DL} />
