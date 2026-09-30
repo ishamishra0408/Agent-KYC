@@ -198,3 +198,11 @@ Real mistakes from building this, and what changed because of them. Most end in 
 - **What happened:** the first report said the reader flagged 15 of 120 forgeries. Reading the reports, all 8 of Gemma's named the height field, 7 of them calling the height itself implausible (7 ft 10 in, a quirk of the synthetic data), on genuine and forged cards alike: they were about the licence, not the edit. Separately, D-040 said a swapped portrait passes the face match, but the face match compares the selfie with the registry's photo; a pasted portrait only gets through where the registry has none.
 - **Fix:** the report now pairs each forgery with the same licence's genuine copy, splits the counts by the model that answered, and lists every report. Pairing alone wasn't enough (its 10 still held two height remarks and missed two real catches), so D-040 states the result per model, from the reports themselves. D-040's reason now says what the checks actually miss.
 - **Lesson:** a detection count means little until the reports behind it are read. Pair each positive with its own negative.
+
+## F-027 · Safari kept showing the old icon after the new look went live
+
+- **When:** after the red-and-black look went live (D-044), 30 Sep
+- **What happened:** the live page declared the new octahedron, yet Safari's tab for the live site still showed the old brown-and-gold checkmark. The icon was written into the page itself (a `data:` URL in `index.html`), and Safari keeps its own copy of each site's icon and didn't refresh it when that inline icon changed. The files browsers look for by name, `/favicon.ico` and `/apple-touch-icon.png`, returned 404, so there was no real file for it to fetch either.
+- **Fix:** the icon is now real files in `public/`: `favicon.svg` as the source, and `favicon-32.png`, `favicon.ico` and a 180 px `apple-touch-icon.png` built from it by `npm run icons`. `index.html` links them with a version in the URL (`?v=2`), so a new mark gets a new address.
+- **Checked:** each file loads from the live site with its image type. A Safari that already cached the old icon may still hold it until its website data for the site is removed.
+- **Lesson:** give a site's icon a real, versioned URL; an icon inlined in the page changes without the browser noticing.

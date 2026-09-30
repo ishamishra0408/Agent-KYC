@@ -54,7 +54,7 @@ Five AI models were compared on the same cases. The open-weight Gemma got every 
 | What drivers see | Fix reasons in full; review reasons never ([D-021](DECISIONS.md#d-021--drivers-never-see-why-they-were-sent-to-review)) | Every reason shown | Less transparency for a flagged driver: saying what was noticed teaches them to hide it |
 | Test data | Made-up SPECIMEN documents only ([D-005](DECISIONS.md#d-005--fake-specimen-documents-only)) | Real IDs | Less realism; a phone-photo kit and public IDNet forgeries fill some of the gap |
 
-Every decision, with its options and what it cost: [DECISIONS.md](DECISIONS.md), 45 in all. What went wrong and what changed: [FAILURES.md](FAILURES.md).
+Every decision, with its options and what it cost: [DECISIONS.md](DECISIONS.md), 46 in all. What went wrong and what changed: [FAILURES.md](FAILURES.md).
 
 ## Try it
 
@@ -92,7 +92,7 @@ npm run c4 && npm run c4:check              # the architecture diagrams (needs D
 
 ## Learn more
 
-[PRD](PRD.md) · [45 decisions](DECISIONS.md) · [26 failures and fixes](FAILURES.md) · [architecture](architecture/agent-kycready/workspace.dsl) · [evals](evals/README.md)
+[PRD](PRD.md) · [46 decisions](DECISIONS.md) · [27 failures and fixes](FAILURES.md) · [architecture](architecture/agent-kycready/workspace.dsl) · [evals](evals/README.md)
 
 Stack: React · Express · SQLite · Open Policy Agent (Rego compiled to WebAssembly) · OpenRouter · Neo4j Aura.
 
